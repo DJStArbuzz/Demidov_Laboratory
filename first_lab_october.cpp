@@ -7,7 +7,6 @@
 
 const double PI = acos(-1.0);
 
-using namespace std;
 
 void problem_1() {
 	/* Задание 1, вариант 9
@@ -16,47 +15,47 @@ void problem_1() {
 		Цель - вывести оба выражения и их разность с точностью
 		в 0,000001.
 	*/
-	cout << "Задание №1" << endl;
+	std::cout << "Задание №1" << std::endl;
 
 	// Число pi = 3.14159...
 
-	cout << "Введите градус: ";
+	std::cout << "Введите градус: ";
 	double alpha;
-	cin >> alpha;
+	std::cin >> alpha;
 
-	bool flag = alpha != 90 ? true : false;
+	bool flag = (alpha != 90) && (alpha != 270) ? true : false;
+	alpha = alpha * PI / 180;
 	bool flag2 = sin(PI / 4 - alpha / 2) != 0 ? true : false;
 
 	double a, b;
 
-	alpha = alpha * PI / 180;
 	// Вводимое пользователем переменная
 
 	if (flag) {
 		a = tan(alpha) + pow(cos(alpha), -1) - 1;
-		cout << "Выражение A = " << fixed << setprecision(6) << a << endl;
+		std::cout << "Выражение A = " << std::fixed << std::setprecision(6) << a << std::endl;
 	}
 	else {
-		cout << "Тангенс 90 градусов не определен." << endl;
+		std::cout << "Тангенс 90 градусов не определен." << std::endl;
 	}
 
 	if (flag2) {
 		b = pow(2, 0.5) * sin(alpha / 2) / sin(PI / 4 - alpha / 2);
-		cout << "Выражение B = " << fixed << setprecision(6) << b << endl;
+		std::cout << "Выражение B = " << std::fixed << std::setprecision(6) << b << std::endl;
 	}
 	else {
-		cout << "Деление на 0\n";
+		std::cout << "Деление на 0\n";
 	}
 
 	if (flag && flag2) {
 		a = tan(alpha) + pow(cos(alpha), -1) - 1;
 		b = pow(2, 0.5) * sin(alpha / 2) / sin(PI / 4 - alpha / 2);
-		cout << "Разность выражений A и B = " << fixed << setprecision(6) << a - b << "\n";
+		std::cout << "Разность выражений A и B = " << std::fixed << std::setprecision(6) << a - b << "\n";
 	}
 	else {
-		cout << "Поиск разности невозможен\n";
+		std::cout << "Поиск разности невозможен\n";
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
 void problem_2() {
@@ -68,24 +67,24 @@ void problem_2() {
 		необходимо в виде чисел с фиксированной точкой (точность 0,000001).
 	*/
 
-	cout << "Задание №2" << endl;
+	std::cout << "Задание №2" << std::endl;
 
-	cout << "Введите a и b: ";
+	std::cout << "Введите a и b: ";
 	double a_2, b_2;
-	cin >> a_2 >> b_2;
+	std::cin >> a_2 >> b_2;
 
 	if ((a_2 == 0 && b_2 != 1) || b_2 <= 0) {
-		cout << "Нет решений." << endl;
+		std::cout << "Нет решений." << std::endl;
 	}
 	else if (a_2 == 0 && b_2 == 1) {
-		cout << "Бесконечное количество решений.";
+		std::cout << "Бесконечное количество решений.";
 	}
 	else {
 		double x1 = pow(b_2, -1.0 / a_2);
 		double x2 = -1.0 * pow(b_2, -1.0 / a_2);
-		cout << "Решения: " << x1 << " и " << x2 << ".\n";
+		std::cout << "Решения: " << x1 << " и " << x2 << ".\n";
 	}
-	cout << endl;
+	std::cout << std::endl;
 }
 
 void problem_3() {
@@ -98,22 +97,23 @@ void problem_3() {
 
 	int P = 10000;
 
-	cout << "Возможные варианты решения ребуса:\n";
-
-	for (int U = 9; U > 1; U--) {
+	std::cout << "Возможные варианты решения ребуса:\n";
+	std::cout << "USA + USSR + PEACE\n";
+	
+	for (int U = 9; U > 1; --U) {
 		for (int S = 0; S < 10; S++) {
 			for (int R = 0; R < 10; R++) {
 				for (int A = 0; A < 10; A++) {
 					for (int C = 0; C < 10; C++) {
 						for (int E = 0; E < 10; E++) {
-							vector<int> sp = { P, U, S, R, A, C, E };
-							set<int> sp2 = { P, U, S, R, A, C, E };
+							std::vector<int> sp = { P, U, S, R, A, C, E };
+							std::set<int> sp2 = { P, U, S, R, A, C, E };
 							if (sp.size() == sp2.size()) {
 								int USA = U * 100 + S * 10 + A;
 								int USSR = U * 1000 + S * 100 + S * 10 + R;
 								int PEACE = P + E * 1000 + A * 100 + C * 10 + E;
 								if (USA + USSR == PEACE) {
-									cout << USA << " + " << USSR << " = " << PEACE << endl;
+									std::cout << USA << " + " << USSR << " = " << PEACE << std::endl;
 									break;
 								}
 							}
@@ -124,7 +124,7 @@ void problem_3() {
 		}
 	}
 
-	cout << endl;
+	std::cout << std::endl;
 }
 
 void problem_4() {
@@ -135,39 +135,39 @@ void problem_4() {
 		Начало координат - левый нижний угол картинки.
 	*/
 	
-	cout << "Первая точка (любые вещественные координаты): " << endl;
+	std::cout << "Первая точка (любые вещественные координаты): " << std::endl;
 	double x1, y1;
-	cin >> x1 >> y1;
+	std::cin >> x1 >> y1;
 	if (x1 >= 0 && y1 >= 0) {
-		cout << "Точка не принадлежит закрашенной области.";
+		std::cout << "Точка не принадлежит закрашенной области.";
 	}
 	else {
 		if (pow(x1, 2) + pow(y1, 2) > 1 && abs(x1 + y1) + abs(y1 - x1) <= 2) {
-			cout << "Точка принадлежит закрашенной области.";
+			std::cout << "Точка принадлежит закрашенной области.";
 		}
 		else {
-			cout << "Точка не принадлежит закрашенной области.";
+			std::cout << "Точка не принадлежит закрашенной области.";
 		}
 	}
 
-	cout << "\nВторая точка (любые неотрицательные координаты): " << endl;
+	std::cout << "\nВторая точка (любые неотрицательные координаты): " << std::endl;
 	double x2, y2;
-	cin >> x2 >> y2;
+	std::cin >> x2 >> y2;
 
 	if (x2 < 0 || y2 < 0) {
-		cout << "Точка не принадлежит закрашенной области.";
+		std::cout << "Точка не принадлежит закрашенной области.";
 	}
 	else {
 		if ((int(x2) % 3 == 0 && int(y2) % 3 == 0)
 			|| (int(x2) % 3 == 0 && int(y2) % 3 != 0) || 
 			(int(x2) % 3 != 0 && int(y2) % 3 == 0))  {
-			cout << "Точка принадлежит закрашенной области.";
+			std::cout << "Точка принадлежит закрашенной области.";
 		}
 		else {
-			cout << "Точка не принадлежит закрашенной области.";
+			std::cout << "Точка не принадлежит закрашенной области.";
 		}
 	}
-	cout << endl;
+	std::cout << std::endl;
 
 
 }
@@ -179,7 +179,7 @@ void problem_5() {
 	A = ((x + y) ↔ z) | xyz,
 	B = xyz ⊕ 1.
 	*/
-	cout << "X Y Z A B\n";
+	std::cout << "X Y Z A B\n";
 
 	int A, B;
 	
@@ -188,11 +188,11 @@ void problem_5() {
 			for (int z = 0; z < 2; z++) {
 				A = !(x) || !(y) || !(z);
 				B = !(x && y && z);
-				cout << x << " " << y << " " << z << " " << A << " " << B << endl;
+				std::cout << x << " " << y << " " << z << " " << A << " " << B << std::endl;
 			}
 		}
 	}
-	cout << endl;
+	std::cout << std::endl;
 
 }
 
@@ -204,15 +204,15 @@ void problem_6() {
 	последовательности a1, . . . , an, являющихся квадратами четных чисел.
 	*/
 	int n;
-	cin >> n;
+	std::cin >> n;
 	int k = 0;
 	for (int i = 1; i * i <= n; i++) {
 		if (i % 2 == 0) {
 			k++;
 		}
 	}
-	cout << "Количество членов последовательности, являющихся квадратом четных чисел " << k << endl;
-	cout << endl;
+	std::cout << "Количество членов последовательности, являющихся квадратом четных чисел " << k << std::endl;
+	std::cout << std::endl;
 }
 
 int main()
@@ -222,7 +222,7 @@ int main()
 	bool flag = true;
 	int problem;
 	while (flag) {
-		cin >> problem;
+		std::cin >> problem;
 		switch (problem)
 		{
 		case(1):
