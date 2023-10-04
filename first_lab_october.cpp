@@ -185,7 +185,7 @@ void problem_5() {
 	
 	for (int x = 0; x < 2; ++x) {
 		for (int y = 0; y < 2; ++y) {
-			for (int z = 0; z < 2; +z) {
+			for (int z = 0; z < 2; ++z) {
 				A = !(x) || !(y) || !(z);
 				B = !(x && y && z);
 				std::cout << x << " " << y << " " << z << " " << A << " " << B << std::endl;
