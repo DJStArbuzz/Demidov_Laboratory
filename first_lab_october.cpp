@@ -203,21 +203,20 @@ void problem_6() {
 	Даны натуральные числа n, a1, . . . , an. Определите количество членов ai
 	последовательности a1, . . . , an, являющихся квадратами четных чисел.
 	*/
+	std::cout << "Проверка на квадратность четного числа.\n";
 	int n;
 	std::cin >> n;
-	int k = 0;
-	for (int i = 0; i < n; i++)
-	{
-		cin >> a;
-
-	}
-	for (int i = 1; i * i <= n; ++i) {
-		if (i % 2 == 0) {
-			k++;
+	for (int i = 0; i < n; i++) {
+		int n_new;
+		std::cin >> n_new;
+		int n_dop = int(sqrt(n_new));
+		if (pow(n_dop, 2) == n_new && n_dop % 2 == 0) {
+			std::cout << "Число является квадратом четного числа " << n_dop << std::endl;
+		}
+		else {
+			std::cout << "Число не является квадратом четного числа." << std::endl;
 		}
 	}
-	std::cout << "Количество членов последовательности, являющихся квадратом четных чисел " << k << std::endl;
-	std::cout << std::endl;
 }
 
 int main()
