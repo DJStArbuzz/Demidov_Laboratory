@@ -82,7 +82,7 @@ void problem_2() {
 	else {
 		double x1 = pow(b_2, -1.0 / a_2);
 		double x2 = -1.0 * pow(b_2, -1.0 / a_2);
-		std::cout << "Решения: " << x1 << " и " << x2 << ".\n";
+		std::cout << "Решения: " << std::fixed << std::setprecision(6) << x1 << " и " << x2 << ".\n";
 	}
 	std::cout << std::endl;
 }
