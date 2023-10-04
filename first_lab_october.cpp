@@ -101,11 +101,11 @@ void problem_3() {
 	std::cout << "USA + USSR + PEACE\n";
 	
 	for (int U = 9; U > 1; --U) {
-		for (int S = 0; S < 10; S++) {
-			for (int R = 0; R < 10; R++) {
-				for (int A = 0; A < 10; A++) {
-					for (int C = 0; C < 10; C++) {
-						for (int E = 0; E < 10; E++) {
+		for (int S = 0; S < 10; ++S) {
+			for (int R = 0; R < 10; ++R) {
+				for (int A = 0; A < 10; ++A) {
+					for (int C = 0; C < 10; ++C) {
+						for (int E = 0; E < 10; ++E) {
 							std::vector<int> sp = { P, U, S, R, A, C, E };
 							std::set<int> sp2 = { P, U, S, R, A, C, E };
 							if (sp.size() == sp2.size()) {
@@ -183,9 +183,9 @@ void problem_5() {
 
 	int A, B;
 	
-	for (int x = 0; x < 2; x++) {
-		for (int y = 0; y < 2; y++) {
-			for (int z = 0; z < 2; z++) {
+	for (int x = 0; x < 2; ++x) {
+		for (int y = 0; y < 2; ++y) {
+			for (int z = 0; z < 2; +z) {
 				A = !(x) || !(y) || !(z);
 				B = !(x && y && z);
 				std::cout << x << " " << y << " " << z << " " << A << " " << B << std::endl;
@@ -206,7 +206,7 @@ void problem_6() {
 	int n;
 	std::cin >> n;
 	int k = 0;
-	for (int i = 1; i * i <= n; i++) {
+	for (int i = 1; i * i <= n; ++i) {
 		if (i % 2 == 0) {
 			k++;
 		}
