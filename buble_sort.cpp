@@ -7,23 +7,22 @@
 
 using namespace std;
 
-void read_info(int *A, int n) 
+void read_info(int* A, int n) 
 {
 	for (int i = 0; i < n; i++) {
 		cin >> A[i];
-	}
-		 
+	}		 
 }
 
 void swap_A(int& a, int& b) {
 	if (a > b) {
 		int tmp = a;
 		a = b;
-		b = a;
+		b = tmp;
 	}
 }
 
-void buble_sort(int *A, int n) {
+void buble_sort(int* A, int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 1; j < n; j++) {
 			swap_A(A[j - 1], A[j]);
