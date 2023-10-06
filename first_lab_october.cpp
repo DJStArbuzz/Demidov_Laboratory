@@ -205,6 +205,7 @@ void problem_6() {
 	*/
 	std::cout << "Проверка на квадратность четного числа.\n";
 	int n;
+	int k = 0;
 	std::cin >> n;
 	for (int i = 0; i < n; i++) {
 		int n_new;
@@ -212,11 +213,13 @@ void problem_6() {
 		int n_dop = int(sqrt(n_new));
 		if (pow(n_dop, 2) == n_new && n_dop % 2 == 0) {
 			std::cout << "Число является квадратом четного числа " << n_dop << std::endl;
+			k++;
 		}
 		else {
 			std::cout << "Число не является квадратом четного числа." << std::endl;
 		}
 	}
+	std::cout << "Количество элементов - квадратов четных чисел: " << k << std::endl;
 }
 
 int main()
