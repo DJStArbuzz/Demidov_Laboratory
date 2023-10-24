@@ -1,13 +1,13 @@
 #include <iostream>
-#include <stdio.h>
+#include <cmath>
+#include <set>
+#include <algorithm>
 
-
-using namespace std;
 
 void positive_array(int array[101], int n) {
 	for (int i = 0; i < n; i++) {
 		if (array[i] >= 0) {
-			cout << array[i] << " ";
+			std::cout << array[i] << " ";
 		}
 	}
 }
@@ -15,7 +15,7 @@ void positive_array(int array[101], int n) {
 void negative_array(int array[101], int n) {
 	for (int i = 0; i < n; i++) {
 		if (array[i] < 0) {
-			cout << array[i] << " ";
+			std::cout << array[i] << " ";
 		}
 	}
 }
@@ -28,25 +28,25 @@ void problem_1() {
 	Полученный ответ вывести на экран.
 	*/
 	
-	cout << "Задание 1\n";
-	cout << "Введите n, потом элементы статистического массива.\n\n";
+	std::cout << "Задание 1\n";
+	std::cout << "Введите n, потом элементы статистического массива.\n\n";
 
-	int n, tmp;
-	cin >> n;
+	int n;
+	std::cin >> n;
 
 	int array[101];
-	for (int i = 0; i < n; i++) {
-		cin >> array[i];
+	for (int i = 0; i < n; ++i) {
+		std::cin >> array[i];
 	}
 
-	cout << "\nМассив был изменен.\n";
-	cout << "Сначала неотрицательные члены, потом отрицательные\n";
-	cout << "Тот же порядок.\n\n";
+	std::cout << "\nМассив был изменен.\n";
+	std::cout << "Сначала неотрицательные члены, потом отрицательные\n";
+	std::cout << "Тот же порядок.\n\n";
 	
 	positive_array(array, n);
 	negative_array(array, n);
 
-	cout << endl << endl;
+	std::cout << std::endl << std::endl;
 }
 
 void problem_2() {
@@ -56,87 +56,159 @@ void problem_2() {
 	Если серий в массиве меньше K, то вывести массив без изменений.
 	*/
 
-	cout << "Задание 2\n";
-	cout << "Введите n и k, потом элементы динамического массива.\n";
+	std::cout << "Задание 2\n";
+	std::cout << "Введите n и k, потом элементы динамического массива.\n\n";
 
 	int n, k;
-	cin >> n >> k;
+	std::cin >> n >> k;
 
 	int* array_1 = new int[n];
-	int* array_2 = new int[n];
-	for (int i = 0; i < n; i++) {
-		cin >> array_1[i];
+	int* array_res = new int[n];
+	for (int i = 0; i < n; ++i) {
+		std::cin >> array_1[i];
 	}
 
 	int count = 1;
-	for (int i = 0; i < n - 1; i++) {
+	for (int i = 0; i < n - 1; ++i) {
 		if (array_1[i] != array_1[i + 1]) {
 			count++;
 		}
 	}
 
-	cout << "Серия массива равна: " << count << endl;
-	cout << "Вывод динамического массива\n";
+	std::cout << "\nСерия массива равна: " << count << std::endl;
+	std::cout << "Вывод динамического массива\n\n";
 
 	if (count < k) {
 		for (int i = 0; i < n; i++) {
-			cout << array_1[i] << " ";
+			std::cout << array_1[i] << " ";
 		}
 	}
 	else {
-		int nk = 1;
-		int beginKSeries = 1;
-		int lenKSeries = (k == 1 ? 1 : 0);
-		int beginEndSeries;
+		int tmp = 1;
+		int indKSeries = 1; // индекс начала серии К
+		int indFSeries = 1; // индекс начала последней серии
+		int lenKSeries = (k == 1 ? 1 : 0); // длина серии К
 
 		for (int i = 1; i < n; ++i) {
 			if (array_1[i - 1] != array_1[i]) {
-				nk++;
-				if (nk == k) beginKSeries = i;
-				beginEndSeries = i;
+				tmp++;
+				if (k == tmp)
+				{
+					indKSeries = i;
+				}
+				indFSeries = i;
 			}
-			if (nk == k) lenKSeries++;
+			if (k == tmp)
+			{
+				lenKSeries++;
+			}
 		}
 
 		int index = -1;
-		for (int i = 0; i < beginKSeries; ++i)
+		for (int i = 0; i < indKSeries; ++i)
 		{
 			index++;
-			array_2[index] = array_1[i];
+			array_res[index] = array_1[i];
 		}
 
-		for (int i = beginEndSeries; i < n; ++i)
+		for (int i = indFSeries; i < n; ++i)
 		{
 			index++;
-			array_2[index] = array_1[i];
+			array_res[index] = array_1[i];
 		}
 
-		for (int i = beginKSeries + lenKSeries; i < beginEndSeries; ++i)
+		for (int i = indKSeries + lenKSeries; i < indFSeries; ++i)
 		{
 			index++;
-			array_2[index] = array_1[i];
+			array_res[index] = array_1[i];
 		}
 
-		for (int i = beginKSeries; i < beginKSeries + lenKSeries; ++i)
+		for (int i = indKSeries; i < indKSeries + lenKSeries; ++i)
 		{
 			index++;
-			array_2[index] = array_1[i];
-		}
-
-		for (int i = 0; i < n; ++i)
-		{
-			array_1[i] = array_2[i];
+			array_res[index] = array_1[i];
 		}
 
 		for (int i = 0; i < n; ++i) {
-			cout << array_1[i] << " ";
+			std::cout << array_res[i] << " ";
 		}
+
+		std::cout << "\n\n";
 
 	}
 
-	delete[] array_1, array_2;
+	delete[] array_1, array_res;
 
-	cout << endl << endl;
+	std::cout << std::endl << std::endl;
+}
+
+bool perfect_search(int n) {
+	/*	Совершенное число - число, которое равно сумме всех своих делителей
+		(без самого же себя)
+		Пример: 6 = 1 + 2 + 3
+		28 = 1 + 2 + 4 + 7 + 14
+	*/
+
+	int sum = (-1) * n;
+	for (int i = 1; i * i <= n; i++) {
+		if (n % i == 0) {
+			sum += i;
+			if (i * i != n) {
+				sum += (n / i);
+			}
+		}
+	}
+
+	return sum == n;
+}
+
+int perfect_search_res(int* array3, int n, int begin) {
+	bool flag;
+
+	for (int i = begin; i < n; i++) {
+		flag = perfect_search(array3[i]);
+		if (flag) 
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int max_positive_odd_n_search(int* array3, int n) {
+	int res = -1;
+	int maximum = -1;
+	
+	for (int i = 0; i < n; i++) {
+		if (array3[i] > 0 && array3[i] % 2 == 1 && array3[i] > maximum) {
+			maximum = array3[i];
+			res = i;
+		}
+	}
+
+	return res;
+}
+
+int min_positive_n_search(int* array3, int n) {
+	int res = -1;
+	int minimum = 10000000;
+
+	for (int i = 0; i < n; i++) {
+		if (array3[i] > 0 && array3[i] < minimum) {
+			minimum = array3[i];
+			res = i;
+		}
+	}
+
+	return res;
+}
+
+int delete_elem(int* &array, int index, int size) {
+	for (int i = index; i < size - 1; i++) {
+		array[i] = array[i + 1];
+	}
+
+	return size - 1;
 }
 
 void problem_3() {
@@ -148,10 +220,61 @@ void problem_3() {
 	элемента, определения максимального и минимального элементов согласно заданию,
 	проверки условия — число совершенное.*/
 
-	int n;
-	cin >> n;
+	std::cout << "Задание 3\n";
+	std::cout << "Введите n, потом элементы динамического массива.\n\n";
 
-	int* array_1 = new int[n];
+	int n;
+	std::cin >> n;
+
+	int* array3 = new int[n];
+	for (int i = 0; i < n; i++) {
+		std::cin >> array3[i];
+	}
+
+	int firstPerfectN = -1;   // Первое совершенное число
+	int secondPerfectN = -1;  // Второе совершенное число
+	int maxPositiveOddN = - 1; // Максимальное среди положительных нечетных элементов
+	int minPositiveN = -1;    // Минимальный среди положительных элементов
+	
+	for (int i = 0; i < 2; i++) {
+		firstPerfectN = perfect_search_res(array3, n, 0);
+		
+		if (firstPerfectN != -1) {
+			secondPerfectN = perfect_search_res(array3, n, firstPerfectN + 1);
+		}
+
+		maxPositiveOddN = max_positive_odd_n_search(array3, n);
+
+		minPositiveN = min_positive_n_search(array3, n);
+	
+		std::set<int> deleteElem = { maxPositiveOddN, minPositiveN, firstPerfectN, secondPerfectN };
+		deleteElem.erase(-1);
+
+		std::cout << std::endl;
+
+		int k = deleteElem.size();
+
+		for (int i = 0; i < k; i++) {
+			std::set<int>::iterator it = deleteElem.begin();
+			std::advance(it, i);
+			int element = *it;
+
+			n = delete_elem(array3, element - i, n);
+		}
+
+		std::cout << "Удаление массивов:\n";
+
+		for (int i = 0; i < n; i++) {
+			std::cout << array3[i] << " ";
+		}
+
+		std::cout << "\n\n";
+
+	}
+
+	delete[] array3;
+
+	std::cout << std::endl;
 }
 
 int main()
