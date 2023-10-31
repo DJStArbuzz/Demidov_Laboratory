@@ -2,6 +2,8 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -25,19 +27,29 @@ void multiplicationMatrix(int(&arrayFirst)[100][100], int(&arraySecond)[100][100
 	int arrayRes[100][100];
 
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; i++) {
+		for (int j = 0; j < n; j++) {
 			int sum = 0;
 			for (int k = 0; k < n; k++) {
 				sum += arrayFirst[i][k] * arraySecond[k][j];
 			}
-			cout << i << endl;
+			arrayRes[i][j] = sum;
 		}
 	}
 
 
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			arrayFirst[i][j] = arrayRes[i][j];
+		}
+	}
+}
 
-	
-
+void sum_matrix(int(&matrixRes)[100][100], int(&matrixA)[100][100], int n) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			matrixRes[i][j] += matrixA[i][j];
+		}
+	}
 }
 
 void cout_res(int(&matrixRes)[100][100], int n)
@@ -56,6 +68,12 @@ void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 	// f(x) = x^(3) − 4x^(2) + 2x − 5
 	int result[100][100];
 
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			result[i][j] = 0;
+		}
+	}
+
 	int first[100][100];
 	int second[100][100];
 	int third[100][100];
@@ -71,8 +89,33 @@ void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 	}
 
 	multiplicationMatrix(second, second, n);
+	multiplicationMatrix(first, second, n);
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			second[i][j] *= -4;
+		}
+	}
+
+	cout << "1-ый член многочлена:" << endl;
+	cout_res(first, n);
+
+	cout << "2-ый член многочлена:" << endl;
+	cout_res(second, n);
+
+	cout << "3-ий член многочлена:" << endl;
+	cout_res(third, n);
+
+	cout << "4-ый член многочлена:" << endl;
+	cout_res(fourth, n);
 
 
+	sum_matrix(result, first, n);
+	sum_matrix(result, second, n);
+	sum_matrix(result, third, n);
+	sum_matrix(result, fourth, n);
+
+	cout << "Итоговый результат:" << endl;
 	cout_res(result, n);
 }
 
