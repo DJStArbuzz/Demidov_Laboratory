@@ -2,12 +2,10 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
-#include <stdio.h>
-#include <stdlib.h>
 
 using namespace std;
 
-void cin_for_matrix(int (& arrayA)[100][100], int n) {
+void cin_for_matrix(int(&arrayA)[100][100], int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			cin >> arrayA[i][j];
@@ -84,7 +82,7 @@ void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 			first[i][j] = arrayA[i][j];
 			second[i][j] = arrayA[i][j];
 			third[i][j] = arrayA[i][j] * 2;
-			fourth[i][j] = unitMatrix[i][j] * 5;
+			fourth[i][j] = unitMatrix[i][j] * (-5);
 		}
 	}
 
@@ -122,22 +120,22 @@ void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 void problem_1() {
 	/* Задание 1, вариант 1
 	На вход программы из файла поступает квадратная матрица .
-	Элементы матрицы — вещественные числа. Дан многочлен f(x) или многочлены f(x) и g(x). 
+	Элементы матрицы — вещественные числа. Дан многочлен f(x) или многочлены f(x) и g(x).
 	Выражение A − k следует понимать как A − kE, где E — единичная матрица.
 	Необходимо вычислить значение выражения в и вывести промежуточные результаты
-	вычислений в файл. Необходимо использовать статический массив. 
+	вычислений в файл. Необходимо использовать статический массив.
 	Пользоваться классом vector запрещено.
 
 	1. f(x) = x^(3) − 4x^(2) + 2x − 5. Найдите f(A).*/
 
 	cout << "Введити число n - порядок матрицы A: ";
-	
+
 	// n - порядок матрицы А
 	int n;
 	cin >> n;
 
 	cout << "Введите элементы матрицы А размера n * n" << endl;
-	
+
 	// Матрица А размером n * n
 	int arrayA[100][100];
 	cin_for_matrix(arrayA, n);
@@ -157,7 +155,7 @@ void problem_2() {
 	Если серий в массиве меньше K, то вывести массив без изменений.
 	*/
 
-	
+
 }
 
 
@@ -170,12 +168,12 @@ void problem_3() {
 	элемента, определения максимального и минимального элементов согласно заданию,
 	проверки условия — число совершенное.*/
 
-	
+
 }
 
 void problem_4()
 {
-	
+
 }
 
 int main()
