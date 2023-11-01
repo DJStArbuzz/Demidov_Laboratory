@@ -2,9 +2,11 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
+// Ввод матрицы из консоли
 void cin_for_matrix(int(&arrayA)[100][100], int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
@@ -13,6 +15,18 @@ void cin_for_matrix(int(&arrayA)[100][100], int n) {
 	}
 }
 
+// Вывод матрицы в консоль
+void cout_res(int(&matrixRes)[100][100], int n)
+{
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cout << matrixRes[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+// Разарботка единичной матрицы
 void create_unit_matrix(int(&unitMatrix)[100][100], int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
@@ -21,6 +35,16 @@ void create_unit_matrix(int(&unitMatrix)[100][100], int n) {
 	}
 }
 
+// Умножение матрицы на число k
+void additional_matrix_multiplication(int(&matrix)[100][100], int n, int k) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			matrix[i][j] *= k;
+		}
+	}
+}
+
+// Перемножение матриц
 void multiplicationMatrix(int(&arrayFirst)[100][100], int(&arraySecond)[100][100], int n) {
 	int arrayRes[100][100];
 
@@ -34,7 +58,6 @@ void multiplicationMatrix(int(&arrayFirst)[100][100], int(&arraySecond)[100][100
 		}
 	}
 
-
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			arrayFirst[i][j] = arrayRes[i][j];
@@ -42,6 +65,7 @@ void multiplicationMatrix(int(&arrayFirst)[100][100], int(&arraySecond)[100][100
 	}
 }
 
+// Сложение матриц
 void sum_matrix(int(&matrixRes)[100][100], int(&matrixA)[100][100], int n) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
@@ -50,19 +74,61 @@ void sum_matrix(int(&matrixRes)[100][100], int(&matrixA)[100][100], int n) {
 	}
 }
 
-void cout_res(int(&matrixRes)[100][100], int n)
-{
-	cout << "Результат выражения:" << endl;
+// Поиск определителя матрицы 
+double search_determinant_of_matrix(int(&arrayA)[100][100], int n) {
+	double arrayB[100][100];
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			cout << matrixRes[i][j] << " ";
+			arrayB[i][j] = 1.0 * arrayA[i][j];
 		}
-		cout << endl;
 	}
+
+	double determinant = -1;
+
+	if (n == 1) {
+		return arrayA[0][0];
+	}
+	else if (n == 2) {
+		determinant = arrayA[0][0] * arrayA[1][1] - arrayA[1][0] * arrayA[0][1];
+	}
+	else if (n > 2) {
+		determinant = 1.0;
+		for (int i = 0; i < n; i++) {
+			int tmp = i;
+			for (int j = i + 1; j < n; j++) {
+				if (abs(arrayB[j][i]) > abs(arrayB[tmp][i])) {
+					tmp = j;
+				}
+			}
+
+			if (tmp != i) {
+				swap(arrayB[i], arrayB[tmp]);
+				determinant *= -1;
+			}
+
+			if (arrayB[i][i] == 0.0) {
+				return 0;
+			}
+
+			determinant *= arrayB[i][i];
+			for (int j = i + 1; j < n; j++) {
+				double factor = arrayB[j][i] / arrayB[i][i];
+				for (int k = i + 1; k < n; k++) {
+					arrayB[j][k] -= factor * arrayB[i][k];
+				}
+			}
+		}
+
+		return determinant;
+
+	}
+
+	return determinant;
 }
 
 
-void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
+// Вычисление значения выражения для 1-го задания
+void find_function_for_problem1(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 	// f(x) = x^(3) − 4x^(2) + 2x − 5
 	int result[100][100];
 
@@ -81,30 +147,28 @@ void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 		for (int j = 0; j < n; j++) {
 			first[i][j] = arrayA[i][j];
 			second[i][j] = arrayA[i][j];
-			third[i][j] = arrayA[i][j] * 2;
-			fourth[i][j] = unitMatrix[i][j] * (-5);
+			third[i][j] = arrayA[i][j];
+			fourth[i][j] = unitMatrix[i][j];
 		}
 	}
 
 	multiplicationMatrix(second, second, n);
 	multiplicationMatrix(first, second, n);
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			second[i][j] *= -4;
-		}
-	}
+	additional_matrix_multiplication(second, n, -4);
+	additional_matrix_multiplication(third, n, 2);
+	additional_matrix_multiplication(fourth, n, -5);
 
-	cout << "1-ый член многочлена:" << endl;
+	cout << "\n1-ый член многочлена:" << endl;
 	cout_res(first, n);
 
-	cout << "2-ый член многочлена:" << endl;
+	cout << "\n2-ый член многочлена:" << endl;
 	cout_res(second, n);
 
-	cout << "3-ий член многочлена:" << endl;
+	cout << "\n3-ий член многочлена:" << endl;
 	cout_res(third, n);
 
-	cout << "4-ый член многочлена:" << endl;
+	cout << "\n4-ый член многочлена:" << endl;
 	cout_res(fourth, n);
 
 
@@ -113,7 +177,7 @@ void find_function(int(&arrayA)[100][100], int(&unitMatrix)[100][100], int n) {
 	sum_matrix(result, third, n);
 	sum_matrix(result, fourth, n);
 
-	cout << "Итоговый результат:" << endl;
+	cout << "\nИтоговый результат:" << endl;
 	cout_res(result, n);
 }
 
@@ -143,38 +207,46 @@ void problem_1() {
 	int unitMatrix[100][100];
 	create_unit_matrix(unitMatrix, n);
 
-	find_function(arrayA, unitMatrix, n);
+	find_function_for_problem1(arrayA, unitMatrix, n);
 
 	cout << endl;
 }
 
+void create_matrix_for_problem2(int(&array)[100][100], int n) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			array[j][i] = (abs((i + 1) - (j + 1)));
+		}
+	}
+}
+
 void problem_2() {
-	/* Задание 2, вариант 9
-	Дано целое число K (> 0) и целочисленный массив размера N.
-	Поменять местами последнюю серию массива и его серию с номером K.
-	Если серий в массиве меньше K, то вывести массив без изменений.
+	/* Задание 2, вариант 17
+	Вычислите определитель порядка n, элементы которого заданы условием 
+	aij = |i − j|. Нумерация строк и столбцов начинается с единицы.
 	*/
 
 
+	cout << "Введити число n - порядок матрицы A: ";
+
+	// n - порядок матрицы А
+	int n;
+	cin >> n;
+
+	// Матрица А размером n * n
+	// Aij = |i - j|
+	int arrayIEqualJ[100][100];
+	create_matrix_for_problem2(arrayIEqualJ, n);
+
+	cout << "\nМатрица вида Aij = |i - j|: " << endl;
+	cout_res(arrayIEqualJ, n);
+
+	cout << "\nОпределитель матрицы: ";
+	double result = search_determinant_of_matrix(arrayIEqualJ, n);
+	cout << result << endl;
+	
 }
 
-
-void problem_3() {
-	/* Задание 3, вариант 8
-	В целочисленном массиве Х(N) определить: максимальный элемент среди
-	положительных нечетных элементов, минимальный среди положительных
-	четных элементов, первые два совершенных числа. Удалить найденные элементы.
-	Процедуру повторить еще раз. В программе написать методы: удаления
-	элемента, определения максимального и минимального элементов согласно заданию,
-	проверки условия — число совершенное.*/
-
-
-}
-
-void problem_4()
-{
-
-}
 
 int main()
 {
@@ -191,12 +263,6 @@ int main()
 			break;
 		case(2):
 			problem_2();
-			break;
-		case(3):
-			problem_3();
-			break;
-		case(4):
-			problem_4();
 			break;
 		default:
 			problem_1();
