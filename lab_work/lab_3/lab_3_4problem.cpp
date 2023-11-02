@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -255,10 +256,29 @@ void operation_with_matrix(double** &matrix) {
 	}
 }
 
+// проверка на некорректный ввод данных и подправление
+bool correct_name_for_cin_file(string& name, string &operation) {
+	return (name == "input.txt" && operation == "cin") ||
+		(name == "output.txt" && operation == "cout");
+}
+
+
 // 3. вывод матрицы в файл
 // 9. печать матрицы после преобразования в файл
 void cout_to_file(double**& matrix) {
-	ofstream output("output.txt");
+	cout << "Введите имя файла: ";
+	string operation = "cout";
+	string name_of_file;
+	cin >> name_of_file;
+
+	bool flag = correct_name_for_cin_file(name_of_file, operation);
+	while (flag != true) {
+		cout << "Попробуйте еще раз: ";
+		cin >> name_of_file;
+		flag = correct_name_for_cin_file(name_of_file, operation);
+	}
+
+	ofstream output(name_of_file);
 	
 	double tmp{ 0.0 };
 	for (int i = 0; i < order; i++) {
@@ -275,9 +295,20 @@ void cout_to_file(double**& matrix) {
 
 // 5. ввод матрицы из файла
 void cin_to_file(double** &matrix) {
-	int n = 0, m = 0;
-	
-	ifstream input("input.txt");
+	cout << "Введите имя файла: ";
+
+	string operation = "cin";
+	string name_of_file;
+	cin >> name_of_file;
+
+	bool flag = correct_name_for_cin_file(name_of_file, operation);
+	while (flag != true) {
+		cout << "Попробуйте еще раз: ";
+		cin >> name_of_file;
+		flag = correct_name_for_cin_file(name_of_file, operation);
+	}
+
+	ifstream input(name_of_file);
 
 	for (int i = 0; i < order; i++) {
 		for (int j = 0; j < order; j++) {
