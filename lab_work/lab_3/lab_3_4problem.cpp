@@ -349,7 +349,7 @@ pair<int, int> max_elem(double**& matrix) {
 	}
 	
 	cout << "Максимальный элемент матрицы: " << max_elem << endl;
-	cout << "Позиция в матрице [" << result.first << "][" << result.second << "]." << endl;
+	cout << "Позиция в матрице [" << result.first << "][" << result.second << "].\n" << endl;
 	return result;
 }
 
