@@ -258,17 +258,38 @@ void operation_with_matrix(double** &matrix) {
 // 3. вывод матрицы в файл
 // 9. печать матрицы после преобразования в файл
 void cout_to_file(double**& matrix) {
-	freopen("laboratory3/output/output.txt", "wt", stdout);
+	ofstream output("output.txt");
+	
+	double tmp{ 0.0 };
 	for (int i = 0; i < order; i++) {
 		for (int j = 0; j < order; j++) {
-			cout << matrix[i] << " ";
+			tmp = matrix[i][j];
+			output << tmp << " ";
+			}
+		output << endl;
 		}
-		cout << endl;
-	}
+	
+	output.close();
+	cout << "Матрица была введена.\n" << endl;
 }
 
 // 5. ввод матрицы из файла
-// 
+void cin_to_file(double** &matrix) {
+	int n = 0, m = 0;
+	
+	ifstream input("input.txt");
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			input >> matrix[i][j];
+		}
+	}
+	
+	input.close();
+	cout << "Матрица была записана.\n" << endl;
+}
+
+
 // 6. вычисление характеристики
 
 
@@ -328,16 +349,17 @@ int main()
 	*/
 	setlocale(LC_ALL, "Russian");
 
-	start();
-
 	double** matrix;
 	matrix = new double* [order];
 	for (int i = 0; i < order; i++) {
 		matrix[i] = new double[order];
 	}
+	create_unit_matrix(matrix);
 
 	bool flag = true;
 	int problem;
+
+	start();
 
 	while (flag) {
 		std::cin >> problem;
@@ -361,6 +383,10 @@ int main()
 
 		case(4):
 			cin_to_console_matrix(matrix);
+			break;
+
+		case(5):
+			cin_to_file(matrix);
 			break;
 
 		case(7):
