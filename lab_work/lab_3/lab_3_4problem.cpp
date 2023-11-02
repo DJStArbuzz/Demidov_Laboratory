@@ -322,6 +322,48 @@ void cin_to_file(double** &matrix) {
 
 
 // 6. вычисление характеристики
+/* Наибольший элемент матрицы расположен ниже побочной диагонали.
+
+	1 2 3
+	4 5 6
+	7 8 9
+
+	Главная диагональ: 1 - 5 - 9
+	Побочная диагональ: 7 - 5 - 3
+
+	Наибольший элемент матрицы, 9, расположен ниже побочной диагонали
+ */
+
+// Поиск максимального элемента в матрице (его координат)
+pair<int, int> max_elem(double**& matrix) {
+	pair<int, int> result = { 0, 0 };
+	double max_elem = 0.0;
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			if (max_elem <= matrix[i][j]) {
+				max_elem = matrix[i][j];
+				result = { i, j };
+			}
+		}
+	}
+	
+	cout << "Максимальный элемент матрицы: " << max_elem << endl;
+	cout << "Позиция в матрице [" << result.first << "][" << result.second << "]." << endl;
+	return result;
+}
+
+// Проверка находится ли макс. элемент под побочной диагональю
+void max_elem_inder_diagonal(double**& matrix) {
+	pair<int, int>coordinates = max_elem(matrix);
+
+	if (coordinates.first + coordinates.second > order - 1) {
+		cout << "Максимальный элемент под побочной диагональю." << endl;
+	}
+	else {
+		cout << "Максимальный элемент не под побочной диагональю." << endl;
+	}
+}
 
 
 // 4. ввод матрицы на экран,
@@ -418,6 +460,9 @@ int main()
 
 		case(5):
 			cin_to_file(matrix);
+			break;
+		case(6):
+			max_elem_inder_diagonal(matrix);
 			break;
 
 		case(7):
