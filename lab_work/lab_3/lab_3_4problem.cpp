@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const int order = 3;
+
 // Процедура для вывода команд
 void start() {
 	cout << "Меню:" << endl;
@@ -22,32 +24,270 @@ void start() {
 	cout << endl;
 }
 
-// 2. вывод матрицы на экран,
-void cout_to_console_matrix(double**& matrix, int order) {
+void menu_for_7() {
+	cout << "1. возведение матрицы в -1 степень" << endl;
+	cout << "2. перемножение матрицы на саму же себя" << endl;
+	cout << "3. сложение с единичной матрицей" << endl;
+	cout << "4. умножение на некоторое число k" << endl;
+	cout << "5. транспонирование матрицы" << endl;
+	cout << "6. вернуться в меню" << endl;
+	cout << endl;
+}
+
+// 2. вывод матрицы на экран
+// 8. печать матрицы после преобразования на экран
+void cout_to_console_matrix(double**& matrix) {
 	for (int i = 0; i < order; i++) {
 		for (int j = 0; j < order; j++) {
-			cout << matrix[i][j] << " ";
+			cout << fixed << setprecision(3) << matrix[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	cout << endl;
+}
+
+
+// 7. преобразование матрицы
+
+// Поиск определителя матрицы 
+double search_determinant_of_matrix(double**& matrix) {
+	double** arrayB;
+	arrayB = new double* [order];
+	for (int i = 0; i < order; i++) {
+		arrayB[i] = new double[order];
+	}
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			arrayB[i][j] = 1.0 * matrix[i][j];
+		}
+	}
+
+	double determinant = -1;
+
+	if (order == 1) {
+		return matrix[0][0];
+	}
+	else if (order == 2) {
+		determinant = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
+	}
+	else if (order > 2) {
+		determinant = 1.0;
+		for (int i = 0; i < order; i++) {
+			int tmp = i;
+			for (int j = i + 1; j < order; j++) {
+				if (abs(arrayB[j][i]) > abs(arrayB[tmp][i])) {
+					tmp = j;
+				}
+			}
+
+			if (tmp != i) {
+				swap(arrayB[i], arrayB[tmp]);
+				determinant *= -1;
+			}
+
+			if (arrayB[i][i] == 0.0) {
+				return 0;
+			}
+
+			determinant *= arrayB[i][i];
+			for (int j = i + 1; j < order; j++) {
+				double factor = arrayB[j][i] / arrayB[i][i];
+				for (int k = i + 1; k < order; k++) {
+					arrayB[j][k] -= factor * arrayB[i][k];
+				}
+			}
+		}
+
+		return determinant;
+
+	}
+
+	return determinant;
+}
+
+// 7.1. возведение матрицы в -1 степень
+double** reverse_matrix(double** &matrix) {
+	double** secondMatrix;
+	secondMatrix = new double* [order];
+	for (int i = 0; i < order; i++) {
+		secondMatrix[i] = new double[order];
+	}
+
+	float det = search_determinant_of_matrix(matrix);
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			secondMatrix[i][j] = (matrix[(j + 1) % 3][(i + 1) % 3] * matrix[(j + 2) % 3][(i + 2) % 3]
+				- (matrix[(j + 1) % 3][(i + 2) % 3] *
+					matrix[(j + 2) % 3][(i + 1) % 3])) / det;
+		}
+	}
+
+	return secondMatrix;
+}
+
+// 7.2. перемножение матрицы на саму же себя
+double** multiplicationMatrix(double**& matrix) {
+	double** secondMatrix;
+	double** resMatrix;
+
+	secondMatrix = new double* [order];
+	resMatrix = new double* [order];
+
+	for (int i = 0; i < order; i++) {
+		secondMatrix[i] = new double[order];
+		resMatrix[i] = new double[order];
+	}
+
+	secondMatrix = matrix;
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			int sum = 0;
+			for (int k = 0; k < order; k++) {
+				sum += matrix[i][k] * secondMatrix[k][j];
+			}
+			resMatrix[i][j] = sum;
+		}
+	}
+
+	return resMatrix;
+}
+
+// 7.3. сложение с единичной матрицей
+
+void sum_matrix(double**& matrix, double**& unitMatrix) {
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			matrix[i][j] += unitMatrix[i][j];
+		}
+	}
+}
+
+// 7.4. умножение на некоторое число k
+
+void additional_matrix_multiplication(double**& matrix) {
+	cout << "Введите некоторое число k: ";
+	
+	int k;
+	cin >> k;
+
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			matrix[i][j] *= k;
+		}
+	}
+}
+
+// 7.5. транспонирование матрицы
+double** transpose_matrix(double**& matrix) {
+	double** resMatrix;
+	resMatrix = new double* [order];
+	for (int i = 0; i < order; i++) {
+		resMatrix[i] = new double[order];
+	}
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			resMatrix[j][i] = matrix[i][j];
+		}
+	}
+
+	return resMatrix;
+}
+
+// Разарботка единичной матрицы
+void create_unit_matrix(double**& unitMatrix) {
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			unitMatrix[i][j] = (i == j) ? 1 : 0;
+		}
+	}
+}
+
+
+// выбор операции
+void operation_with_matrix(double** &matrix) {
+	menu_for_7();
+
+	int choise; // номер выбранной операции
+	cin >> choise;
+
+	switch(choise) {
+		case(1):
+			matrix = reverse_matrix(matrix);
+			cout << endl;
+			break;
+
+		case(2):
+			matrix = multiplicationMatrix(matrix);
+			cout << endl;
+			break;
+
+		case(3):
+			// Единичная матрица порядка 3
+			double** unitMatrix;
+			unitMatrix = new double* [order];
+			for (int i = 0; i < order; i++) {
+				unitMatrix[i] = new double[order];
+			}
+			create_unit_matrix(unitMatrix);
+
+			sum_matrix(matrix, unitMatrix);
+			cout << endl;
+			break;
+
+		case(4):
+			additional_matrix_multiplication(matrix);
+			cout << endl;
+			break;
+
+		case(5):
+			matrix = transpose_matrix(matrix);
+			cout << endl;
+			break;
+
+		case(6):
+			cout << endl;
+			break;
+	}
+}
+
+// 3. вывод матрицы в файл
+// 9. печать матрицы после преобразования в файл
+void cout_to_file(double**& matrix) {
+	freopen("laboratory3/output/output.txt", "wt", stdout);
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			cout << matrix[i] << " ";
 		}
 		cout << endl;
 	}
 }
 
+// 5. ввод матрицы из файла
+// 
+// 6. вычисление характеристики
+
+
+// 4. ввод матрицы на экран,
+void cin_to_console_matrix(double**& matrix) {
+	cout << "Введите элементы матрицы." << endl;
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			cin >> matrix[i][j];
+		}
+	}
+	cout << endl;
+}
+
 // 1. генерация случайной матрицы
-int random_matrix(int**& matirx) {
-	int order = rand() % 10; // Порядок матрицы
+void random_matrix(double**& matrix) {
 	int start = 0;           // Начало диапазона
 	int end = 100;           // Конец диапазона
 
-	if (order == 0) {
-		order = 1;
-	}
-
-	double** matrix;         //  'Случайная' матрица
-	matrix = new double* [order];
-
-	for (int i = 0; i < order; i++) {
-		matrix[i] = new double[order];
-	}
 
 	for (int i = 0; i < order; i++) {
 		for (int j = 0; j < order; j++) {
@@ -58,12 +298,10 @@ int random_matrix(int**& matirx) {
 	cout << "Разработка матрицы, заполненной случайными значениями." << endl;
 	cout << "Порядок матрицы: " << order << endl;
 	cout << "'Случайная' матрица:" << endl;
-	cout_to_console_matrix(matrix, order);
-
-	cout << endl;
-
-	return order;
+	cout_to_console_matrix(matrix);
 }
+
+
 
 int main()
 {
@@ -92,9 +330,12 @@ int main()
 
 	start();
 
-	int** matrix;
+	double** matrix;
+	matrix = new double* [order];
+	for (int i = 0; i < order; i++) {
+		matrix[i] = new double[order];
+	}
 
-	int order = 2;
 	bool flag = true;
 	int problem;
 
@@ -105,37 +346,40 @@ int main()
 		case(0):
 			start();
 			break;
-		case(1):
-			order = random_matrix(matrix);
-			break;
-			/*
-			case(2):
-				problem_2();
-				break;
-			case(3):
-				problem_3();
-				break;
-			case(4):
-				problem_4();
-				break;
-			case(5):
-				problem_5();
-				break;
-			case(6):
-				problem_6();
-				break;
-			case(7):
-				problem_7();
-				break;
-			case(8):
-				problem_8();
-				break;
-			case(9):
-				problem_8();
-				break;
-			*/
 
-		case(-1):
+		case(1):
+			random_matrix(matrix);
+			break;
+
+		case(2):
+			cout_to_console_matrix(matrix);
+			break;
+
+		case(3):
+			cout_to_file(matrix);
+			break;
+
+		case(4):
+			cin_to_console_matrix(matrix);
+			break;
+
+		case(7):
+			operation_with_matrix(matrix);
+			break;
+
+		case(8):
+			cout_to_console_matrix(matrix);
+			break;
+
+		case(9):
+			cout_to_file(matrix);
+			break;
+
+		case(10):
+			for (int i = 0; i < order; i++) {
+				delete[] matrix[i];
+			}
+			delete[] matrix;
 			return 0;
 		default:
 			start();
