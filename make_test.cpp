@@ -63,6 +63,8 @@ int main()
 			a3 = (rand() * rand() + rand()) % 1000000000 + 1;
 			a4 = (rand() * rand() + rand()) % 1000000000 + 1;
 		}
+
 		write_file(file_name, a1, a2, a3, a4);
+		cout << "test " << num_test << " OK\n";
 	}
 }
