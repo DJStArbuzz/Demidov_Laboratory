@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -57,7 +58,7 @@ public:
 
     // 4. Добавляет содержимое переданной строки в конец текущей строки.
     void append(const ShebetaNI_String& string) {
-        char* tmp = new char[sz + string.sz + 1]; 
+        char* tmp = new char[sz + string.sz + 1];
         strcpy_s(tmp, sz + 1, str);
         strcpy_s(tmp + sz, string.sz + 1, string.str);
 
@@ -75,7 +76,7 @@ public:
         else {
             result.sz = min(count, sz - start);
             result.str = new char[result.sz + 1];
-            strncpy_s(result.str, result.sz + 1, 
+            strncpy_s(result.str, result.sz + 1,
                 str + start, result.sz);
             return result;
         }
@@ -128,22 +129,31 @@ public:
     bool operator>=(const ShebetaNI_String& other) const {
         return strcmp(str, other.str) >= 0;
     }
-    
-    // 4. Оператор ввода / вывода
-    friend std::ostream& operator<<(std::ostream& os, const ShebetaNI_String& s) {
-        os << s.str;
-        return os;
-    }
 
-    friend std::istream& operator>>(std::istream& is, ShebetaNI_String& s) {
-const size_t BUFFER_SIZE = 8192;
-char buffer[BUFFER_SIZE];
-is >> buffer;
-s = ShebetaNI_String(buffer);
-return is;
+    // 4. Оператор ввода / вывода
+    friend std::ostream& operator<<(std::ostream& os, const ShebetaNI_String& str);
+    friend std::istream& operator>>(std::istream& is, ShebetaNI_String& str);
+};
+
+std::ostream& operator<<(std::ostream& os, const ShebetaNI_String& string) {
+    os << string.str;
+    return os;
 }
 
-};
+std::istream& operator>>(std::istream& is, ShebetaNI_String& string) {
+    std::vector<char> buffer;
+    char ch;
+    while (is.get(ch) && !isspace(ch)) { // считываем символы пока не встретим пробел или конец файла
+        buffer.push_back(ch);
+    }
+    buffer.push_back('\0'); // добавляем нулевой символ в конец строки
+
+    int length = buffer.size();
+    string.str = new char[length];
+    strcpy(string.str, buffer.data());
+
+    return is;
+}
 
 void operation() {
     cout << "1. ---------" << endl;
@@ -161,15 +171,30 @@ void problem2() {
     */
     ifstream cinFile("inputProblem2.txt");
     ofstream coutFile("outputProblem2.txt");
-    ShebetaNI_String word;
-    while (cinFile >> word) {
-        cinFile >> word;
-        cout << word << " ";
-        coutFile << word;
+
+    ShebetaNI_String word, tmp;
+    while (cinFile.is_open()) {
+        cinFile >> tmp;
+ 
+        cout << tmp.lenght() << endl;
+        if (tmp.lenght() % 2 != 0) {
+            word = tmp.substr(23, 2);
+
+            cout << word << " ";
+            coutFile << word << " ";
+        }
+        else {
+            cout << tmp << " ";
+            coutFile << tmp << " ";
+        }
+        if (cinFile.eof()) {
+            break;
+        }
     }
 
     cinFile.close();
     coutFile.close();
+    cout << endl;
     cout << endl;
 }
 
