@@ -6,7 +6,7 @@
 using namespace std;
 
 /*  Задание 1, вариант 1:
-    Необходимо реализовать собственный класс String для работы со строками. 
+    Необходимо реализовать собственный класс String для работы со строками.
 */
 class ShebetaNI_String {
 private:
@@ -149,6 +149,7 @@ std::istream& operator>>(std::istream& is, ShebetaNI_String& string) {
     buffer.push_back('\0'); // добавляем нулевой символ в конец строки
 
     int length = buffer.size();
+    string.sz = length - 1;
     string.str = new char[length];
     strcpy(string.str, buffer.data());
 
@@ -173,20 +174,22 @@ void problem2() {
     ofstream coutFile("outputProblem2.txt");
 
     ShebetaNI_String word, tmp;
+
     while (cinFile.is_open()) {
         cinFile >> tmp;
- 
-        cout << tmp.lenght() << endl;
-        if (tmp.lenght() % 2 != 0) {
-            word = tmp.substr(23, 2);
-
-            cout << word << " ";
-            coutFile << word << " ";
+        if (tmp.lenght() == 1) {
+            continue;
         }
-        else {
+
+        if (tmp.lenght() % 2 == 0) {
             cout << tmp << " ";
             coutFile << tmp << " ";
         }
+        else {
+            cout << tmp.substr(0, tmp.lenght() / 2) << tmp.substr(tmp.lenght() / 2 + 1, tmp.lenght() / 2) << " ";
+            coutFile << tmp.substr(0, tmp.lenght() / 2) << tmp.substr(tmp.lenght() / 2 + 1, tmp.lenght() / 2) << " ";
+        }
+
         if (cinFile.eof()) {
             break;
         }
@@ -200,7 +203,7 @@ void problem2() {
 
 void problem3() {
     /*  Задание 3, вариант 10
-        
+
     */
 }
 
@@ -214,7 +217,7 @@ void problem4() {
 
 int main() {
     setlocale(LC_ALL, "Russian");
-   
+
     bool flag = true;
     int problem;
     while (flag) {
