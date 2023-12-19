@@ -5,10 +5,16 @@
 
 using namespace std;
 
+/*
+    Класс - Кудрявцев Матвей Владимирович
+    Задания 2-4 - Шебета Николай Иванович
+
+*/
+
 /*  Задание 1, вариант 1:
     Необходимо реализовать собственный класс String для работы со строками.
 */
-class ShebetaNI_String {
+class KyravcevMV_String{
 private:
     char* str = nullptr;  // Указатель на массив символов, который будет хранит строку
     size_t sz = 0;        // Переменная для отслеживания длины строки
@@ -17,24 +23,24 @@ public:
     // Конструкторы
 
     // 1. Конструктор по умолчанию
-    ShebetaNI_String() : str(nullptr), sz(0) {}
+    KyravcevMV_String() : str(nullptr), sz(0) {}
 
     // 2. Конструктор с параметрами
-    ShebetaNI_String(const char* string) {
+    KyravcevMV_String(const char* string) {
         sz = strlen(string);
         str = new char[sz + 1]; // +1 для символа '\0
         strcpy_s(str, sz + 1, string);
     }
 
     // 3. Конструктор копирования
-    ShebetaNI_String(const ShebetaNI_String& other) {
+    KyravcevMV_String(const KyravcevMV_String& other) {
         sz = other.sz;
         str = new char[sz + 1]; // +1 для символа '\0'
         strcpy_s(str, sz + 1, other.str);
     }
 
     // 4. Деструктор
-    ~ShebetaNI_String() {
+    ~KyravcevMV_String() {
         delete[] str;
     }
 
@@ -57,7 +63,7 @@ public:
     }
 
     // 4. Добавляет содержимое переданной строки в конец текущей строки.
-    void append(const ShebetaNI_String& string) {
+    void append(const KyravcevMV_String& string) {
         char* tmp = new char[sz + string.sz + 1];
         strcpy_s(tmp, sz + 1, str);
         strcpy_s(tmp + sz, string.sz + 1, string.str);
@@ -68,8 +74,8 @@ public:
     }
 
     // 5 Возвращает подстроку, начиная с позиции start и содержащую count символов
-    ShebetaNI_String substr(size_t start, size_t count) const {
-        ShebetaNI_String result;
+    KyravcevMV_String substr(size_t start, size_t count) const {
+        KyravcevMV_String result;
         if (start >= sz) {
             return str;
         }
@@ -84,7 +90,7 @@ public:
 
     // Операторы
     // 1. Оператор присваивания (=)
-    ShebetaNI_String& operator=(const ShebetaNI_String& other) {
+    KyravcevMV_String& operator=(const KyravcevMV_String& other) {
         if (this != &other) {
             delete[] str;
 
@@ -96,51 +102,51 @@ public:
     }
 
     // 2. Оператор конкатенации (+)
-    ShebetaNI_String operator+(const ShebetaNI_String& other) {
-        ShebetaNI_String result = *this;
+    KyravcevMV_String operator+(const KyravcevMV_String& other) {
+        KyravcevMV_String result = *this;
         result.append(other);
         return result;
     }
 
     // 3. Операторы сравнения
-    bool operator==(const ShebetaNI_String& other) const {
+    bool operator==(const KyravcevMV_String& other) const {
         if (sz != other.sz) {
             return false;
         }
         return strcmp(str, other.str) == 0;
     }
 
-    bool operator!=(const ShebetaNI_String& other) const {
+    bool operator!=(const KyravcevMV_String& other) const {
         return !(*this == other);
     }
 
-    bool operator<(const ShebetaNI_String& other) const {
+    bool operator<(const KyravcevMV_String& other) const {
         return strcmp(str, other.str) < 0;
     }
 
-    bool operator>(const ShebetaNI_String& other) const {
+    bool operator>(const KyravcevMV_String& other) const {
         return strcmp(str, other.str) > 0;
     }
 
-    bool operator<=(const ShebetaNI_String& other) const {
+    bool operator<=(const KyravcevMV_String& other) const {
         return strcmp(str, other.str) <= 0;
     }
 
-    bool operator>=(const ShebetaNI_String& other) const {
+    bool operator>=(const KyravcevMV_String& other) const {
         return strcmp(str, other.str) >= 0;
     }
 
     // 4. Оператор ввода / вывода
-    friend std::ostream& operator<<(std::ostream& os, const ShebetaNI_String& str);
-    friend std::istream& operator>>(std::istream& is, ShebetaNI_String& str);
+    friend std::ostream& operator<<(std::ostream& os, const KyravcevMV_String& str);
+    friend std::istream& operator>>(std::istream& is, KyravcevMV_String& str);
 };
 
-std::ostream& operator<<(std::ostream& os, const ShebetaNI_String& string) {
+std::ostream& operator<<(std::ostream& os, const KyravcevMV_String& string) {
     os << string.str;
     return os;
 }
 
-std::istream& operator>>(std::istream& is, ShebetaNI_String& string) {
+std::istream& operator>>(std::istream& is, KyravcevMV_String& string) {
     std::vector<char> buffer;
     char ch;
     while (is.get(ch) && !isspace(ch)) { // считываем символы пока не встретим пробел или конец файла
@@ -173,7 +179,7 @@ void problem2() {
     ifstream cinFile("inputProblem2.txt");
     ofstream coutFile("outputProblem2.txt");
 
-    ShebetaNI_String word, tmp;
+    KyravcevMV_String word, tmp;
 
     while (cinFile.is_open()) {
         cinFile >> tmp;
@@ -208,7 +214,7 @@ void problem3() {
 }
 
 void problem4() {
-    ShebetaNI_String word = "asda";
+    KyravcevMV_String word = "aвапваa";
     cout << word;
     cout << endl;
     cout << word.lenght();
