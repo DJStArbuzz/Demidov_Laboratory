@@ -14,7 +14,7 @@ using namespace std;
 /*  Задание 1, вариант 1:
     Необходимо реализовать собственный класс String для работы со строками.
 */
-class KyravcevMV_String{
+class KydravcevMV_String {
 private:
     char* str = nullptr;  // Указатель на массив символов, который будет хранит строку
     size_t sz = 0;        // Переменная для отслеживания длины строки
@@ -23,24 +23,24 @@ public:
     // Конструкторы
 
     // 1. Конструктор по умолчанию
-    KyravcevMV_String() : str(nullptr), sz(0) {}
+    KydravcevMV_String() : str(nullptr), sz(0) {}
 
     // 2. Конструктор с параметрами
-    KyravcevMV_String(const char* string) {
+    KydravcevMV_String(const char* string) {
         sz = strlen(string);
         str = new char[sz + 1]; // +1 для символа '\0
         strcpy_s(str, sz + 1, string);
     }
 
     // 3. Конструктор копирования
-    KyravcevMV_String(const KyravcevMV_String& other) {
+    KydravcevMV_String(const KydravcevMV_String& other) {
         sz = other.sz;
         str = new char[sz + 1]; // +1 для символа '\0'
         strcpy_s(str, sz + 1, other.str);
     }
 
     // 4. Деструктор
-    ~KyravcevMV_String() {
+    ~KydravcevMV_String() {
         delete[] str;
     }
 
@@ -63,7 +63,7 @@ public:
     }
 
     // 4. Добавляет содержимое переданной строки в конец текущей строки.
-    void append(const KyravcevMV_String& string) {
+    void append(const KydravcevMV_String& string) {
         char* tmp = new char[sz + string.sz + 1];
         strcpy_s(tmp, sz + 1, str);
         strcpy_s(tmp + sz, string.sz + 1, string.str);
@@ -74,8 +74,8 @@ public:
     }
 
     // 5 Возвращает подстроку, начиная с позиции start и содержащую count символов
-    KyravcevMV_String substr(size_t start, size_t count) const {
-        KyravcevMV_String result;
+    KydravcevMV_String substr(size_t start, size_t count) const {
+        KydravcevMV_String result;
         if (start >= sz) {
             return str;
         }
@@ -90,7 +90,7 @@ public:
 
     // Операторы
     // 1. Оператор присваивания (=)
-    KyravcevMV_String& operator=(const KyravcevMV_String& other) {
+    KydravcevMV_String& operator=(const KydravcevMV_String& other) {
         if (this != &other) {
             delete[] str;
 
@@ -102,51 +102,51 @@ public:
     }
 
     // 2. Оператор конкатенации (+)
-    KyravcevMV_String operator+(const KyravcevMV_String& other) {
-        KyravcevMV_String result = *this;
+    KydravcevMV_String operator+(const KydravcevMV_String& other) {
+        KydravcevMV_String result = *this;
         result.append(other);
         return result;
     }
 
     // 3. Операторы сравнения
-    bool operator==(const KyravcevMV_String& other) const {
+    bool operator==(const KydravcevMV_String& other) const {
         if (sz != other.sz) {
             return false;
         }
         return strcmp(str, other.str) == 0;
     }
 
-    bool operator!=(const KyravcevMV_String& other) const {
+    bool operator!=(const KydravcevMV_String& other) const {
         return !(*this == other);
     }
 
-    bool operator<(const KyravcevMV_String& other) const {
+    bool operator<(const KydravcevMV_String& other) const {
         return strcmp(str, other.str) < 0;
     }
 
-    bool operator>(const KyravcevMV_String& other) const {
+    bool operator>(const KydravcevMV_String& other) const {
         return strcmp(str, other.str) > 0;
     }
 
-    bool operator<=(const KyravcevMV_String& other) const {
+    bool operator<=(const KydravcevMV_String& other) const {
         return strcmp(str, other.str) <= 0;
     }
 
-    bool operator>=(const KyravcevMV_String& other) const {
+    bool operator>=(const KydravcevMV_String& other) const {
         return strcmp(str, other.str) >= 0;
     }
 
     // 4. Оператор ввода / вывода
-    friend std::ostream& operator<<(std::ostream& os, const KyravcevMV_String& str);
-    friend std::istream& operator>>(std::istream& is, KyravcevMV_String& str);
+    friend std::ostream& operator<<(std::ostream& os, const KydravcevMV_String& str);
+    friend std::istream& operator>>(std::istream& is, KydravcevMV_String& str);
 };
 
-std::ostream& operator<<(std::ostream& os, const KyravcevMV_String& string) {
+std::ostream& operator<<(std::ostream& os, const KydravcevMV_String& string) {
     os << string.str;
     return os;
 }
 
-std::istream& operator>>(std::istream& is, KyravcevMV_String& string) {
+std::istream& operator>>(std::istream& is, KydravcevMV_String& string) {
     std::vector<char> buffer;
     char ch;
     while (is.get(ch) && !isspace(ch)) { // считываем символы пока не встретим пробел или конец файла
@@ -179,7 +179,7 @@ void problem2() {
     ifstream cinFile("inputProblem2.txt");
     ofstream coutFile("outputProblem2.txt");
 
-    KyravcevMV_String word, tmp;
+    KydravcevMV_String word, tmp;
 
     while (cinFile.is_open()) {
         cinFile >> tmp;
@@ -214,7 +214,7 @@ void problem3() {
 }
 
 void problem4() {
-    KyravcevMV_String word = "aвапваa";
+    KydravcevMV_String word = "aвапваa";
     cout << word;
     cout << endl;
     cout << word.lenght();
