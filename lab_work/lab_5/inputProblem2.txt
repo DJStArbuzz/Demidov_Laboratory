@@ -1,2 +1,2 @@
-Furina support/healer relies on the Pneumatic mode, which heals an active ally. However, most non-Fontaine characters cannot gain fanfare 
+A Furina support/healer relies on the Pneumatic mode, which heals an active ally. However, most non-Fontaine characters cannot gain fanfare 
 without using the Hydro Archon mode – only if they receive damage from enemies. In addition, energy particles do not fall out in the Pneumatic mode, so it is preferable to alternate arhe.
