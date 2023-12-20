@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <vector>
 #include <string>
+#include <ctype.h>
+#include <wchar.h>
 
 using namespace std;
 
@@ -207,14 +209,98 @@ void problem2() {
 
 void problem3() {
     /*  Задание 3, вариант 16
+        Замените каждую букву на соседнюю справа (по циклу) 
+        в этом же ряду на клавиатуре.
 
+        q -> w
+        s -> d
+        p -> q
     */
+
+    char rowEn[29] = {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'q', 
+                       'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'a',
+                       'z', 'x', 'c', 'v', 'b', 'n', 'm', 'z' };
+
+    char rowRu[35] = { 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'й',
+                        'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'ф' ,
+                        'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', 'я' };
+
+    KydravcevMV_String listOfWord[1000];
+    int numOfWords = 0;
+
+    ifstream cinFile("inputProblem3.txt");
+    ofstream coutFile("outputProblem3encryption.txt");
+
+    KydravcevMV_String word;
+    while (cinFile.is_open()) {
+        cinFile >> word;
+        listOfWord[numOfWords] = word;
+        numOfWords++;
+
+        cout << word << " ";
+        if (cinFile.eof()) {
+            break;
+        }
+    } 
+
+    cinFile.close();
+    cout << endl;
+    cout << "Шифруем текст:\n";
+
+    for (int i = 0; i < numOfWords; i++) {
+        word = listOfWord[i];
+
+        for (int j = 0; j < word.lenght(); j++) {
+            char tmp = word[j];
+
+            if (tolower(tmp) >= 'a' && tolower(tmp) <= 'z') {
+                int index = distance(rowEn, find(rowEn, rowEn + 29, tolower(tmp)));
+                word[j] = rowEn[index + 1];
+            }
+            
+            else if (tolower(tmp) >= 'а' && tolower(tmp) <= 'я') {
+                int index = distance(rowRu, find(rowRu, rowRu + 35, tolower(tmp)));
+                word[j] = rowRu[index + 1];
+            }
+        }
+
+        cout << word << " ";
+        coutFile << word << " ";
+    }
+    coutFile.close();
+
+    cout << endl;
+    cout << "Расшифруем текст:\n";
+    ofstream coutFile2("outputProblem3decoding.txt");
+    
+    for (int i = 0; i < numOfWords; i++) {
+        word = listOfWord[i];
+
+        for (int j = 0; j < word.lenght(); j++) {
+            char tmp = word[j];
+
+            if (tolower(tmp) >= 'a' && tolower(tmp) <= 'z') {
+                int index = distance(rowEn, find(rowEn, rowEn + 29, tolower(tmp)));
+                word[j] = rowEn[index];
+            }
+
+            else if (tolower(tmp) >= 'а' && tolower(tmp) <= 'я') {
+                int index = distance(rowRu, find(rowRu, rowRu + 35, tolower(tmp)));
+                word[j] = rowRu[index];
+            }
+        }
+
+        cout << word << " ";
+        coutFile2 << word << " ";
+    }
+    coutFile2.close();
+
+    cout << endl;
 }
 
 bool compare(pair<char, int> &first, pair<char, int> &second) {
     return first.second > second.second;
 }
-
 
 void problem4() {
     /*
@@ -292,7 +378,7 @@ void problem4() {
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
+    setlocale(LC_CTYPE, ".1251");
 
     bool flag = true;
     int problem;
