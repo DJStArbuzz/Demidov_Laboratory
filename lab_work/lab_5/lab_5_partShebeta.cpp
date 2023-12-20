@@ -2,6 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -181,11 +182,8 @@ void problem2() {
 
     KydravcevMV_String word, tmp;
 
-    while (cinFile.is_open()) {
+    while (cinFile.is_open()){
         cinFile >> tmp;
-        if (tmp.lenght() == 1) {
-            continue;
-        }
 
         if (tmp.lenght() % 2 == 0) {
             cout << tmp << " ";
@@ -208,16 +206,88 @@ void problem2() {
 }
 
 void problem3() {
-    /*  Задание 3, вариант 10
+    /*  Задание 3, вариант 16
 
     */
 }
 
+bool compare(pair<char, int> &first, pair<char, int> &second) {
+    return first.second > second.second;
+}
+
+
 void problem4() {
-    KydravcevMV_String word = "aвапваa";
-    cout << word;
+    /*
+        Задание 4, вариант 8
+        Какие две буквы чаще всего встречается после пробела. 
+        Реже всего. Выведите на экран и в файл.
+    */
+
+    pair<char, int> listRes[26];
+    char cTmp;
+    char c = 'a';
+    for (int i = 0; i < 26; i++) {
+        listRes[i].second = 0;
+        listRes[i].first = c;
+        c++;
+    }
+
+    ifstream cinFile("inputProblem4.txt");
+    ofstream coutFile("outputProblem4.txt");
+
+    KydravcevMV_String word, tmp;
+    cinFile >> word;
+
+    while (cinFile.is_open()) {
+        cinFile >> tmp;
+        cTmp = tolower(tmp[0]);
+        cout << tmp << " " << cTmp;
+        listRes[cTmp - 'a'].second++;
+
+        if (tmp.lenght() >= 2) {
+            cTmp = tolower(tmp[1]);
+            cout << " " << cTmp;
+            listRes[cTmp - 'a'].second++;
+        }
+        cout << endl;
+
+        
+        if (cinFile.eof()) {
+            break;
+        }
+    }
+
+    sort(listRes, listRes + 26, compare);
+
+    cout << "Наиболее повторяющиеся символы: " << endl;
+    cout << listRes[0].first << " - " << listRes[0].second << " раз." << endl;
+    cout << listRes[1].first << " - " << listRes[1].second << " раз." << endl;
+    cout << "Наименее повторяющиеся символы: " << endl;
+
+    coutFile << "Наиболее повторяющиеся символы: " << endl;
+    coutFile << listRes[0].first << " - " << listRes[0].second << " раз." << endl;
+    coutFile << listRes[1].first << " - " << listRes[1].second << " раз." << endl;
+    coutFile << "Наименее повторяющиеся символы: " << endl;
+
+    for (int i = 25; i >= 0; i--) {
+        if (listRes[i].second != 0) {
+            cout << listRes[i].first << " - " << listRes[i].second << " раз." << endl;
+            cout << listRes[i - 1].first << " - " << listRes[i - 1].second << " раз." << endl;
+            
+            coutFile << listRes[i].first << " - " << listRes[i].second << " раз." << endl;
+            coutFile << listRes[i - 1].first << " - " << listRes[i - 1].second << " раз." << endl;
+
+            break;
+        }
+    }
+    
     cout << endl;
-    cout << word.lenght();
+    for (int i = 0; i < 26; i++) {
+        cout << listRes[i].first << " - " << listRes[i].second << endl;
+    }
+
+    cinFile.close();
+    coutFile.close();
     cout << endl;
 }
 
