@@ -5,6 +5,7 @@
 #include <string>
 #include <ctype.h>
 #include <wchar.h>
+#include <Windows.h>
 
 using namespace std;
 
@@ -247,20 +248,29 @@ void problem3() {
     cout << endl;
     cout << "Шифруем текст:\n";
 
+    bool flag;
+
     for (int i = 0; i < numOfWords; i++) {
         word = listOfWord[i];
 
         for (int j = 0; j < word.lenght(); j++) {
             char tmp = word[j];
+            flag = isupper(tmp);
 
             if (tolower(tmp) >= 'a' && tolower(tmp) <= 'z') {
                 int index = distance(rowEn, find(rowEn, rowEn + 29, tolower(tmp)));
                 word[j] = rowEn[index + 1];
+                if (flag) {
+                    word[j] = toupper(word[j]);
+                }
             }
             
             else if (tolower(tmp) >= 'а' && tolower(tmp) <= 'я') {
                 int index = distance(rowRu, find(rowRu, rowRu + 35, tolower(tmp)));
                 word[j] = rowRu[index + 1];
+                if (flag) {
+                    word[j] = toupper(word[j]);
+                }
             }
         }
 
@@ -278,15 +288,24 @@ void problem3() {
 
         for (int j = 0; j < word.lenght(); j++) {
             char tmp = word[j];
+            flag = isupper(tmp);
 
             if (tolower(tmp) >= 'a' && tolower(tmp) <= 'z') {
                 int index = distance(rowEn, find(rowEn, rowEn + 29, tolower(tmp)));
                 word[j] = rowEn[index];
+
+                if (flag) {
+                    word[j] = toupper(word[j]);
+                }
             }
 
             else if (tolower(tmp) >= 'а' && tolower(tmp) <= 'я') {
                 int index = distance(rowRu, find(rowRu, rowRu + 35, tolower(tmp)));
                 word[j] = rowRu[index];
+
+                if (flag) {
+                    word[j] = toupper(word[j]);
+                }
             }
         }
 
@@ -295,6 +314,7 @@ void problem3() {
     }
     coutFile2.close();
 
+    cout << endl;
     cout << endl;
 }
 
@@ -379,6 +399,8 @@ void problem4() {
 
 int main() {
     setlocale(LC_CTYPE, ".1251");
+    setlocale(LC_ALL, "Russian");
+    SetConsoleCP(1251);
 
     bool flag = true;
     int problem;
