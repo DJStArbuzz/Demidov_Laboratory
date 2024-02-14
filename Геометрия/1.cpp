@@ -59,5 +59,10 @@ double cross(Point A, Point B) {
 
 int main()
 {
+	/*
+	(P2.y + p1.y)/2 * (p2.x - p1.x) - площадь полигона
 
+	Инт(от прав до лев гр)f(x)dx
+	
+	*/
 }
