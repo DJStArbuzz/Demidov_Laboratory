@@ -17,7 +17,7 @@ public:
     BigInteger& operator=(const BigInteger&);
 
     // 1. Сложение, вычитание, умножение, деление
-    // остаток по модулю, работающие так же, как и для int
+   // остаток по модулю, работающие так же, как и для int
     friend BigInteger& operator+=(BigInteger&, const BigInteger&);
     friend BigInteger operator+(const BigInteger&, const BigInteger&);
     friend BigInteger operator-(const BigInteger&, const BigInteger&);
@@ -30,12 +30,14 @@ public:
     friend BigInteger& operator%=(BigInteger&, const BigInteger&);
     friend BigInteger& operator^=(BigInteger&, const BigInteger&);
     friend BigInteger operator^(BigInteger&, const BigInteger&);
+    friend BigInteger& operator^=(BigInteger&, const BigInteger&);
+    friend BigInteger operator^(BigInteger&, const BigInteger&);
 
     // 2. Префикс/постфиксный инкремент и декремент
     BigInteger& operator++();
-    BigInteger operator++(int temp);
+    BigInteger operator++(int tmp);
     BigInteger& operator--();
-    BigInteger operator--(int temp);
+    BigInteger operator--(int tmp);
 
     // 3. Операторы сравнения
     friend bool operator==(const BigInteger&, const BigInteger&);
@@ -55,16 +57,23 @@ public:
     }
 
     // 6. Конструирование из int
+    BigInteger(int n) {
+        number = to_string(n);
+    }
 
     // 7. Неявное преобразование в bool
+    explicit operator bool() const {
+        return (!number.empty() && number != "0");
+    }
 
-    // Дополнительно
-    friend BigInteger sqrt(BigInteger& a);
-    friend BigInteger Factorial(BigInteger a);
+
+    //Others
+    friend BigInteger Factorial(int n);
     friend void divide_by_2(BigInteger& a);
     friend bool Null(const BigInteger&);
     friend int Length(const BigInteger&);
     int operator[](const int)const;
+    friend BigInteger sqrt(BigInteger& a);
 };
 
 BigInteger::BigInteger(string& s) {
@@ -72,87 +81,69 @@ BigInteger::BigInteger(string& s) {
     int n = s.size();
     for (int i = n - 1; i >= 0;i--) {
         if (!isdigit(s[i]))
-            throw("ERROR");
+            throw("СУКА ЭТО НЕ ЧИСЛО");
         number.push_back(s[i] - '0');
     }
 }
-
-BigInteger::BigInteger(unsigned long long tmp) {
-    while (tmp) {
-        number.push_back(tmp % 10);
-        tmp /= 10;
-    }
+BigInteger::BigInteger(unsigned long long nr) {
+    while (nr) {
+        number.push_back(nr % 10);
+        nr /= 10;
+    } 
 }
-
 BigInteger::BigInteger(const char* s) {
     number = "";
     for (int i = strlen(s) - 1; i >= 0;i--)
     {
         if (!isdigit(s[i]))
-            throw("Ошибка");
+            throw("НЕ ЧИСЛО");
         number.push_back(s[i] - '0');
     }
 }
-
 BigInteger::BigInteger(BigInteger& a) {
     number = a.number;
 }
 
 bool Null(const BigInteger& a) {
     if (a.number.size() == 1 && a.number[0] == 0)
-    {
         return true;
-    }
     return false;
 }
-
 int Length(const BigInteger& a) {
     return a.number.size();
 }
-
 int BigInteger::operator[](const int index)const {
     if (number.size() <= index || index < 0)
-        throw("Ошибка");
+        throw("ERROR");
     return number[index];
 }
-
-bool operator==(const BigInteger& first, const BigInteger& second) {
-    return first.number == second.number;
+bool operator==(const BigInteger& a, const BigInteger& b) {
+    return a.number == b.number;
 }
-
-bool operator!=(const BigInteger& first, const BigInteger& second) {
-    return !(first == second);
+bool operator!=(const BigInteger& a, const BigInteger& b) {
+    return !(a == b);
 }
-
-bool operator<(const BigInteger& first, const BigInteger& second) {
-    int n = Length(first), m = Length(second);
+bool operator<(const BigInteger& a, const BigInteger& b) {
+    int n = Length(a), m = Length(b);
     if (n != m)
-    {
         return n < m;
-    }
-    while (n--) {
-        if (first.number[n] != second.number[n])
-        {
-            return first.number[n] < second.number[n];
-        }
-    }
+    while (n--)
+        if (a.number[n] != b.number[n])
+            return a.number[n] < b.number[n];
     return false;
 }
-bool operator>(const BigInteger& first, const BigInteger& second) {
-    return second < first;
+bool operator>(const BigInteger& a, const BigInteger& b) {
+    return b < a;
+}
+bool operator>=(const BigInteger& a, const BigInteger& b) {
+    return !(a < b);
+}
+bool operator<=(const BigInteger& a, const BigInteger& b) {
+    return !(a > b);
 }
 
-bool operator>=(const BigInteger& first, const BigInteger& second) {
-    return !(first < second);
-}
-
-bool operator<=(const BigInteger& first, const BigInteger& second) {
-    return !(first > second);
-}
-
-
-BigInteger& BigInteger::operator=(const BigInteger& first) {
-    number = first.number;
+BigInteger& BigInteger::operator=(const BigInteger& a) {
+    number = a.number;
     return *this;
 }
 
@@ -166,7 +157,7 @@ BigInteger& BigInteger::operator++() {
         number[i]++;
     return *this;
 }
-BigInteger BigInteger::operator++(int temp) {
+BigInteger BigInteger::operator++(int tmp) {
     BigInteger aux;
     aux = *this;
     ++(*this);
@@ -209,16 +200,14 @@ BigInteger& operator+=(BigInteger& a, const BigInteger& b) {
         a.number.push_back(t);
     return a;
 }
-BigInteger operator+(const BigInteger& first, const BigInteger& second) {
+BigInteger operator+(const BigInteger& a, const BigInteger& b) {
     BigInteger tmp;
-    tmp = first;
-    tmp += second;
+    tmp = a;
+    tmp += b;
     return tmp;
 }
 
 BigInteger& operator-=(BigInteger& a, const BigInteger& b) {
-    if (a < b)
-        throw("UNDERFLOW");
     int n = Length(a), m = Length(b);
     int i, t = 0, s;
     for (i = 0; i < n;i++) {
@@ -238,14 +227,13 @@ BigInteger& operator-=(BigInteger& a, const BigInteger& b) {
         n--;
     return a;
 }
-// Оператор вычитания
 BigInteger operator-(const BigInteger& a, const BigInteger& b) {
-    BigInteger temp;
-    temp = a;
-    temp -= b;
-    return temp;
+    BigInteger tmp;
+    tmp = a;
+    tmp -= b;
+    return tmp;
 }
-// Оператор умножения
+
 BigInteger& operator*=(BigInteger& a, const BigInteger& b)
 {
     if (Null(a) || Null(b)) {
@@ -272,15 +260,15 @@ BigInteger& operator*=(BigInteger& a, const BigInteger& b)
     return a;
 }
 BigInteger operator*(const BigInteger& a, const BigInteger& b) {
-    BigInteger temp;
-    temp = a;
-    temp *= b;
-    return temp;
+    BigInteger tmp;
+    tmp = a;
+    tmp *= b;
+    return tmp;
 }
 
 BigInteger& operator/=(BigInteger& a, const BigInteger& b) {
     if (Null(b))
-        throw("Деление на ноль, сука");
+        throw("Деление на 0");
     if (a < b) {
         a = BigInteger();
         return a;
@@ -291,7 +279,7 @@ BigInteger& operator/=(BigInteger& a, const BigInteger& b) {
     }
     int i, lgcat = 0, cc;
     int n = Length(a), m = Length(b);
-    vector<int> list(n, 0);
+    vector<int> cat(n, 0);
     BigInteger t;
     for (i = n - 1; t * 10 + a.number[i] < b;i--) {
         t *= 10;
@@ -301,19 +289,19 @@ BigInteger& operator/=(BigInteger& a, const BigInteger& b) {
         t = t * 10 + a.number[i];
         for (cc = 9; cc * b > t;cc--);
         t -= cc * b;
-        list[lgcat++] = cc;
+        cat[lgcat++] = cc;
     }
-    a.number.resize(list.size());
+    a.number.resize(cat.size());
     for (i = 0; i < lgcat;i++)
-        a.number[i] = list[lgcat - i - 1];
+        a.number[i] = cat[lgcat - i - 1];
     a.number.resize(lgcat);
     return a;
 }
 BigInteger operator/(const BigInteger& a, const BigInteger& b) {
-    BigInteger temp;
-    temp = a;
-    temp /= b;
-    return temp;
+    BigInteger tmp;
+    tmp = a;
+    tmp /= b;
+    return tmp;
 }
 
 BigInteger& operator%=(BigInteger& a, const BigInteger& b) {
@@ -344,11 +332,30 @@ BigInteger& operator%=(BigInteger& a, const BigInteger& b) {
     return a;
 }
 BigInteger operator%(const BigInteger& a, const BigInteger& b) {
-    BigInteger temp;
-    temp = a;
-    temp %= b;
-    return temp;
+    BigInteger tmp;
+    tmp = a;
+    tmp %= b;
+    return tmp;
 }
+
+BigInteger& operator^=(BigInteger& a, const BigInteger& b) {
+    BigInteger Exponent, Base(a);
+    Exponent = b;
+    a = 1;
+    while (!Null(Exponent)) {
+        if (Exponent[0] & 1)
+            a *= Base;
+        Base *= Base;
+        divide_by_2(Exponent);
+    }
+    return a;
+}
+BigInteger operator^(BigInteger& a, BigInteger& b) {
+    BigInteger tmp(a);
+    tmp ^= b;
+    return tmp;
+}
+
 void divide_by_2(BigInteger& a) {
     int add = 0;
     for (int i = a.number.size() - 1; i >= 0;i--) {
@@ -359,7 +366,7 @@ void divide_by_2(BigInteger& a) {
     while (a.number.size() > 1 && !a.number.back())
         a.number.pop_back();
 }
-// Корень
+
 BigInteger sqrt(BigInteger& a) {
     BigInteger left(1), right(a), v(1), mid, prod;
     divide_by_2(right);
@@ -381,26 +388,52 @@ BigInteger sqrt(BigInteger& a) {
     }
     return v;
 }
-// Ввод
+
+BigInteger NthCatalan(int n) {
+    BigInteger a(1), b;
+    for (int i = 2; i <= n;i++)
+        a *= i;
+    b = a;
+    for (int i = n + 1; i <= 2 * n;i++)
+        b *= i;
+    a *= a;
+    a *= (n + 1);
+    b /= a;
+    return b;
+}
+
+BigInteger NthFibonacci(int n) {
+    BigInteger a(1), b(1), c;
+    if (!n)
+        return c;
+    n--;
+    while (n--) {
+        c = a + b;
+        b = a;
+        a = c;
+    }
+    return b;
+}
+
 istream& operator>>(istream& in, BigInteger& a) {
     string s;
     in >> s;
     int n = s.size();
     for (int i = n - 1; i >= 0;i--) {
         if (!isdigit(s[i]))
-            throw("Не число");
+            throw("СУКА ЭТО НЕ ЧИСЛО");
         a.number[n - i - 1] = s[i];
     }
     return in;
 }
-// Вывод
+
 ostream& operator<<(ostream& out, const BigInteger& a) {
     for (int i = a.number.size() - 1; i >= 0;i--)
         cout << (short)a.number[i];
     return cout;
 }
-// Факториал
-BigInteger Factorial(BigInteger n) {
+
+BigInteger Factorial(int n) {
     BigInteger f(1);
     for (int i = 2; i <= n;i++)
         f *= i;
@@ -449,8 +482,32 @@ int main()
     product = second * third;
     cout << "Product of second and third = "
         << product << '\n';
-    BigInteger n2(5);
-    string s = n2.toString();
-    cout << "\n" << s;
-    cout << Factorial(n2[0]); 
+
+    // Print the fibonacci number from 1 to 100
+    cout << "-------------------------Fibonacci"
+        << "------------------------------\n";
+    for (int i = 0; i <= 100; i++) {
+        BigInteger Fib;
+        Fib = NthFibonacci(i);
+        cout << "Fibonacci " << i << " = " << Fib << '\n';
+    }
+
+    cout << "Fact" << endl;
+    for (int i = 0; i <= 10; i++) {
+        BigInteger Fib;
+        Fib = Factorial(i);
+        cout << "Fibonacci " << i << " = " << Fib << '\n';
+    }
+
+    bool s = bool(BigInteger(3));
+    cout << s << endl;
+
+    BigInteger num1(123456789);
+    string str = num1.toString();
+    cout << str << endl; // Output: 123456789
+
+    // Construction from int and implicit conversion
+    BigInteger num2 = 100; // implicit conversion from int to BigInteger
+    cout << boolalpha;
+    cout << bool(num2) << endl; // Output: true
 }
