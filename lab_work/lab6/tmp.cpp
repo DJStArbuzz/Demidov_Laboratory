@@ -55,12 +55,12 @@ public:
     }
 
     // 6. Конструирование из int
-     
+
     // 7. Неявное преобразование в bool
 
     // Дополнительно
     friend BigInteger sqrt(BigInteger& a);
-    friend BigInteger Factorial(int n);
+    friend BigInteger Factorial(BigInteger a);
     friend void divide_by_2(BigInteger& a);
     friend bool Null(const BigInteger&);
     friend int Length(const BigInteger&);
@@ -76,21 +76,24 @@ BigInteger::BigInteger(string& s) {
         number.push_back(s[i] - '0');
     }
 }
+
 BigInteger::BigInteger(unsigned long long tmp) {
     while (tmp) {
         number.push_back(tmp % 10);
         tmp /= 10;
     }
 }
+
 BigInteger::BigInteger(const char* s) {
     number = "";
     for (int i = strlen(s) - 1; i >= 0;i--)
     {
         if (!isdigit(s[i]))
-            throw("ERROR");
+            throw("Ошибка");
         number.push_back(s[i] - '0');
     }
 }
+
 BigInteger::BigInteger(BigInteger& a) {
     number = a.number;
 }
@@ -102,13 +105,14 @@ bool Null(const BigInteger& a) {
     }
     return false;
 }
+
 int Length(const BigInteger& a) {
     return a.number.size();
 }
 
 int BigInteger::operator[](const int index)const {
     if (number.size() <= index || index < 0)
-        throw("ERROR");
+        throw("Ошибка");
     return number[index];
 }
 
@@ -180,7 +184,7 @@ BigInteger& BigInteger::operator--() {
         number.pop_back();
     return *this;
 }
-BigInteger BigInteger::operator--(int temp) {
+BigInteger BigInteger::operator--(int tmp) {
     BigInteger aux;
     aux = *this;
     --(*this);
@@ -276,7 +280,7 @@ BigInteger operator*(const BigInteger& a, const BigInteger& b) {
 
 BigInteger& operator/=(BigInteger& a, const BigInteger& b) {
     if (Null(b))
-        throw("Arithmetic Error: Division By 0");
+        throw("Деление на ноль, сука");
     if (a < b) {
         a = BigInteger();
         return a;
@@ -287,7 +291,7 @@ BigInteger& operator/=(BigInteger& a, const BigInteger& b) {
     }
     int i, lgcat = 0, cc;
     int n = Length(a), m = Length(b);
-    vector<int> cat(n, 0);
+    vector<int> list(n, 0);
     BigInteger t;
     for (i = n - 1; t * 10 + a.number[i] < b;i--) {
         t *= 10;
@@ -297,11 +301,11 @@ BigInteger& operator/=(BigInteger& a, const BigInteger& b) {
         t = t * 10 + a.number[i];
         for (cc = 9; cc * b > t;cc--);
         t -= cc * b;
-        cat[lgcat++] = cc;
+        list[lgcat++] = cc;
     }
-    a.number.resize(cat.size());
+    a.number.resize(list.size());
     for (i = 0; i < lgcat;i++)
-        a.number[i] = cat[lgcat - i - 1];
+        a.number[i] = list[lgcat - i - 1];
     a.number.resize(lgcat);
     return a;
 }
@@ -377,7 +381,7 @@ BigInteger sqrt(BigInteger& a) {
     }
     return v;
 }
-// Вывод
+// Ввод
 istream& operator>>(istream& in, BigInteger& a) {
     string s;
     in >> s;
@@ -389,14 +393,14 @@ istream& operator>>(istream& in, BigInteger& a) {
     }
     return in;
 }
-
+// Вывод
 ostream& operator<<(ostream& out, const BigInteger& a) {
     for (int i = a.number.size() - 1; i >= 0;i--)
         cout << (short)a.number[i];
     return cout;
 }
-
-BigInteger Factorial(int n) {
+// Факториал
+BigInteger Factorial(BigInteger n) {
     BigInteger f(1);
     for (int i = 2; i <= n;i++)
         f *= i;
@@ -445,13 +449,8 @@ int main()
     product = second * third;
     cout << "Product of second and third = "
         << product << '\n';
-
-    // Print the fibonacci number from 1 to 100
-    cout << "-------------------------Fibonacci"
-        << "------------------------------\n";
-    for (int i = 0; i <= 100; i++) {
-        BigInteger Fib;
-        Fib = NthFibonacci(i);
-        cout << "Fibonacci " << i << " = " << Fib << '\n';
-    }
+    BigInteger n2(5);
+    string s = n2.toString();
+    cout << "\n" << s;
+    cout << Factorial(n2[0]); 
 }
