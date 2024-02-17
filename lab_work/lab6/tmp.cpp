@@ -6,7 +6,8 @@
 using namespace std;
 
 class BigInteger {
-    string number;
+    string number;     // Само число
+    bool pos = false;  // Наличие унарного минуса
 public:
     // Конструкторы:
     BigInteger(unsigned long long n = 0);
@@ -19,55 +20,39 @@ public:
     // 1. Сложение, вычитание, умножение, деление
    // остаток по модулю, работающие так же, как и для int
     friend BigInteger& operator+=(BigInteger&, const BigInteger&);
-    friend BigInteger operator+(const BigInteger&, const BigInteger&);
-    friend BigInteger operator-(const BigInteger&, const BigInteger&);
     friend BigInteger& operator-=(BigInteger&, const BigInteger&);
     friend BigInteger& operator*=(BigInteger&, const BigInteger&);
-    friend BigInteger operator*(const BigInteger&, const BigInteger&);
     friend BigInteger& operator/=(BigInteger&, const BigInteger&);
-    friend BigInteger operator/(const BigInteger&, const BigInteger&);
-    friend BigInteger operator%(const BigInteger&, const BigInteger&);
     friend BigInteger& operator%=(BigInteger&, const BigInteger&);
-    friend BigInteger& operator^=(BigInteger&, const BigInteger&);
-    friend BigInteger operator^(BigInteger&, const BigInteger&);
-    friend BigInteger& operator^=(BigInteger&, const BigInteger&);
-    friend BigInteger operator^(BigInteger&, const BigInteger&);
 
     // 2. Префикс/постфиксный инкремент и декремент
     BigInteger& operator++();
-    BigInteger operator++(int tmp);
     BigInteger& operator--();
+    BigInteger operator++(int tmp);
     BigInteger operator--(int tmp);
 
     // 3. Операторы сравнения
     friend bool operator==(const BigInteger&, const BigInteger&);
     friend bool operator!=(const BigInteger&, const BigInteger&);
-    friend bool operator>(const BigInteger&, const BigInteger&);
-    friend bool operator>=(const BigInteger&, const BigInteger&);
     friend bool operator<(const BigInteger&, const BigInteger&);
+    friend bool operator>(const BigInteger&, const BigInteger&);
     friend bool operator<=(const BigInteger&, const BigInteger&);
+    friend bool operator>=(const BigInteger&, const BigInteger&);
 
     // 4. Вывод в поток и ввод из потока
     friend ostream& operator<<(ostream&, const BigInteger&);
     friend istream& operator>>(istream&, BigInteger&);
 
     // 5. Метод toString(), возвращающий строковое представление числа
-    string toString() {
-        return number;
-    }
 
     // 6. Конструирование из int
-    BigInteger(int n) {
-        number = to_string(n);
-    }
+
 
     // 7. Неявное преобразование в bool
     explicit operator bool() const {
-        return (!number.empty() && number != "0");
+        return (!number.empty());
     }
 
-
-    //Others
     friend BigInteger Factorial(int n);
     friend void divide_by_2(BigInteger& a);
     friend bool Null(const BigInteger&);
@@ -75,7 +60,14 @@ public:
     int operator[](const int)const;
     friend BigInteger sqrt(BigInteger& a);
 };
-
+bool Null(const BigInteger& a) {
+    if (a.number.size() == 1 && a.number[0] == 0)
+        return true;
+    return false;
+}
+int Length(const BigInteger& a) {
+    return a.number.size();
+}
 BigInteger::BigInteger(string& s) {
     number = "";
     int n = s.size();
@@ -89,28 +81,21 @@ BigInteger::BigInteger(unsigned long long nr) {
     while (nr) {
         number.push_back(nr % 10);
         nr /= 10;
-    } 
+    }
 }
 BigInteger::BigInteger(const char* s) {
     number = "";
     for (int i = strlen(s) - 1; i >= 0;i--)
     {
         if (!isdigit(s[i]))
+        {
             throw("НЕ ЧИСЛО");
+        }
         number.push_back(s[i] - '0');
     }
 }
 BigInteger::BigInteger(BigInteger& a) {
     number = a.number;
-}
-
-bool Null(const BigInteger& a) {
-    if (a.number.size() == 1 && a.number[0] == 0)
-        return true;
-    return false;
-}
-int Length(const BigInteger& a) {
-    return a.number.size();
 }
 int BigInteger::operator[](const int index)const {
     if (number.size() <= index || index < 0)
@@ -135,11 +120,11 @@ bool operator<(const BigInteger& a, const BigInteger& b) {
 bool operator>(const BigInteger& a, const BigInteger& b) {
     return b < a;
 }
-bool operator>=(const BigInteger& a, const BigInteger& b) {
-    return !(a < b);
-}
 bool operator<=(const BigInteger& a, const BigInteger& b) {
     return !(a > b);
+}
+bool operator>=(const BigInteger& a, const BigInteger& b) {
+    return !(a < b);
 }
 
 BigInteger& BigInteger::operator=(const BigInteger& a) {
@@ -157,13 +142,6 @@ BigInteger& BigInteger::operator++() {
         number[i]++;
     return *this;
 }
-BigInteger BigInteger::operator++(int tmp) {
-    BigInteger aux;
-    aux = *this;
-    ++(*this);
-    return aux;
-}
-
 BigInteger& BigInteger::operator--() {
     if (number[0] == 0 && number.size() == 1)
         throw("UNDERFLOW");
@@ -174,6 +152,11 @@ BigInteger& BigInteger::operator--() {
     if (n > 1 && number[n - 1] == 0)
         number.pop_back();
     return *this;
+}
+BigInteger BigInteger::operator++(int tmp) {
+    BigInteger aux = *this;
+    ++(*this);
+    return aux;
 }
 BigInteger BigInteger::operator--(int tmp) {
     BigInteger aux;
@@ -210,22 +193,44 @@ BigInteger operator+(const BigInteger& a, const BigInteger& b) {
 BigInteger& operator-=(BigInteger& a, const BigInteger& b) {
     int n = Length(a), m = Length(b);
     int i, t = 0, s;
-    for (i = 0; i < n;i++) {
-        if (i < m)
-            s = a.number[i] - b.number[i] + t;
-        else
-            s = a.number[i] + t;
-        if (s < 0)
-            s += 10,
-            t = -1;
-        else
-            t = 0;
-        a.number[i] = s;
+    if (n >= m) {
+        for (i = 0; i < n;i++) {
+            if (i < m)
+                s = a.number[i] - b.number[i] + t;
+            else
+                s = a.number[i] + t;
+            if (s < 0)
+                s += 10,
+                t = -1;
+            else
+                t = 0;
+            a.number[i] = s;
+        }
+        while (n > 1 && a.number[n - 1] == 0)
+            a.number.pop_back(),
+            n--;
+        return a;
     }
-    while (n > 1 && a.number[n - 1] == 0)
-        a.number.pop_back(),
-        n--;
-    return a;
+    else {
+        BigInteger c = a;
+        a = b;
+        for (i = 0; i < n;i++) {
+            if (i < m)
+                s = a.number[i] - c.number[i] + t;
+            else
+                s = a.number[i] + t;
+            if (s < 0)
+                s += 10,
+                t = -1;
+            else
+                t = 0;
+            a.number[i] = s;
+        }
+        while (n > 1 && a.number[n - 1] == 0)
+            a.number.pop_back(),
+            n--;
+        return a;
+    }
 }
 BigInteger operator-(const BigInteger& a, const BigInteger& b) {
     BigInteger tmp;
@@ -338,24 +343,6 @@ BigInteger operator%(const BigInteger& a, const BigInteger& b) {
     return tmp;
 }
 
-BigInteger& operator^=(BigInteger& a, const BigInteger& b) {
-    BigInteger Exponent, Base(a);
-    Exponent = b;
-    a = 1;
-    while (!Null(Exponent)) {
-        if (Exponent[0] & 1)
-            a *= Base;
-        Base *= Base;
-        divide_by_2(Exponent);
-    }
-    return a;
-}
-BigInteger operator^(BigInteger& a, BigInteger& b) {
-    BigInteger tmp(a);
-    tmp ^= b;
-    return tmp;
-}
-
 void divide_by_2(BigInteger& a) {
     int add = 0;
     for (int i = a.number.size() - 1; i >= 0;i--) {
@@ -389,50 +376,31 @@ BigInteger sqrt(BigInteger& a) {
     return v;
 }
 
-BigInteger NthCatalan(int n) {
-    BigInteger a(1), b;
-    for (int i = 2; i <= n;i++)
-        a *= i;
-    b = a;
-    for (int i = n + 1; i <= 2 * n;i++)
-        b *= i;
-    a *= a;
-    a *= (n + 1);
-    b /= a;
-    return b;
-}
-
-BigInteger NthFibonacci(int n) {
-    BigInteger a(1), b(1), c;
-    if (!n)
-        return c;
-    n--;
-    while (n--) {
-        c = a + b;
-        b = a;
-        a = c;
-    }
-    return b;
-}
-
 istream& operator>>(istream& in, BigInteger& a) {
     string s;
     in >> s;
     int n = s.size();
+
     for (int i = n - 1; i >= 0;i--) {
         if (!isdigit(s[i]))
+        {
             throw("СУКА ЭТО НЕ ЧИСЛО");
+        }
         a.number[n - i - 1] = s[i];
     }
     return in;
 }
 
 ostream& operator<<(ostream& out, const BigInteger& a) {
+    if (a.pos == true) {
+        cout << '-';
+    }
     for (int i = a.number.size() - 1; i >= 0;i--)
         cout << (short)a.number[i];
     return cout;
 }
 
+// Дополнительная функция
 BigInteger Factorial(int n) {
     BigInteger f(1);
     for (int i = 2; i <= n;i++)
@@ -479,18 +447,9 @@ int main()
     cout << "Sum of fourth and fifth = "
         << sum << '\n';
     BigInteger product;
-    product = second * third;
+    product = second + third;
     cout << "Product of second and third = "
         << product << '\n';
-
-    // Print the fibonacci number from 1 to 100
-    cout << "-------------------------Fibonacci"
-        << "------------------------------\n";
-    for (int i = 0; i <= 100; i++) {
-        BigInteger Fib;
-        Fib = NthFibonacci(i);
-        cout << "Fibonacci " << i << " = " << Fib << '\n';
-    }
 
     cout << "Fact" << endl;
     for (int i = 0; i <= 10; i++) {
@@ -503,11 +462,22 @@ int main()
     cout << s << endl;
 
     BigInteger num1(123456789);
-    string str = num1.toString();
-    cout << str << endl; // Output: 123456789
 
     // Construction from int and implicit conversion
-    BigInteger num2 = 100; // implicit conversion from int to BigInteger
-    cout << boolalpha;
+    BigInteger num2("0"); // implicit conversion from int to BigInteger
     cout << bool(num2) << endl; // Output: true
+
+    BigInteger ns(9999), b(123);
+    ns++;
+    cout << ns << endl;
+    BigInteger n;
+    /*
+    1) не работает разность чисел, если по итогу разность дает унарный минус.
+    2) унарный минус отсутсвует. Программа реализована как unsigned
+    3) не работает консольный ввод
+
+
+
+
+        */
 }
