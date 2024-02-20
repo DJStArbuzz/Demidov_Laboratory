@@ -33,12 +33,6 @@ public:
     BigInteger multiplication(const BigInteger& numTmp) const;
     BigInteger division(const BigInteger& numTmp) const;
 
-    /**
-     * Complex arithmetic
-     */
-    BigInteger pow(const BigInteger& numTmp) const;
-    BigInteger modulus(const BigInteger& numTmp) const;
-
     // 1. Операции 
     BigInteger operator+(const BigInteger& numTmp);
     BigInteger& operator+=(const BigInteger& numTmp);
@@ -47,11 +41,8 @@ public:
     BigInteger operator*(const BigInteger& numTmp);
     BigInteger& operator*=(const BigInteger& numTmp);
     BigInteger operator/(const BigInteger& numTmp);
-    BigInteger operator%(const BigInteger& numTmp);
-    BigInteger operator<<(const BigInteger& numTmp) const;
-    BigInteger operator>>(const BigInteger& numTmp) const;
-    
     BigInteger& operator/=(const BigInteger& numTmp);
+    BigInteger operator%(const BigInteger& numTmp);
     
     // 2. Префиксный и постфискный инкремент и декремент
     BigInteger& operator++(); // преф
@@ -72,29 +63,37 @@ public:
         out << numTmp.toString();
         return out;
     }
-    friend istream& operator>>(istream&, BigInteger&);
+    friend istream& operator>>(istream& in, const BigInteger& numTmp) {
+    }
+    void setNum(string tmpBI) { numBI = tmpBI; }
 
     // 5. Метод toString
     string toString() const;
 
     // Доп. операции
-    int numTmptLength() const;
     int compare(const BigInteger& numTmp) const;
     bool isPositive() const;
     bool isNegative() const;
     void swap(BigInteger& numTmp);
+    BigInteger modulus(const BigInteger& numTmp) const;
     BigInteger negate() const;
     BigInteger absolute() const;
 };
+istream& operator >> (istream& in, BigInteger& tmp)
+{
+    string name;
+    in >> name;
+    tmp.setNum(name);
+    return in;
+}
 // Константы "0", "1", "10"
 const BigInteger BigInteger::ZERO = BigInteger("0");
 const BigInteger BigInteger::ONE = BigInteger("1");
 const BigInteger BigInteger::TEN = BigInteger("10");
-const string BigInteger::baseChar = "0123456789";
 // Конструктор по умолчанию
 BigInteger::BigInteger()
-    : negaFlag(false)
-    , numBI("0"){}
+    : numBI("0"),
+    negaFlag(false){}
 // Конструктор с int-переменной
 BigInteger::BigInteger(int num)
     : negaFlag(num < 0)
@@ -107,8 +106,7 @@ BigInteger::BigInteger(int num)
 }
 // Конструктор с long long-переменной
 BigInteger::BigInteger(long long num)
-    : negaFlag(num < 0)
-{
+    : negaFlag(num < 0){
     string strNum = to_string(num);
     if (negaFlag) {
         strNum.erase(0, 1);
@@ -128,40 +126,41 @@ BigInteger::BigInteger(string num)
     }
     numBI = num;
 }
-
+// Деструктор
 BigInteger::~BigInteger(){}
 // Сложение
 BigInteger BigInteger::addition(const BigInteger& numTmp) const
 {
-    BigInteger additionition;
+    BigInteger result;
     // Случай (-A) + B
     if (this->negaFlag && !numTmp.negaFlag) {
-        additionition = numTmp.substraction(negate());
+        result = numTmp.substraction(negate());
     }
     // Случай A + (-B)
     else if (!this->negaFlag && numTmp.negaFlag) {
-        additionition = substraction(numTmp.negate());
+        result = substraction(numTmp.negate());
     }
     // Случай A + B || -(A) + (-B)
     else {
-        string sum = this->numBI;
-        string additioned = numTmp.numBI;
-        int diffLength = abs(int(sum.length() - additioned.length()));
-        if (sum.length() > additioned.length()) {
-            additioned.insert(0, diffLength, '0');
+        string tmpNum = numTmp.numBI;
+        string tmp2 = this->numBI;
+        int lenDif = abs(int(tmp2.length() - tmpNum.length()));
+        if (tmp2.length() > tmpNum.length()) {
+            tmpNum.insert(0, lenDif, '0');
         }
         else {
-            sum.insert(0, diffLength, '0');
+            tmp2.insert(0, lenDif, '0');
         }
-        reverse(sum.begin(), sum.end());
-        reverse(additioned.begin(), additioned.end());
+
+        reverse(tmp2.begin(), tmp2.end());
+        reverse(tmpNum.begin(), tmpNum.end());
         char carry = '0';
 
         int index = 0;
-        for (char& c : sum) {
-            c = (carry - '0') + (c - '0') + (additioned.at(index) - '0') + '0';
-            if (c > '9') {
-                c -= 10;
+        for (char& s : tmp2) {
+            s = (carry - '0') + (s - '0') + (tmpNum.at(index) - '0') + '0';
+            if (s > '9') {
+                s -= 10;
                 carry = '1';
             }
             else {
@@ -170,12 +169,12 @@ BigInteger BigInteger::addition(const BigInteger& numTmp) const
             index++;
         }
         if (carry > '0') {
-            sum.append(1, carry);
+            tmp2.append(1, carry);
         }
-        reverse(sum.begin(), sum.end());
-        additionition = (this->negaFlag ? BigInteger(sum).negate() : BigInteger(sum));
+        reverse(tmp2.begin(), tmp2.end());
+        result = (this->negaFlag ? BigInteger(tmp2).negate() : BigInteger(tmp2));
     }
-    return additionition;
+    return result;
 }
 // Вычитание
 BigInteger BigInteger::substraction(const BigInteger& numTmp) const
@@ -308,25 +307,6 @@ BigInteger BigInteger::division(const BigInteger& numTmp) const
     }
     return division;
 }
-// Степень
-BigInteger BigInteger::pow(const BigInteger& numTmp) const
-{
-    BigInteger ret;
-    if (numTmp == ZERO) {
-        ret = ONE;
-    }
-    else if (numTmp == ONE) {
-        ret = (*this);
-    }
-    else {
-        BigInteger initial_num = (*this);
-        ret = (*this);
-        for (BigInteger i = ONE; i < numTmp; i++) {
-            ret *= initial_num;
-        }
-    }
-    return ret;
-}
 
 BigInteger BigInteger::modulus(const BigInteger& numTmp) const
 {
@@ -334,44 +314,39 @@ BigInteger BigInteger::modulus(const BigInteger& numTmp) const
     return mod;
 }
 
-int BigInteger::numTmptLength() const
-{
-    return toString().length();
-}
-
 int BigInteger::compare(const BigInteger& numTmp) const
 {
-    int comparison;
+    int result;
     if (this->negaFlag && !numTmp.negaFlag) {
-        // -a, +b
-        comparison = -1;
+        // Случай -А, +Б
+        result = -1;
     }
     else if (!this->negaFlag && numTmp.negaFlag) {
-        // +a, -b
-        comparison = 1;
+        // Случай +А, -Б
+        result = 1;
     }
     else {
         // +a, +b or -a, -b
         if (this->numBI.length() < numTmp.numBI.length()) {
-            comparison = -1;
+            result = -1;
         }
         else if (this->numBI.length() > numTmp.numBI.length()) {
-            comparison = 1;
+            result = 1;
         }
         else {
             bool positive = !this->negaFlag;
             if (this->numBI < numTmp.numBI) {
-                comparison = (positive ? -1 : 1);
+                result = (positive ? -1 : 1);
             }
             else if (this->numBI > numTmp.numBI) {
-                comparison = (positive ? 1 : -1);;
+                result = (positive ? 1 : -1);;
             }
             else {
-                comparison = 0;
+                result = 0;
             }
         }
     }
-    return comparison;
+    return result;
 }
 
 BigInteger BigInteger::negate() const
@@ -427,26 +402,6 @@ BigInteger BigInteger::operator%(const BigInteger& numTmp)
     return this->modulus(numTmp);
 }
 
-BigInteger BigInteger::operator<<(const BigInteger& numTmp) const
-{
-    string numTmptwise_val = toString();
-    for (BigInteger i = ZERO; i < numTmp; i++) {
-        numTmptwise_val.push_back('0');
-    }
-    return BigInteger(numTmptwise_val);
-}
-
-BigInteger BigInteger::operator>>(const BigInteger& numTmp) const
-{
-    string numTmptwise_val = toString();
-    for (BigInteger i = ZERO; i < numTmp && numTmptwise_val.length()>0; i++) {
-        numTmptwise_val.pop_back();
-    }
-    if (numTmptwise_val.empty()) {
-        numTmptwise_val.push_back('0');
-    }
-    return BigInteger(numTmptwise_val);
-}
 
 BigInteger& BigInteger::operator+=(const BigInteger& numTmp)
 {
@@ -544,6 +499,14 @@ string BigInteger::toString() const
     return ss.str();
 }
 
+// Дополнительная функция
+BigInteger Factorial(int n) {
+    BigInteger f(1);
+    for (int i = 2; i <= n;i++)
+        f *= i;
+    return f;
+}
+
 using namespace std;
 
 int main()
@@ -555,5 +518,14 @@ int main()
     cout << n / n2 << endl;
     BigInteger n3("-100");
     cout << n3;
+    BigInteger n4;
+    cin >> n4;
+    cout << n4;
+    cout << "Fact" << endl;
+    for (int i = 0; i <= 20; i++) {
+        BigInteger Fib;
+        Fib = Factorial(i);
+        cout << "Fibonacci " << i << " = " << Fib << '\n';
+    }
     return 0;
 }
