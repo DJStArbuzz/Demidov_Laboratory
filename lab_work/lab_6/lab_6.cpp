@@ -33,7 +33,7 @@ public:
     BigInteger operator/(const BigInteger& numTmp);
     BigInteger& operator/=(const BigInteger& numTmp);
     BigInteger operator%(const BigInteger& numTmp);
-    
+
     BigInteger addition(const BigInteger& numTmp) const;
     BigInteger substraction(const BigInteger& numTmp) const;
     BigInteger multiplication(const BigInteger& numTmp) const;
@@ -52,7 +52,7 @@ public:
     bool operator>(const BigInteger& numTmp) const;
     bool operator<=(const BigInteger& numTmp) const;
     bool operator>=(const BigInteger& numTmp) const;
-    
+
     // 4. Вывод в поток и ввод из потока 
     friend ostream& operator<<(ostream& out, const BigInteger& numTmp) {
         out << numTmp.toString();
@@ -91,10 +91,10 @@ const BigInteger BigInteger::TEN = BigInteger("10");
 // Конструктор по умолчанию
 BigInteger::BigInteger()
     : numBI("0"),
-    negaFlag(false){}
+    negaFlag(false) {}
 // Конструктор с int-переменной
 BigInteger::BigInteger(int num)
-    : negaFlag(num < 0){
+    : negaFlag(num < 0) {
     string strNum = to_string(num);
     if (negaFlag) {
         strNum.erase(0, 1);
@@ -103,7 +103,7 @@ BigInteger::BigInteger(int num)
 }
 // Конструктор с long long-переменной
 BigInteger::BigInteger(long long num)
-    : negaFlag(num < 0){
+    : negaFlag(num < 0) {
     string strNum = to_string(num);
     if (negaFlag) {
         strNum.erase(0, 1);
@@ -112,7 +112,7 @@ BigInteger::BigInteger(long long num)
 }
 // Конструктор с string-переменной
 BigInteger::BigInteger(string num)
-: negaFlag(num[0] == '-')
+    : negaFlag(num[0] == '-')
 {
     if (negaFlag) {
         num.erase(0, 1);
@@ -123,7 +123,7 @@ BigInteger::BigInteger(string num)
     numBI = num;
 }
 // Деструктор
-BigInteger::~BigInteger(){}
+BigInteger::~BigInteger() {}
 // Сложение
 BigInteger BigInteger::addition(const BigInteger& numTmp) const
 {
@@ -154,7 +154,7 @@ BigInteger BigInteger::addition(const BigInteger& numTmp) const
 
         int index = 0;
         for (char& s : tmp2) {
-            s = (carry - '0') + (s - '0') + (tmpNum.at(index) - '0') + '0';
+            s = (carry - '0') + (s - '0') + (tmpNum[index] - '0') + '0';
             if (s > '9') {
                 s -= 10;
                 carry = '1';
@@ -190,9 +190,9 @@ BigInteger BigInteger::substraction(const BigInteger& numTmp) const
             result = addition(numTmp.negate());
         }
         else {
-            bool invert_sign = (compare(numTmp) == -1);
-            string sub = (invert_sign ? numTmp.numBI : this->numBI);
-            string removed = (invert_sign ? this->numBI : numTmp.numBI);
+            bool flag = (compare(numTmp) == -1);
+            string sub = (flag ? numTmp.numBI : this->numBI);
+            string removed = (flag ? this->numBI : numTmp.numBI);
 
             int diffLength = abs(int(sub.length() - removed.length()));
             if (sub.size() > removed.size()) {
@@ -206,18 +206,18 @@ BigInteger BigInteger::substraction(const BigInteger& numTmp) const
 
             int index = 0;
             for (char& c : sub) {
-                if (c < removed.at(index)) {
+                if (c < removed[index]) {
                     c += 10;
                     sub[index + 1]--;
                 }
-                c = (c - '0') - (removed.at(index) - '0') + '0';
+                c = (c - '0') - (removed[index] - '0') + '0';
                 index++;
             }
             reverse(sub.begin(), sub.end());
             while (sub.front() == '0' && sub.length() != 1) {
                 sub.erase(0, 1);
             }
-            result = (invert_sign ? BigInteger(sub).negate() : BigInteger(sub));
+            result = (flag ? BigInteger(sub).negate() : BigInteger(sub));
         }
     }
     return result;
@@ -277,23 +277,23 @@ BigInteger BigInteger::division(const BigInteger& numTmp) const
         result = 1;
     }
     else {
-        string divisionnd = this->numBI, quo, curQuo;
-        reverse(divisionnd.begin(), divisionnd.end());
+        string div = this->numBI, quo, curQuo;
+        reverse(div.begin(), div.end());
 
         BigInteger numTmpAbs = numTmp.absolute();
-        while (!divisionnd.empty()) {
-            curQuo.push_back(divisionnd.back());
-            divisionnd.pop_back();
+        while (!div.empty()) {
+            curQuo.push_back(div.back());
+            div.pop_back();
 
-            BigInteger numTmp_divisionnd(curQuo);
-            if (numTmp_divisionnd >= numTmpAbs) {
+            BigInteger divTmp(curQuo);
+            if (divTmp >= numTmpAbs) {
                 BigInteger n = BigInteger(2);
-                while (numTmpAbs.multiplication(n) <= numTmp_divisionnd) {
+                while (numTmpAbs.multiplication(n) <= divTmp) {
                     n++;
                 }
                 n--;
                 quo.append(n.toString());
-                curQuo = numTmp_divisionnd.substraction(numTmpAbs.multiplication(n)).toString();
+                curQuo = divTmp.substraction(numTmpAbs.multiplication(n)).toString();
             }
             else {
                 quo.push_back('0');
@@ -302,7 +302,7 @@ BigInteger BigInteger::division(const BigInteger& numTmp) const
         result = BigInteger(quo);
     }
 
-    bool flagPo = (this->negaFlag && numTmp.negaFlag) 
+    bool flagPo = (this->negaFlag && numTmp.negaFlag)
         || (!this->negaFlag && !numTmp.negaFlag);
     if (!flagPo) {
         result = result.negate();
