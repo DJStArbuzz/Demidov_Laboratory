@@ -481,7 +481,7 @@ bool BigInteger::operator>=(const BigInteger& numTmp) const
 // Дополнительная функция - Факториал
 BigInteger Factorial(int n) {
     BigInteger f(1);
-    for (int i = 2; i <= n;i++)
+    for (int i = 2; i <= n; i++)
         f *= i;
     return f;
 }
@@ -490,13 +490,14 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
     cout << "Лабораторная работа №6\n";
-    cout << "Введем числа n1 = 1000 и n2 = 56:" << endl;
-    BigInteger n1("1000"), n2("56"), n3;
+    cout << "Введем числа n1 = 1001 и n2 = 56:" << endl;
+    BigInteger n1("1001"), n2("56"), n3;
 
-    cout << "n2 - n1 = " << n2 - n1 << endl;
     cout << "n2 + n1 = " << n2 + n1 << endl;
     cout << "n1 - n2 = " << n1 - n2 << endl;
     cout << "n2 / n1 = " << n1 / n2 << endl;
+    cout << "n2 * n1 = " << n1 * n2 << endl;
+
 
     cout << "Введем еще одно число: ";
     cin >> n3;
