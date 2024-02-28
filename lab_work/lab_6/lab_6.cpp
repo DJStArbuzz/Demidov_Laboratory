@@ -62,7 +62,7 @@ public:
     void setNum(string tmpBI) { numBI = tmpBI; }
 
     // Метод toString
-    string toString() const { 
+    string toString() const {
         if (numBI == "0") {
             return "0";
         }
@@ -71,7 +71,7 @@ public:
         if (negaFlag) {
             s = "-";
         }
-        return s + numBI; 
+        return s + numBI;
     };
 
     // Доп. операции
@@ -323,7 +323,7 @@ BigInteger BigInteger::division(const BigInteger& numTmp) const
 BigInteger BigInteger::modulus(const BigInteger& numTmp) const
 {
     BigInteger n1 = (*this), n2 = numTmp, mod;
-    
+
     if (numTmp == ZERO) {
         return BigInteger("None");
     }
@@ -507,8 +507,7 @@ int main()
     cout << "Лабораторная работа №6\n";
     BigInteger n1("-1001"), n2("3"), n3("-100"), n4("0");
 
-    n4 = n2 + n1;
-    cout << "n2 + n1 = " << n4 << " " << n4.isNegative() <<  endl;
+    cout << "n2 + n1 = " << n1 + n2 << endl;
     cout << "n1 - n2 = " << n1 - n2 << endl;
     cout << "n2 / n1 = " << n1 / n2 << endl;
     cout << "n2 * n1 = " << n1 * n2 << endl;
@@ -517,18 +516,14 @@ int main()
     cout << n3 / n4 << endl;
 
     BigInteger n5(10), n6(3);
-    cout << n5 % n6 << " "<<  (10) % (3) << endl;
-   
+    cout << n5 % n6 << " " << (10) % (3) << endl;
     BigInteger n7(-10), n8(3);
     cout << n7 % n8 << " " << (-10) % (3) << endl;
-
-
     BigInteger n9(10), n10(-3);
     cout << n9 % n10 << " " << (10) % (-3) << endl;
-
     BigInteger n11(-10), n12(-3);
     cout << n11 % n12 << " " << (-10) % (-3) << endl;
-    /*
+
     cout << "Введем еще одно число: ";
     cin >> n3;
     cout << n3 << " / " << 23 << " = " << n3 / 23 << "(" << n3 % 23 << ")" << endl;
@@ -543,5 +538,5 @@ int main()
         Fib = Factorial(i);
         cout << "Факториал " << i << " = " << Fib << '\n';
     }
-    return 0;*/
+    return 0;
 }
