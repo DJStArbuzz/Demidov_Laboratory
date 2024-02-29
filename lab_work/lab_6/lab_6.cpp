@@ -506,7 +506,7 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
     cout << "Лабораторная работа №6\n";
-    BigInteger n1("-1001"), n2("3"), n3("-100"), n4("0");
+    BigInteger n1("-1001"), n2("3"), n3("1"), n4("0");
 
     cout << "n2 + n1 = " << n1 + n2 << endl;
     cout << "n1 - n2 = " << n1 - n2 << endl;
@@ -522,18 +522,22 @@ int main()
     cout << n3 / n4 << endl;
 
     cout << "\n\n\n\n";
-    BigInteger n5(10), n6(4);
+
+    BigInteger n5(10), n6(3);
     cout << "10 % 3: ";
-    cout << n5 % n6 << " " << (10) % (4) << endl;
+    cout << n5 % n6 << " " << (10) % (3) << endl;
+
+    BigInteger n7(-10), n8(3);
     cout << "\n-10 % 3: ";
-    BigInteger n7(-10), n8(4);
-    cout << n7 % n8 << " " << (-10) % (4) << endl;
-    BigInteger n9(10), n10(-4);
+    cout << n7 % n8 << " " << (-10) % (3) << endl;
+    
+    BigInteger n9(10), n10(-3);
     cout << "\n10 % (-3): ";
-    cout << n9 % n10 << " " << (10) % (-4) << endl;
+    cout << n9 % n10 << " " << (10) % (-3) << endl;
+ 
+    BigInteger n11(-10), n12(-3);
     cout << "\n-10 % (-3): ";
-    BigInteger n11(-10), n12(-4);
-    cout << n11 % n12 << " " << (-10) % (-4) << endl;
+    cout << n11 % n12 << " " << (-10) % (-3) << endl;
 
     cout << "Введем еще одно число: ";
     cin >> n3;
