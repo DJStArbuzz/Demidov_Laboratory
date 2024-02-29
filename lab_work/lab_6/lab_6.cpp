@@ -21,7 +21,7 @@ public:
     // Константы
     static const BigInteger ZERO;
     static const BigInteger ONE;
-    static const BigInteger TEN;
+    static const BigInteger NONE;
 
     // Операции 
     BigInteger operator+(const BigInteger& numTmp);
@@ -97,6 +97,7 @@ istream& operator >> (istream& in, BigInteger& tmp)
 // Константы "0", "1", "10"
 const BigInteger BigInteger::ZERO = BigInteger("0");
 const BigInteger BigInteger::ONE = BigInteger("1");
+const BigInteger BigInteger::NONE = BigInteger("NONE");
 // Конструктор по умолчанию
 BigInteger::BigInteger()
     : numBI("0"),
@@ -277,10 +278,10 @@ BigInteger BigInteger::division(const BigInteger& numTmp) const
 {
     BigInteger result;
 
-    if (numTmp == ZERO) {
-        return BigInteger("None");
+    if (numTmp == ZERO || numTmp == NONE || (*this) == NONE) {
+        return NONE;
     }
-    if (numTmp == ONE) {
+    else if (numTmp == ONE) {
         result = (*this);
     }
     else if (compare(numTmp) == 0) {
@@ -512,17 +513,27 @@ int main()
     cout << "n2 / n1 = " << n1 / n2 << endl;
     cout << "n2 * n1 = " << n1 * n2 << endl;
     cout << "n2 % n1 = " << n1 % n2 << endl;
-
+    cout << "\n\n\n\n";
+    
+    BigInteger n22;
+    n22 = n3 / n4;
+    cout << n22 << endl;
+    cout << n22 / n1 << endl;
     cout << n3 / n4 << endl;
 
-    BigInteger n5(10), n6(3);
-    cout << n5 % n6 << " " << (10) % (3) << endl;
-    BigInteger n7(-10), n8(3);
-    cout << n7 % n8 << " " << (-10) % (3) << endl;
-    BigInteger n9(10), n10(-3);
-    cout << n9 % n10 << " " << (10) % (-3) << endl;
-    BigInteger n11(-10), n12(-3);
-    cout << n11 % n12 << " " << (-10) % (-3) << endl;
+    cout << "\n\n\n\n";
+    BigInteger n5(10), n6(4);
+    cout << "10 % 3: ";
+    cout << n5 % n6 << " " << (10) % (4) << endl;
+    cout << "\n-10 % 3: ";
+    BigInteger n7(-10), n8(4);
+    cout << n7 % n8 << " " << (-10) % (4) << endl;
+    BigInteger n9(10), n10(-4);
+    cout << "\n10 % (-3): ";
+    cout << n9 % n10 << " " << (10) % (-4) << endl;
+    cout << "\n-10 % (-3): ";
+    BigInteger n11(-10), n12(-4);
+    cout << n11 % n12 << " " << (-10) % (-4) << endl;
 
     cout << "Введем еще одно число: ";
     cin >> n3;
