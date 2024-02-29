@@ -4,6 +4,7 @@
 
 using namespace std;
 
+// 1-ое задание: класс BigInteger
 class BigInteger
 {
 private:
@@ -19,9 +20,9 @@ public:
     ~BigInteger();
 
     // Константы
-    static const BigInteger ZERO;
-    static const BigInteger ONE;
-    static const BigInteger NONE;
+    static const BigInteger ZERO_BI;
+    static const BigInteger ONE_BI;
+    static const BigInteger NONE_BI;
 
     // Операции 
     BigInteger operator+(const BigInteger& numTmp);
@@ -38,6 +39,7 @@ public:
     BigInteger substraction(const BigInteger& numTmp) const;
     BigInteger multiplication(const BigInteger& numTmp) const;
     BigInteger division(const BigInteger& numTmp) const;
+    BigInteger modulus(const BigInteger& numTmp) const;
 
     // Префиксный и постфискный инкремент и декремент
     BigInteger& operator++(); // преф
@@ -79,7 +81,7 @@ public:
     bool isPositive() const;
     bool isNegative() const;
     void swap(BigInteger& numTmp);
-    BigInteger modulus(const BigInteger& numTmp) const;
+
     BigInteger negate() const;
     BigInteger absolute() const;
 
@@ -95,9 +97,9 @@ istream& operator >> (istream& in, BigInteger& tmp)
     return in;
 }
 // Константы "0", "1", "10"
-const BigInteger BigInteger::ZERO = BigInteger("0");
-const BigInteger BigInteger::ONE = BigInteger("1");
-const BigInteger BigInteger::NONE = BigInteger("NONE");
+const BigInteger BigInteger::ZERO_BI = BigInteger("0");
+const BigInteger BigInteger::ONE_BI = BigInteger("1");
+const BigInteger BigInteger::NONE_BI = BigInteger("NONE_BI");
 // Конструктор по умолчанию
 BigInteger::BigInteger()
     : numBI("0"),
@@ -278,10 +280,10 @@ BigInteger BigInteger::division(const BigInteger& numTmp) const
 {
     BigInteger result;
 
-    if (numTmp == ZERO || numTmp == NONE || (*this) == NONE) {
-        return NONE;
+    if (numTmp == ZERO_BI || numTmp == NONE_BI || (*this) == NONE_BI) {
+        return NONE_BI;
     }
-    else if (numTmp == ONE) {
+    else if (numTmp == ONE_BI) {
         result = (*this);
     }
     else if (compare(numTmp) == 0) {
@@ -325,8 +327,8 @@ BigInteger BigInteger::modulus(const BigInteger& numTmp) const
 {
     BigInteger n1 = (*this), n2 = numTmp, mod;
 
-    if (numTmp == ZERO) {
-        return BigInteger("None");
+    if (numTmp == ZERO_BI) {
+        return BigInteger("NONE_BI");
     }
     mod = substraction(numTmp.multiplication(division(numTmp)));
     return mod;
@@ -442,25 +444,25 @@ BigInteger BigInteger::operator%(const BigInteger& numTmp)
 // Декремент - префиксный и постфискный
 BigInteger& BigInteger::operator--()
 {
-    (*this) = substraction(ONE);
+    (*this) = substraction(ONE_BI);
     return (*this);
 }
 BigInteger BigInteger::operator--(int)
 {
     BigInteger before_minus = (*this);
-    (*this) = substraction(ONE);
+    (*this) = substraction(ONE_BI);
     return before_minus;
 }
 // Инкремент - префиксный и постфискный
 BigInteger& BigInteger::operator++()
 {
-    (*this) = addition(ONE);
+    (*this) = addition(ONE_BI);
     return (*this);
 }
 BigInteger BigInteger::operator++(int)
 {
     BigInteger before_plus = (*this);
-    (*this) = addition(ONE);
+    (*this) = addition(ONE_BI);
     return before_plus;
 }
 // Операторы сравнения
