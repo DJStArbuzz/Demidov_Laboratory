@@ -87,7 +87,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glColor3f(1.0, 0.0, 0.0);
-	glPointSize(6.0);
+	glPointSize(10.0);
 
 
 	vector<Point> list = {
@@ -102,7 +102,6 @@ void display(void)
 		glVertex2i(list[j].x, list[j].y);
 	}
 	glEnd();
-	glColor3f(0.0, 1.0, 0.0);
 	
 	map<int, vector<int>> arrays = createTravelPos();
 
@@ -145,12 +144,21 @@ void display(void)
 		int negaFlagY = negaFlag(first.y, second.y);
 
 		glBegin(GL_POINTS);
-		double tmpX = negaFlagX * dist, tmpY = negaFlagY * dist;
-		for (int j = 0; j <= dist / newDist; j++)
+		
+		glColor3f(0.0, 1.0, 0.0);
+		glPointSize(6.0);
+		double tmpX = negaFlagX * newDist, tmpY = negaFlagY * newDist;
+		for (int j = 0; j < dist / newDist; j++)
 		{
 			glVertex2i(first.x + tmpX, first.y + tmpY);
-			tmpX += dist * negaFlagX;
-			tmpY += dist * negaFlagY;
+			cout << first.x + tmpX << " " << first.y + tmpY << endl;
+			tmpX += newDist * negaFlagX;
+			tmpY += newDist * negaFlagY;
+
+			if ((first.x + tmpX > second.x && negaFlagX == 1) || (first.y + tmpY > second.y && negaFlagY == 1) ||
+				(first.x + tmpX < second.x && negaFlagX == -1) || (first.y + tmpY < second.y && negaFlagY == -1) ){
+				break;
+			}
 		}
 
 		glEnd();
