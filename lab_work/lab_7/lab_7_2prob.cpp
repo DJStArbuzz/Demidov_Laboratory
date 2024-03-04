@@ -94,7 +94,7 @@ void display(void)
 		Point(50.0, 50.0),
 		Point(50.0, 100.0),
 		Point(100.0, 100.0),
-		Point(100.0, 50.0)
+		Point(150.0, 75.0)
 	};
 
 	glBegin(GL_POINTS);
@@ -113,7 +113,6 @@ void display(void)
 		for (int j = 1; j <= N; j++) {
 			if (count(arrays[j].begin(), arrays[j].end(), i) == 1)
 			{
-
 				posFirst = j - 1;
 				break;
 			}
@@ -134,6 +133,11 @@ void display(void)
 		double dist = distance(first, second);
 		double newDist = dist * R;
 
+		glBegin(GL_LINES);
+		glVertex2i(first.x, first.y);
+		glVertex2i(second.x, second.y);
+		glEnd();
+
 		cout << "a: " << first.x << " " << first.y << " " << posFirst << endl;
 		cout << "b: " << second.x << " " << second.y << " " << posSecond << endl;
 		cout << dist << " dist" << endl;
@@ -144,21 +148,17 @@ void display(void)
 		int negaFlagY = negaFlag(first.y, second.y);
 
 		glBegin(GL_POINTS);
-		
-		glColor3f(0.0, 1.0, 0.0);
 		glPointSize(6.0);
-		double tmpX = negaFlagX * newDist, tmpY = negaFlagY * newDist;
-		for (int j = 0; j < dist / newDist; j++)
-		{
-			glVertex2i(first.x + tmpX, first.y + tmpY);
-			cout << first.x + tmpX << " " << first.y + tmpY << endl;
-			tmpX += newDist * negaFlagX;
-			tmpY += newDist * negaFlagY;
+		glColor3f(0.0, 1.0, 0.0);
 
-			if ((first.x + tmpX > second.x && negaFlagX == 1) || (first.y + tmpY > second.y && negaFlagY == 1) ||
-				(first.x + tmpX < second.x && negaFlagX == -1) || (first.y + tmpY < second.y && negaFlagY == -1) ){
-				break;
-			}
+		double dx = abs(second.x - first.x) / (pow(R, -1)) * negaFlagX;
+		double dy = abs(second.y - first.y) / (pow(R, -1)) * negaFlagY;
+
+		for (int j = 1; j <= int(pow(R, -1)) - 1; j++)
+		{
+			glVertex2i(first.x + dx * j, first.y + dy * j);
+			cout << first.x + dx * j << " " << first.y + dy * j << endl;
+			
 		}
 
 		glEnd();
@@ -171,14 +171,19 @@ void display(void)
 int main(int argc, char* argv[])
 {
 	/*
-	Построить ломанную по указаниям
+	Построить фигуру и найти ее площадь методом Монте-Карло
+	 / x^7 + 2y^3 < 1
+	 | x + y > -1
+	<| -2 < x < 2
+	 | -2 < y > 2
+	 \
 	*/
 	setlocale(LC_ALL, "Russian");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Задание 2, вариант 30");
+	glutCreateWindow("Задание 3, вариант 19");
 	init2D(0.0, 0.0, 0.0);
 	glutDisplayFunc(display);
 	glutMainLoop();
