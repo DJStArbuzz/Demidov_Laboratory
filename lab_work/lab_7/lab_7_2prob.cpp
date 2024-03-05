@@ -24,9 +24,9 @@ struct Point {
 
 	Point(double xTmp, double yTmp);
 };
-Point::Point(double xTmp, double yTmp):
+Point::Point(double xTmp, double yTmp) :
 	x(xTmp),
-	y(yTmp){}
+	y(yTmp) {}
 
 
 void init2D(float r, float g, float b)
@@ -83,7 +83,7 @@ int negaFlag(double first, double second) {
 
 void display(void)
 {
-	
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glColor3f(1.0, 0.0, 0.0);
@@ -98,16 +98,16 @@ void display(void)
 	};
 
 	glBegin(GL_POINTS);
-	for (int j = 0; j < list.size(); j++){
+	for (int j = 0; j < list.size(); j++) {
 		glVertex2i(list[j].x, list[j].y);
 	}
 	glEnd();
-	
+
 	map<int, vector<int>> arrays = createTravelPos();
 
 	for (int i = 1; i < M; i++)
 	{
-		cout << i << " этап" << endl;
+		cout << i << " этап:\n";
 		int posFirst = 0, posSecond = 0;
 
 		for (int j = 1; j <= N; j++) {
@@ -131,7 +131,6 @@ void display(void)
 
 		Point first = list[posFirst], second = list[posSecond];
 		double dist = distance(first, second);
-		double newDist = dist * R;
 
 		glBegin(GL_LINES);
 		glVertex2i(first.x, first.y);
@@ -140,9 +139,7 @@ void display(void)
 
 		cout << "a: " << first.x << " " << first.y << " " << posFirst << endl;
 		cout << "b: " << second.x << " " << second.y << " " << posSecond << endl;
-		cout << dist << " dist" << endl;
-		cout << newDist << " new dist" << endl;
-		cout << dist / newDist << " count " << endl;
+		cout << dist << " расстояние" << endl;
 
 		int negaFlagX = negaFlag(first.x, second.x);
 		int negaFlagY = negaFlag(first.y, second.y);
@@ -158,28 +155,28 @@ void display(void)
 		{
 			glVertex2i(first.x + dx * j, first.y + dy * j);
 			cout << first.x + dx * j << " " << first.y + dy * j << endl;
-			
+
 		}
 
 		glEnd();
 		glFlush();
 
-		cout << "\nend\n\n\n";
+		cout << "конец этапа\n\n";
 	}
 }
 
 int main(int argc, char* argv[])
 {
 	/*
- 	Построить "ломанную" по точкам. Точек = N, Операций = M - 1.
-  	Коэффициент подобия = 0.5
+	Построить "ломанную" по точкам. Точек = N, Операций = M - 1.
+	Коэффициент подобия = 0.5
 	*/
 	setlocale(LC_ALL, "Russian");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Задание 3, вариант 19");
+	glutCreateWindow("Задание 2, вариант 30");
 	init2D(0.0, 0.0, 0.0);
 	glutDisplayFunc(display);
 	glutMainLoop();
