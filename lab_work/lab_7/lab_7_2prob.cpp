@@ -144,16 +144,16 @@ void display(void)
 		int negaFlagX = negaFlag(first.x, second.x);
 		int negaFlagY = negaFlag(first.y, second.y);
 
-		glBegin(GL_POINTS);
-		glPointSize(6.0);
+		glPointSize(5.0);
 		glColor3f(0.0, 1.0, 0.0);
 
 		Point tmpFirst(first.x, first.y);
 
-		while (dist < 5.0) {
+		while (dist >= 0.005) {
 			double dx = abs(second.x - tmpFirst.x) / (pow(R, -1)) * negaFlagX;
 			double dy = abs(second.y - tmpFirst.y) / (pow(R, -1)) * negaFlagY;
 
+			glBegin(GL_POINTS);
 			for (int j = 1; j <= int(pow(R, -1)) - 1; j++)
 			{
 				glVertex2i(tmpFirst.x + dx * j, tmpFirst.y + dy * j);
