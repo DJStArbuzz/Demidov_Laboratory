@@ -32,10 +32,14 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_POLYGON);
-    
-    int k = 0, N = 0, S = 16;
-    for (float x = -2; x <= 2; x += 0.005) {
-        for (float y = -2; y <= 2; y += 0.005) {
+
+    pair<double, double> f, s;
+    f.first = -2.0, f.second = -2.0;
+    s.first = 2.0, s.second = 2.0;
+
+    int k = 0, N = 0, S = (abs(s.first) + abs(f.first)) * (abs(s.second) + abs(f.second));
+    for (float x = min(s.first, f.first); x <= max(s.first, f.first); x += 0.005) {
+        for (float y = min(s.second, f.second); y <= max(s.second, f.second); y += 0.005) {
             if (check(x, y)) {
                 glVertex2f(x / 2, y / 2);
                 k++;
