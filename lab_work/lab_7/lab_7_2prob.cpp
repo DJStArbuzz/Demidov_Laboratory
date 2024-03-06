@@ -148,17 +148,25 @@ void display(void)
 		glPointSize(6.0);
 		glColor3f(0.0, 1.0, 0.0);
 
-		double dx = abs(second.x - first.x) / (pow(R, -1)) * negaFlagX;
-		double dy = abs(second.y - first.y) / (pow(R, -1)) * negaFlagY;
+		Point tmpFirst(first.x, first.y);
 
-		for (int j = 1; j <= int(pow(R, -1)) - 1; j++)
-		{
-			glVertex2i(first.x + dx * j, first.y + dy * j);
-			cout << first.x + dx * j << " " << first.y + dy * j << endl;
+		while (dist < 5.0) {
+			double dx = abs(second.x - tmpFirst.x) / (pow(R, -1)) * negaFlagX;
+			double dy = abs(second.y - tmpFirst.y) / (pow(R, -1)) * negaFlagY;
 
+			for (int j = 1; j <= int(pow(R, -1)) - 1; j++)
+			{
+				glVertex2i(tmpFirst.x + dx * j, tmpFirst.y + dy * j);
+				cout << tmpFirst.x + dx * j << " " << tmpFirst.y + dy * j << endl;
+
+			}
+
+			glEnd();
+
+			tmpFirst.x += dx * (int(pow(R, -1)) - 1);
+			tmpFirst.y += dy * (int(pow(R, -1)) - 1);
+			dist = distance(tmpFirst, second);
 		}
-
-		glEnd();
 		glFlush();
 
 		cout << "конец этапа\n\n";
