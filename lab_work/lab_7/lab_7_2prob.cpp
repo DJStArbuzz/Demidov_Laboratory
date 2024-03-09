@@ -86,17 +86,16 @@ void display(void)
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glColor3f(1.0, 0.0, 0.0);
-	glPointSize(10.0);
-
+	glColor3f(3.0, 0.0, 0.0);
 
 	vector<Point> list = {
-		Point(50.0, 50.0),
-		Point(50.0, 100.0),
-		Point(100.0, 100.0),
-		Point(150.0, 75.0)
+		Point(25.0, 25.0),
+		Point(60.0, 25.0),
+		Point(150.0, 100.0),
+		Point(50.0, 150.0)
 	};
 
+	glPointSize(6.0);
 	glBegin(GL_POINTS);
 	for (int j = 0; j < list.size(); j++) {
 		glVertex2i(list[j].x, list[j].y);
@@ -144,7 +143,6 @@ void display(void)
 		int negaFlagX = negaFlag(first.x, second.x);
 		int negaFlagY = negaFlag(first.y, second.y);
 
-		glPointSize(5.0);
 		glColor3f(0.0, 1.0, 0.0);
 
 		Point tmpFirst(first.x, first.y);
@@ -154,6 +152,7 @@ void display(void)
 			double dy = abs(second.y - tmpFirst.y) / (pow(R, -1)) * negaFlagY;
 
 			glBegin(GL_POINTS);
+			glPointSize(6.0);
 			for (int j = 1; j <= int(pow(R, -1)) - 1; j++)
 			{
 				glVertex2i(tmpFirst.x + dx * j, tmpFirst.y + dy * j);
