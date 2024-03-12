@@ -6,11 +6,6 @@
 #include <random>
 #include "glut.h"
 
-const int N = 100; // количество точек для отрисовки
-const double a = 0.0; // нижний предел интеграла
-const double b = 10.0; // верхний предел интеграла
-const double pi = acos(-1.0);
-
 using namespace std;
 
 typedef pair<double, double> pdd;
@@ -32,13 +27,6 @@ Point::Point(double xTmp, double yTmp) :
 */
 double func1(double x) {
 	return 1 / sqrt(1 + exp(x));
-}
-/*	5pi/2 /
-		  | x*sin(2x)dx
-	-pi/2 /
-*/
-double func2(double x) {
-	return x * sin(2 * x);
 }
 
 void init2D(float r, float g, float b)
@@ -74,13 +62,6 @@ float compute_integral(int n) {
 		sum += (func1(x) + func1(x + tmp)) * tmp / 2;
 	}
 	return sum;
-}
-
-void init() {
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(a, b, 0.0, 1.0);
 }
 
 int main(int argc, char** argv) {
