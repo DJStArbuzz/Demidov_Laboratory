@@ -103,7 +103,13 @@ void display(void)
 	glEnd();
 
 	map<int, vector<int>> arrays = createTravelPos();
+	vector<Point> newList = { 
+		Point(25.0, 25.0),
+		Point(60.0, 25.0),
+		Point(150.0, 100.0),
+		Point(50.0, 150.0) };
 
+	int K = 10000;
 	for (int i = 1; i < M; i++)
 	{
 		cout << i << " этап:\n";
@@ -122,42 +128,34 @@ void display(void)
 				break;
 			}
 		}
-
-
 		if (posFirst == posSecond) {
 			continue;
 		}
 
 		Point first = list[posFirst], second = list[posSecond];
-		double dist = distance(first, second);
-
-		glBegin(GL_LINES);
+		/*glBegin(GL_LINES);
 		glVertex2i(first.x, first.y);
 		glVertex2i(second.x, second.y);
-		glEnd();
-
+		glEnd();*/
+		double dist = distance(first, second);
 		cout << "a: " << first.x << " " << first.y << " " << posFirst << endl;
 		cout << "b: " << second.x << " " << second.y << " " << posSecond << endl;
 		cout << dist << " расстояние" << endl;
-
 		int negaFlagX = negaFlag(first.x, second.x);
 		int negaFlagY = negaFlag(first.y, second.y);
-
 		glColor3f(0.0, 1.0, 0.0);
-
 		Point tmpFirst(first.x, first.y);
-
 		while (dist >= 0.005) {
 			double dx = abs(second.x - tmpFirst.x) / (pow(R, -1)) * negaFlagX;
 			double dy = abs(second.y - tmpFirst.y) / (pow(R, -1)) * negaFlagY;
-
 			glBegin(GL_POINTS);
 			glPointSize(6.0);
 			for (int j = 1; j <= int(pow(R, -1)) - 1; j++)
 			{
 				glVertex2i(tmpFirst.x + dx * j, tmpFirst.y + dy * j);
 				cout << tmpFirst.x + dx * j << " " << tmpFirst.y + dy * j << endl;
-
+				K--;
+				newList.push_back(Point(tmpFirst.x + dx * j, tmpFirst.y + dy * j));
 			}
 
 			glEnd();
@@ -166,10 +164,74 @@ void display(void)
 			tmpFirst.y += dy * (int(pow(R, -1)) - 1);
 			dist = distance(tmpFirst, second);
 		}
-		glFlush();
 
 		cout << "конец этапа\n\n";
 	}
+
+	while (K > 0) {
+		if (K < 0) {
+			break;
+		}
+		vector<Point> newList2;
+		for (int i = 0; i < newList.size(); i++) {
+			for (int l = i + 1; l < newList.size(); l++) {
+				Point first = newList[i], second = newList[l];
+				/*
+				glBegin(GL_LINES);
+				glVertex2i(first.x, first.y);
+				glVertex2i(second.x, second.y);
+				glEnd();
+				*/
+				double dist = distance(first, second);
+
+				int negaFlagX = negaFlag(first.x, second.x);
+				int negaFlagY = negaFlag(first.y, second.y);
+
+				while (dist >= 0.005) {
+					double dx = abs(second.x - first.x) / (pow(R, -1)) * negaFlagX;
+					double dy = abs(second.y - first.y) / (pow(R, -1)) * negaFlagY;
+
+					glBegin(GL_POINTS);
+					glPointSize(6.0);
+					for (int r = 1; r <= int(pow(R, -1)) - 1; r++)
+					{
+						glVertex2i(first.x + dx * r, first.y + dy * r);
+						cout << first.x + dx * r << " " << first.y + dy * r << endl;
+						K -= 1;
+						if (K < 0) {
+							break;
+						}
+						cout << K <<" " << newList.size() <<  endl << endl;
+						newList2.push_back(Point(first.x + dx * r, first.y + dy * r));
+					}
+
+					glEnd();
+
+					first.x += dx * (int(pow(R, -1)) - 1);
+					first.y += dy * (int(pow(R, -1)) - 1);
+					dist = distance(first, second);
+				}
+				if (K < 0) {
+					break;
+				}
+			}
+			if (K < 0) {
+				break;
+			}
+		}
+
+
+		for (int i = 0; i < newList2.size(); i++) {
+			newList.push_back(newList2[i]);
+		}
+
+	}
+
+	cout << " " << newList.size() << endl;
+	for (int i = 0; i < newList.size(); i++) {
+		cout << newList[i].x << " " << newList[i].y << endl;
+	}
+	glFlush();
 }
 
 int main(int argc, char* argv[])
