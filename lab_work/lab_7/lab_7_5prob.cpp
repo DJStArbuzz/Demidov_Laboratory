@@ -19,6 +19,10 @@ struct Point {
     double y = 0.0;
     int figure = 0;
     int index = 0;
+    int row = 0;
+    int col = 0;
+    int dist = 1;
+
     /*
         x, y   - координаты позиции точки;
         figure - указатель на фигуру: 0 - пусто, 1 - король, 2 - конь
@@ -80,6 +84,9 @@ void renderText(float x, float y, string text) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
     }
 }
+bool isValid(int x, int y, int dist) {
+    return x >= 0 && x < dist && y >= 0 && y < 8;
+}
 
 
 void display(void)
@@ -108,6 +115,7 @@ void display(void)
     double mi = 100;
 
     int in = 2;
+    int rIn = 0, cIn = 0;
     cout << 1;
     while (n2 <= n) {
         if (in == nextBeg) {
@@ -121,6 +129,8 @@ void display(void)
             beg -= 50;
             n2++;
 
+            cIn = 0;
+            rIn++;
             if (n2 > n) {
                 break;
             }
@@ -132,14 +142,28 @@ void display(void)
         tmpP.y = 850 - mi * cntH;
         tmpP.index = in;
         tmpP.figure = 0;
+        tmpP.row = rIn;
+        tmpP.col = cIn;
+        tmpP.dist = n2;
+        cIn++;
         list.push_back(tmpP);
         cout << in << ' ';
+
         in++;
     }
-        
+
     list[5].figure = 1;
     list[24].figure = 2;
- 
+
+    for (int i = 0; i < list.size(); i++) {
+        cout << "index: " << list[i].index << endl;
+        cout << "row: " << list[i].row << endl;
+        cout << "col: " << list[i].col << endl;
+        cout << "figure: " << list[i].figure << endl;
+        cout << "dist: " << list[i].dist << endl;
+        cout << endl;
+    }
+
     for (int i = 0; i < list.size(); i++) {
         cout << list[i].index;
         glColor3f(3.0, 0.0, 0.0);
@@ -162,6 +186,24 @@ void display(void)
         glEnd();
     }
 
+    int knightX = 3, knightY = 6; // координаты коня
+    vector<pair<int, int>> moves = { {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2} };
+
+    for (auto move1 : moves)
+    {
+        int nextX = knightX + move1.first;
+        int nextY = knightY + move1.second;
+        if (isValid(nextX, nextY, dist)) {
+            cout << "(" << nextX << "," << nextY << ")" << endl;
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (list[i].row == nextY && list[i].col== nextX) {
+                    renderText(list[i].x, list[i].y, "XYI");
+                    break;
+                }
+            }
+        }
+    }
     cout << "\n\n\n";
     cout << dist << "\n\n\n";
 
@@ -170,8 +212,7 @@ void display(void)
 
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]){
     setlocale(LC_ALL, "Russian");
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
