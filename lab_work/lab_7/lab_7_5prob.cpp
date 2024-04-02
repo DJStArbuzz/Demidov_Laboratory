@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include <random>
+#include <sstream>
 #include "glut.h"
 
 const int WIDTH = 1000;
@@ -17,7 +18,7 @@ struct Point {
     double x = 0.0;
     double y = 0.0;
     int figure = 0;
-    int index  = 0;
+    int index = 0;
     /*
         x, y   - координаты позиции точки;
         figure - указатель на фигуру: 0 - пусто, 1 - король, 2 - конь
@@ -72,12 +73,14 @@ void Generate_points(vector<Point>& A, int n) {
     glEnd();
 }
 
-void renderBitmapString(float x, float y, const char* string)
-{
-    glRasterPos3f(x, y, 0);
-    glutBitmapCharacter(FONT, string[0]);
-    glutBitmapCharacter(FONT, string[1]);
+void renderText(float x, float y, string text) {
+    glRasterPos2f(x, y);
+
+    for (int i = 0; i < text.size(); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
+    }
 }
+
 
 void display(void)
 {
@@ -86,25 +89,28 @@ void display(void)
 
     glPointSize(6.0);
 
-    int n = 36;
+    int n = 10, n2 = 1;
 
     int up = 2;
     int nextBeg = 2;
     int dist = 1;
 
-    vector<Point> list(n);
-    list[0].index = 1;
-    list[0].x = 500;
-    list[0].y = 850;
+    vector<Point> list;
+    Point first;
+    first.index = 1;
+    first.x = 500;
+    first.y = 850;
+    list.push_back(first);
 
-    cout << 1;
     double distB = 100;
     int cntW = 0, cntH = 0;
     double beg = 400;
     double mi = 100;
 
-    for (int i = 2; i <= n; i++) {
-        if (i == nextBeg) {
+    int in = 2;
+    cout << 1;
+    while (n2 <= n) {
+        if (in == nextBeg) {
             cout << '\n';
             dist++;
             nextBeg += up;
@@ -113,31 +119,40 @@ void display(void)
             cntH++;
             distB += mi;
             beg -= 50;
+            n2++;
+
+            if (n2 > n) {
+                break;
+            }
         }
-        list[i - 1].x = beg + (distB / dist) * cntW;
+
+        Point tmpP;
+        tmpP.x = beg + (distB / dist) * cntW;
         cntW++;
-        list[i - 1].y = 850 - mi * cntH;
-        list[i - 1].index = i;
-        list[i - 1].figure = 0;
-        cout << i << ' ';
+        tmpP.y = 850 - mi * cntH;
+        tmpP.index = in;
+        tmpP.figure = 0;
+        list.push_back(tmpP);
+        cout << in << ' ';
+        in++;
     }
+        
+    list[5].figure = 1;
+    list[24].figure = 2;
  
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < list.size(); i++) {
         cout << list[i].index;
         glColor3f(3.0, 0.0, 0.0);
 
         string tmp = "--";
         if (list[i].figure == 0) {
-            tmp[0] = char(list[i].index % 10);
-            tmp[1] = char(list[i].index - int(tmp[0] * 10)) ;
+            tmp = to_string(list[i].index);
         }
         else {
-            tmp[0] = '-';
-            tmp[1] = (list[i].figure == 1) ? 'K' : 'H';
+            tmp = (list[i].figure == 1) ? '-K' : '-H';
         }
-
-        renderBitmapString(list[i].x, list[i].y, tmp);
-
+        cout << tmp << endl;
+        renderText(list[i].x, list[i].y, tmp);
         glBegin(GL_LINE_LOOP);
         glColor3f(1.0, 1.0, 0.0);
         glVertex3f(list[i].x - mi / 2, list[i].y - mi / 2, 0);
@@ -156,7 +171,7 @@ void display(void)
 }
 
 int main(int argc, char* argv[])
-{   
+{
     setlocale(LC_ALL, "Russian");
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
