@@ -187,7 +187,15 @@ void display(void)
     }
 
     int knightX = 3, knightY = 6; // координаты коня
-    vector<pair<int, int>> moves = { {-2, -1}, {-2, 1}, {2, -1}, {2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2} };
+    vector<pair<int, int>> moves = 
+     {  {-2, -2}, 
+        {-2, 1}, 
+        {2, -2},
+        {2, 2}, 
+        {-1, -2}, 
+        {-1, 2},
+        {1, -2}, 
+        {1, 3} };
 
     for (auto move1 : moves)
     {
