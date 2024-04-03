@@ -349,7 +349,7 @@ void display(void)
     Node dest = { list[need].row, list[need].col };
     fill_cell(list[need], mi);
     create_table(list, mi);
-    findShortestDistance(n, src, dest, list, mi);
+    if (src.x != dest.y && src.y != dest.y) { findShortestDistance(n, src, dest, list, mi); }
 
 
     glColor3f(0.0, 0.0, 1.0);
