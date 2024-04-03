@@ -15,7 +15,7 @@ const double R = 0.5;
 
 using namespace std;
 
-vector<vector<int>> movesHorse ={
+vector<vector<int>> movesHorse = {
     {-3, -1, -1},
     { 2, -1, -1},
     { 3,  1,  1},
@@ -27,9 +27,9 @@ vector<vector<int>> movesHorse ={
     {-1, -3, -3},
     {-2, -3, -3},
     { 1,  3,  3},
-    { 2,  3,  3},};
+    { 2,  3,  3}, };
 
-vector<vector<int>> movesKing ={ 
+vector<vector<int>> movesKing = {
     { 0,  1,  1},
     { 1,  1,  1},
     {-1,  0,  0},
@@ -96,7 +96,7 @@ bool isValid(int x, int y, int dist) {
 }
 
 void fill_cell(Point point, double mi) {
-    glBegin(GL_QUADS);   
+    glBegin(GL_QUADS);
     glColor3f(3.0, 0.0, 0.0);
     glVertex3f(point.x - mi / 2, point.y - mi / 2, 0);
     glVertex3f(point.x - mi / 2, point.y + mi / 2, 0);
@@ -159,7 +159,7 @@ struct Node
 };
 
 
-int findShortestDistance(int N, Node s, Node dest, vector<Point> &list, double mi)
+int findShortestDistance(int N, Node s, Node dest, vector<Point>& list, double mi)
 {
     Node src = s;
     s.path.push_back({ src.x, src.y });
@@ -168,6 +168,9 @@ int findShortestDistance(int N, Node s, Node dest, vector<Point> &list, double m
     queue<Node> q;
     q.push(src);
 
+    if (s.x == dest.x && s.y == dest.y) {
+        cout << "Length path: " << 0 << endl;
+    }
     while (!q.empty())
     {
         Node node = q.front();
@@ -180,9 +183,6 @@ int findShortestDistance(int N, Node s, Node dest, vector<Point> &list, double m
         if (x == dest.x && y == dest.y) {
             cout << "\n\n\n\n\n";
             cout << "Length path: " << dist << endl;
-            node.path.push_back({ dest.x, dest.y });
-            cout << dest.x << " " << endl;
-            
             vector<Point> list2;
             for (int i = 0; i < node.path.size(); i++) {
                 for (int j = 0; j < list.size(); j++) {
@@ -220,7 +220,7 @@ int findShortestDistance(int N, Node s, Node dest, vector<Point> &list, double m
                 if (isValid(x1, y1, N + movesKing[i][2])) {
                     Node nextNode = { x1, y1, dist + 1 };
                     nextNode.path = node.path;
-                    nextNode.path.push_back({ x1, y1 }); 
+                    nextNode.path.push_back({ x1, y1 });
                     q.push(nextNode);
                 }
             }
@@ -266,9 +266,9 @@ void display(void)
     cout << "Введите максимальную возможную длину : ";
     cin >> n;
     cout << "Введите позицию коня на пирамидной доске: ";
-    cin >> nKing;
-    cout << "Введите позицию короля на пирамидной доске:   ";
     cin >> nHorse;
+    cout << "Введите позицию короля на пирамидной доске:   ";
+    cin >> nKing;
 
     int up = 2;
     int nextBeg = 2;
@@ -341,21 +341,23 @@ void display(void)
 
     cout << "\n\n\n";
 
-    int horseX = list[nHorse].col, horseY = list[nHorse].row;
+    int kingX = list[nKing].col, kingY = list[nKing].row;
 
     int need;
     cout << "Введите до какой клетки хотите добраться: ";
     cin >> need;
     need--;
-    Node src = { horseX,  horseY };
-    Node dest = { list[need].row, list[need].col};
+    Node src = { kingX,  kingY };
+    Node dest = { list[need].row, list[need].col };
     fill_cell(list[need], mi);
     create_table(list, mi);
-    findShortestDistance(n, src, dest, list, mi);
+    if (src.x != kingX && src.y != kingY) {
+        findShortestDistance(n, src, dest, list, mi);
+    }
 
 
     glColor3f(0.0, 0.0, 1.0);
-    fill_cell(list[nHorse], mi);
+    fill_cell(list[nKing], mi);
     glutSwapBuffers();
     glFlush();
 
