@@ -17,12 +17,12 @@ const double R = 0.5;
 using namespace std;
 
 vector<vector<int>> movesHorse =
-{    {-3, -1, -1},
+{ {-3, -1, -1},
     {2, -1, -1},
     {3, 1, 1},
     {-2, 1, 1},
 
-    { - 3, -2, -2},
+    { -3, -2, -2},
     {1, -2, -2},
     {-1, 2, 2},
     {3, 2, 2},
@@ -116,7 +116,7 @@ bool isValid(int x, int y, int dist) {
     return x >= 0 && x < dist && y >= 0 && y < dist;
 }
 
-void horse(Point tmp, vector<Point> &list) {
+void horse(Point tmp, vector<Point>& list) {
 
     int knightX = tmp.col, knightY = tmp.row; // координаты коня
     for (auto move1 : movesHorse)
@@ -163,42 +163,30 @@ void king(Point tmp, vector<Point>& list) {
 }
 
 
-
-// Узел queue, используемый в BFS
 struct Node
 {
-    // (x, y) представляет координаты шахматной доски
-    // `dist` представляет минимальное расстояние от источника
     int x, y, dist;
+    vector<pair<int, int>> path;
 
-    // Конструктор узла
     Node(int x, int y, int dist = 0) : x(x), y(y), dist(dist) {}
-
-    // Поскольку мы используем структуру в качестве ключа в `std::set`,
-    // нам нужно перегрузить оператор `<`.
-    // В качестве альтернативы мы можем использовать `std::pair<int, int>` в качестве ключа
-    // для хранения координат матрицы в наборе.
-
     bool operator<(const Node& o) const {
         return x < o.x || (x == o.x && y < o.y);
     }
 };
 
-// Находим минимальное количество шагов, которое сделал конь
-// из источника в пункт назначения с помощью BFS
-int findShortestDistance(int N, Node src, Node dest)
+
+int findShortestDistance(int N, Node s, Node dest)
 {
-    // ставим проверять, была ли ячейка матрицы посещена раньше или нет
+    Node src = s;
+    s.path.push_back({ src.x, src.y });
     set<Node> visited;
 
     // создаем queue и ставим в queue первый узел
     queue<Node> q;
     q.push(src);
 
-    // цикл до тех пор, пока queue не станет пустой
     while (!q.empty())
     {
-        // удалить передний узел из очереди и обработать его
         Node node = q.front();
         q.pop();
 
@@ -206,34 +194,40 @@ int findShortestDistance(int N, Node src, Node dest)
         int y = node.y;
         int dist = node.dist;
 
-        // если пункт назначения достигнут, возвращаем расстояние
         if (x == dest.x && y == dest.y) {
+
+            cout << "\n\n\n\n\n";
+            cout << "Shortest path: " << dist << endl;
+            cout << "Path: " << s.x << " " << s.y << " ";
+            for (int i = 0; i < node.path.size(); i++) {
+                cout << "(" << node.path[i].first << "," << node.path[i].second << ")";
+                if (i < node.path.size() - 1) {
+                    cout << " -> ";
+                }
+            }
+            cout << endl;
             return dist;
         }
 
-        // пропустить, если место было посещено раньше
         if (!visited.count(node))
         {
-            // отметить текущий узел как посещенный
             visited.insert(node);
 
-            // проверка всех восьми возможных движений коня
-            // и ставим в queue каждое допустимое движение
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < movesHorse.size(); i++)
             {
-                // получаем действительную позицию коня из текущей позиции на
-                // шахматная доска и поставить ее в queue с расстоянием +1
                 int x1 = x + movesHorse[i][0];
                 int y1 = y + movesHorse[i][1];
 
                 if (isValid(x1, y1, N + movesHorse[i][2])) {
-                    q.push({ x1, y1, dist + 1 });
+                    Node nextNode = { x1, y1, dist + 1 };
+                    nextNode.path = node.path; // сохраняем путь до текущего узла
+                    nextNode.path.push_back({ x1, y1 }); // добавляем текущую позицию к пути
+                    q.push(nextNode);
                 }
             }
         }
     }
 
-    // возвращаем бесконечность, если путь невозможен
     return INT_MAX;
 }
 
@@ -371,7 +365,7 @@ void display(void)
         }
     }
 
-        Node src = { knightX,  knightY };
+    Node src = { knightX,  knightY };
     Node dest = { needX, needY };
     cout << "The minimum number of steps required is " <<
         findShortestDistance(n, src, dest);
@@ -383,7 +377,7 @@ void display(void)
 
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     setlocale(LC_ALL, "Russian");
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
