@@ -14,6 +14,19 @@ const double R = 0.5;
 
 using namespace std;
 
+vector<vector<int>> moves =
+{    {-3, -1, -1},
+    {2, -1, -1},
+    {3, 1, 1},
+    {-2, 1, 1},
+    { - 2, -2, -2},
+    {0, -2, -2},
+    {0, 2, 2},
+    {2, 2, 2},
+
+};
+
+
 struct Point {
     double x = 0.0;
     double y = 0.0;
@@ -85,10 +98,36 @@ void renderText(float x, float y, string text) {
     }
 }
 bool isValid(int x, int y, int dist) {
-    return x >= 0 && x < dist && y >= 0 && y < 8;
+    return x >= 0 && x < dist && y >= 0 && y < dist;
 }
 
+void horse(Point tmp, vector<Point> &list) {
 
+    int knightX = tmp.col, knightY = tmp.row; // координаты коня
+    for (auto move1 : moves)
+    {
+        int nextY = knightY + move1[1];
+        int nextX = knightX;
+        if (((nextX == tmp.dist + move1[2] - 1) || nextX == 0) && (abs(move1[2]) == 2)) {
+            continue;
+        }
+
+
+
+        nextX += move1[0];
+        if (isValid(nextX, nextY, tmp.dist + move1[2])) {
+            cout << "(" << nextX << "," << nextY << ")" << endl;
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (list[i].row == nextY && list[i].col == nextX) {
+                    renderText(list[i].x, list[i].y, "XYI");
+                    cout << list[i].index << " " << nextY << " " << nextX << endl;
+                    break;
+                }
+            }
+        }
+    }
+}
 void display(void)
 {
 
@@ -186,32 +225,37 @@ void display(void)
         glEnd();
     }
 
-    int knightX = 3, knightY = 6; // координаты коня
-    vector<pair<int, int>> moves = 
-     {  {-2, -2}, 
-        {-2, 1}, 
-        {2, -2},
-        {2, 2}, 
-        {-1, -2}, 
-        {-1, 2},
-        {1, -2}, 
-        {1, 3} };
-
+    vector<Point> tmpList;
+    int knightX = list[24].col, knightY = list[24].row; // координаты коня
     for (auto move1 : moves)
     {
-        int nextX = knightX + move1.first;
-        int nextY = knightY + move1.second;
-        if (isValid(nextX, nextY, dist)) {
+        int nextY = knightY + move1[1];
+        int nextX = knightX;
+        if (((nextX == list[24].dist + move1[2] - 1) || nextX == 0) && (abs(move1[2]) == 2)) {
+            continue;
+        }
+
+
+
+        nextX += move1[0];
+        if (isValid(nextX, nextY, list[24].dist + move1[2])) {
             cout << "(" << nextX << "," << nextY << ")" << endl;
             for (int i = 0; i < list.size(); i++)
             {
                 if (list[i].row == nextY && list[i].col== nextX) {
                     renderText(list[i].x, list[i].y, "XYI");
+                    tmpList.push_back(list[i]);
+                    cout << list[i].index << " " << nextY << " " << nextX << endl;
                     break;
                 }
             }
         }
     }
+    glColor3f(0.0, 0.0, 1.0);
+    for (int i = 0; i < tmpList.size(); i++) {
+        horse(tmpList[i], list);
+    }
+
     cout << "\n\n\n";
     cout << dist << "\n\n\n";
 
@@ -225,7 +269,7 @@ int main(int argc, char* argv[]){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(WIDTH, HEIGHT);
-    glutInitWindowPosition(100, 100);
+    glutInitWindowPosition(50, 100);
     glutCreateWindow("Задание 5, вариант 4");
     init2D(0.0, 0.0, 0.0);
     glutDisplayFunc(display);
