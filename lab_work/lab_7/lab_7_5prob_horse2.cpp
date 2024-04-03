@@ -346,10 +346,10 @@ void display(void)
     cin >> need;
     need--;
     Node src = { horseX,  horseY };
-    Node dest = { list[need].row, list[need].col };
+    Node dest = { list[need].col, list[need].row };
     fill_cell(list[need], mi);
     create_table(list, mi);
-    if (src.x != dest.y && src.y != dest.y) { findShortestDistance(n, src, dest, list, mi); }
+ findShortestDistance(n, src, dest, list, mi); 
 
 
     glColor3f(0.0, 0.0, 1.0);
