@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <map>
 #include <random>
 #include <algorithm>
 #include <random>
@@ -16,29 +15,26 @@ const double R = 0.5;
 
 using namespace std;
 
-vector<vector<int>> movesHorse =
-{    {-3, -1, -1},
-    {2, -1, -1},
-    {3, 1, 1},
-    {-2, 1, 1},
-
-    { - 3, -2, -2},
-    {1, -2, -2},
-    {-1, 2, 2},
-    {3, 2, 2},
-
-    { -1, -3, -3},
+vector<vector<int>> movesHorse ={
+    {-3, -1, -1},
+    { 2, -1, -1},
+    { 3,  1,  1},
+    {-2,  1,  1},
+    {-3, -2, -2},
+    { 1, -2, -2},
+    {-1,  2,  2},
+    { 3,  2,  2},
+    {-1, -3, -3},
     {-2, -3, -3},
-    {1, 3, 3},
-    {2, 3, 3},
-};
+    { 1,  3,  3},
+    { 2,  3,  3},};
 
-vector<vector<int>> movesKing =
-{ {0, 1, 1},
-    {1, 1, 1},
-    {-1, 0, 0},
-    {1, 0, 0},
-    {0, -1, -1},
+vector<vector<int>> movesKing ={ 
+    { 0,  1,  1},
+    { 1,  1,  1},
+    {-1,  0,  0},
+    { 1,  0,  0},
+    { 0, -1, -1},
     {-1, -1, -1},
 };
 
@@ -50,12 +46,6 @@ struct Point {
     int row = 0;
     int col = 0;
     int dist = 1;
-
-    /*
-        x, y   - координаты позиции точки;
-        figure - указатель на фигуру: 0 - пусто, 1 - король, 2 - конь
-        index  - номер точки
-    */
 
     Point operator+(Point B) {
         Point res;
@@ -93,17 +83,6 @@ void init2D(float r, float g, float b)
     gluOrtho2D(0, WIDTH, 0, HEIGHT);
 }
 
-void Generate_points(vector<Point>& A, int n) {
-    glPointSize(5.0);
-    glColor3f(1, 0, 0);
-    glBegin(GL_POINTS);
-    for (int i = 0; i < n; i++) {
-        A[i].x = abs((rand() % WIDTH) - WIDTH / 2);
-        A[i].y = abs((rand() % HEIGHT) - HEIGHT / 2);
-        glVertex2d(A[i].x, A[i].y);
-    }
-    glEnd();
-}
 
 void renderText(float x, float y, string text) {
     glRasterPos2f(x, y);
@@ -116,22 +95,29 @@ bool isValid(int x, int y, int dist) {
     return x >= 0 && x < dist && y >= 0 && y < dist;
 }
 
-void horse(Point tmp, vector<Point> &list) {
+void fill_cell(Point point, double mi) {
+    glBegin(GL_QUADS);   
+    glColor3f(3.0, 0.0, 0.0);
+    glVertex3f(point.x - mi / 2, point.y - mi / 2, 0);
+    glVertex3f(point.x - mi / 2, point.y + mi / 2, 0);
+    glVertex3f(point.x + mi / 2, point.y + mi / 2, 0);
+    glVertex3f(point.x + mi / 2, point.y - mi / 2, 0);
+    glEnd();
+}
 
-    int knightX = tmp.col, knightY = tmp.row; // координаты коня
-    for (auto move1 : movesHorse)
-    {
-        int nextY = knightY + move1[1];
-        int nextX = knightX;
 
-        nextX += move1[0];
-        if (isValid(nextX, nextY, tmp.dist + move1[2])) {
-            cout << "(" << nextX << "," << nextY << ")" << endl;
+void horse(Point tmp, vector<Point>& list, double mi) {
+    int horseX = tmp.col, horseY = tmp.row;
+    for (auto move : movesHorse) {
+        int nextY = horseY + move[1];
+        int nextX = horseX;
+        nextX += move[0];
+
+        if (isValid(nextX, nextY, tmp.dist + move[2])) {
             for (int i = 0; i < list.size(); i++)
             {
                 if (list[i].row == nextY && list[i].col == nextX) {
-                    renderText(list[i].x, list[i].y, "XYI");
-                    cout << list[i].index << " " << nextY << " " << nextX << endl;
+                    renderText(list[i].x, list[i].y, "OK");
                     break;
                 }
             }
@@ -141,20 +127,18 @@ void horse(Point tmp, vector<Point> &list) {
 
 void king(Point tmp, vector<Point>& list) {
 
-    int knightX = tmp.col, knightY = tmp.row; // координаты коня
+    int kingX = tmp.col, kingY = tmp.row;
     for (auto move1 : movesKing)
     {
-        int nextY = knightY + move1[1];
-        int nextX = knightX;
+        int nextY = kingY + move1[1];
+        int nextX = kingX;
 
         nextX += move1[0];
         if (isValid(nextX, nextY, tmp.dist + move1[2])) {
-            cout << "(" << nextX << "," << nextY << ")" << endl;
             for (int i = 0; i < list.size(); i++)
             {
                 if (list[i].row == nextY && list[i].col == nextX) {
-                    renderText(list[i].x, list[i].y, "XYI");
-                    cout << list[i].index << " " << nextY << " " << nextX << endl;
+                    renderText(list[i].x, list[i].y, "OK");
                     break;
                 }
             }
@@ -163,42 +147,29 @@ void king(Point tmp, vector<Point>& list) {
 }
 
 
-
-// Узел queue, используемый в BFS
 struct Node
 {
-    // (x, y) представляет координаты шахматной доски
-    // `dist` представляет минимальное расстояние от источника
     int x, y, dist;
+    vector<pair<int, int>> path;
 
-    // Конструктор узла
     Node(int x, int y, int dist = 0) : x(x), y(y), dist(dist) {}
-
-    // Поскольку мы используем структуру в качестве ключа в `std::set`,
-    // нам нужно перегрузить оператор `<`.
-    // В качестве альтернативы мы можем использовать `std::pair<int, int>` в качестве ключа
-    // для хранения координат матрицы в наборе.
-
     bool operator<(const Node& o) const {
         return x < o.x || (x == o.x && y < o.y);
     }
 };
 
-// Находим минимальное количество шагов, которое сделал конь
-// из источника в пункт назначения с помощью BFS
-int findShortestDistance(int N, Node src, Node dest)
+
+int findShortestDistance(int N, Node s, Node dest, vector<Point> &list, double mi)
 {
-    // ставим проверять, была ли ячейка матрицы посещена раньше или нет
+    Node src = s;
+    s.path.push_back({ src.x, src.y });
     set<Node> visited;
 
-    // создаем queue и ставим в queue первый узел
     queue<Node> q;
     q.push(src);
 
-    // цикл до тех пор, пока queue не станет пустой
     while (!q.empty())
     {
-        // удалить передний узел из очереди и обработать его
         Node node = q.front();
         q.pop();
 
@@ -206,121 +177,63 @@ int findShortestDistance(int N, Node src, Node dest)
         int y = node.y;
         int dist = node.dist;
 
-        // если пункт назначения достигнут, возвращаем расстояние
         if (x == dest.x && y == dest.y) {
+            cout << "\n\n\n\n\n";
+            cout << "Length path: " << dist << endl;
+            node.path.push_back({ dest.x, dest.y });
+            cout << dest.x << " " << endl;
+            
+            vector<Point> list2;
+            for (int i = 0; i < node.path.size(); i++) {
+                for (int j = 0; j < list.size(); j++) {
+                    if (list[j].col == node.path[i].first && list[j].row == node.path[i].second) {
+                        list2.push_back(list[j]);
+                        fill_cell(list[j], mi);
+                    }
+                }
+            }
+            cout << "Path: (";
+            cout << s.x << ", " << s.y << ") ->";
+            for (int i = 0; i < node.path.size(); i++) {
+                cout << "(" << node.path[i].first << "," << node.path[i].second << ")";
+                if (i < node.path.size() - 1) {
+                    cout << " -> ";
+                }
+            }
+            cout << '\n';
+            cout << "Path: ";
+            for (int i = 0; i < list2.size(); i++) {
+                cout << list2[i].index << " ";
+            }
             return dist;
         }
 
-        // пропустить, если место было посещено раньше
         if (!visited.count(node))
         {
-            // отметить текущий узел как посещенный
             visited.insert(node);
 
-            // проверка всех восьми возможных движений коня
-            // и ставим в queue каждое допустимое движение
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < movesHorse.size(); i++)
             {
-                // получаем действительную позицию коня из текущей позиции на
-                // шахматная доска и поставить ее в queue с расстоянием +1
                 int x1 = x + movesHorse[i][0];
                 int y1 = y + movesHorse[i][1];
 
                 if (isValid(x1, y1, N + movesHorse[i][2])) {
-                    q.push({ x1, y1, dist + 1 });
+                    Node nextNode = { x1, y1, dist + 1 };
+                    nextNode.path = node.path;
+                    nextNode.path.push_back({ x1, y1 }); 
+                    q.push(nextNode);
                 }
             }
         }
     }
 
-    // возвращаем бесконечность, если путь невозможен
     return INT_MAX;
 }
 
-
-
-
-
-
-
-
-void display(void)
-{
+void create_table(vector<Point>& list, double mi) {
 
     glClear(GL_COLOR_BUFFER_BIT);
-
-    glPointSize(6.0);
-
-    int n = 10, n2 = 1;
-
-    int up = 2;
-    int nextBeg = 2;
-    int dist = 1;
-
-    vector<Point> list;
-    Point first;
-    first.index = 1;
-    first.x = 500;
-    first.y = 850;
-    list.push_back(first);
-
-    double distB = 100;
-    int cntW = 0, cntH = 0;
-    double beg = 400;
-    double mi = 100;
-
-    int in = 2;
-    int rIn = 0, cIn = 0;
-    cout << 1;
-    while (n2 <= n) {
-        if (in == nextBeg) {
-            cout << '\n';
-            dist++;
-            nextBeg += up;
-            up++;
-            cntW = 1;
-            cntH++;
-            distB += mi;
-            beg -= 50;
-            n2++;
-
-            cIn = 0;
-            rIn++;
-            if (n2 > n) {
-                break;
-            }
-        }
-
-        Point tmpP;
-        tmpP.x = beg + (distB / dist) * cntW;
-        cntW++;
-        tmpP.y = 850 - mi * cntH;
-        tmpP.index = in;
-        tmpP.figure = 0;
-        tmpP.row = rIn;
-        tmpP.col = cIn;
-        tmpP.dist = n2;
-        cIn++;
-        list.push_back(tmpP);
-        cout << in << ' ';
-
-        in++;
-    }
-
-    list[8].figure = 1;
-    list[24].figure = 2;
-
     for (int i = 0; i < list.size(); i++) {
-        cout << "index: " << list[i].index << endl;
-        cout << "row: " << list[i].row << endl;
-        cout << "col: " << list[i].col << endl;
-        cout << "figure: " << list[i].figure << endl;
-        cout << "dist: " << list[i].dist << endl;
-        cout << endl;
-    }
-
-    for (int i = 0; i < list.size(); i++) {
-        cout << list[i].index;
         glColor3f(3.0, 0.0, 0.0);
 
         string tmp = "--";
@@ -330,52 +243,131 @@ void display(void)
         else {
             tmp = (list[i].figure == 1) ? '-K' : '-H';
         }
-        cout << tmp << endl;
+
         renderText(list[i].x, list[i].y, tmp);
+
         glBegin(GL_LINE_LOOP);
         glColor3f(1.0, 1.0, 0.0);
+
         glVertex3f(list[i].x - mi / 2, list[i].y - mi / 2, 0);
         glVertex3f(list[i].x - mi / 2, list[i].y + mi / 2, 0);
         glVertex3f(list[i].x + mi / 2, list[i].y + mi / 2, 0);
         glVertex3f(list[i].x + mi / 2, list[i].y - mi / 2, 0);
         glEnd();
     }
+}
+
+void display(void)
+{
+
+    glPointSize(6.0);
+
+    int nKing, nHorse, n, tTmp = 1;
+    cout << "Введите максимальную возможную длину : ";
+    cin >> n;
+    cout << "Введите позицию короля на пирамидной доске: ";
+    cin >> nKing;
+    cout << "Введите позицию коня на пирамидной доске:   ";
+    cin >> nHorse;
+
+    int up = 2;
+    int nextBeg = 2;
+    int dist = 1;
+
+    vector<Point> list;
+    Point first;
+    first.index = 1;
+    first.x = WIDTH / 2;
+    first.y = HEIGHT - 50;
+    list.push_back(first);
+
+    double distB = (HEIGHT - 100) / n;
+    double mi = distB, beg = first.x - distB;
+    int cntW = 0, cntH = 0;
+
+    if (n > 10) {
+        mi -= 10 * (n - 10);
+        distB -= 10 * (n - 10);
+        list[0].x -= 10 * (n - 10);
+    }
+
+    int in = 2, rIn = 0, cIn = 0;
+    while (tTmp <= n) {
+        if (in == nextBeg) {
+            dist++;
+            nextBeg += up;
+            up++;
+            cntW = 1;
+            cntH++;
+            distB += mi;
+            beg -= mi / 2;
+            tTmp++;
+
+            cIn = 0;
+            rIn++;
+            if (tTmp > n) {
+                break;
+            }
+        }
+
+        Point tmpP;
+        tmpP.x = beg + (distB / dist) * cntW;
+        cntW++;
+        tmpP.y = HEIGHT - 50 - mi * cntH;
+        tmpP.index = in;
+        tmpP.figure = 0;
+        tmpP.row = rIn;
+        tmpP.col = cIn;
+        tmpP.dist = tTmp;
+        cIn++;
+        list.push_back(tmpP);
+        in++;
+    }
+
+    nHorse--, nKing--;
+    list[nKing].figure = 1;
+    list[nHorse].figure = 2;
+
+    for (int i = 0; i < list.size(); i++) {
+        cout << "Index: " << list[i].index << endl;
+        cout << "Row: " << list[i].row << endl;
+        cout << "Col: " << list[i].col << endl;
+        cout << "Figure: " << list[i].figure << endl;
+        cout << "Dist: " << list[i].dist << endl;
+        cout << endl;
+    }
+
+    create_table(list, mi);
+
     cout << "\n\n\n";
 
-
-
-
-    int knightX = list[24].col, knightY = list[24].row; // координаты коня
-    int needX = list[0].col, needY = list[0].row;
-
-
+    int horseX = list[nHorse].col, horseY = list[nHorse].row;
     vector<Point> tmpList;
 
     for (auto move1 : movesHorse)
     {
-        int nextY = knightY + move1[1];
-        int nextX = knightX;
+        int nextY = horseY + move1[1];
+        int nextX = horseX;
 
         nextX += move1[0];
-        if (isValid(nextX, nextY, list[24].dist + move1[2])) {
-            cout << "(" << nextX << "," << nextY << ")" << endl;
+        if (isValid(nextX, nextY, list[nHorse].dist + move1[2])) {
             for (int i = 0; i < list.size(); i++)
             {
                 if (list[i].row == nextY && list[i].col == nextX) {
-                    renderText(list[i].x, list[i].y, "XYI");
+                    glColor3f(1.0, 0.0, 0.0);
+                    fill_cell(list[i], mi);
+                    renderText(list[i].x, list[i].y, "OK");
                     tmpList.push_back(list[i]);
-                    cout << list[i].index << " " << nextY << " " << nextX << endl;
                     break;
                 }
             }
         }
     }
 
-        Node src = { knightX,  knightY };
-    Node dest = { needX, needY };
-    cout << "The minimum number of steps required is " <<
-        findShortestDistance(n, src, dest);
-
+    for (int i = 0; i < tmpList.size(); i++) {
+        glColor3f(1.0, 1.0, 1.0);
+        horse(tmpList[i], list, mi);
+    }
 
 
     glutSwapBuffers();
@@ -383,7 +375,7 @@ void display(void)
 
 }
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     setlocale(LC_ALL, "Russian");
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
@@ -396,3 +388,6 @@ int main(int argc, char* argv[]){
 
     return 0;
 }
+
+
+
