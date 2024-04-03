@@ -15,25 +15,12 @@ const double R = 0.5;
 
 using namespace std;
 
-vector<vector<int>> movesHorse = {
-    {-3, -1, -1},
-    { 2, -1, -1},
-    { 3,  1,  1},
-    {-2,  1,  1},
-    {-3, -2, -2},
-    { 1, -2, -2},
-    {-1,  2,  2},
-    { 3,  2,  2},
-    {-1, -3, -3},
-    {-2, -3, -3},
-    { 1,  3,  3},
-    { 2,  3,  3}, };
-
 vector<vector<int>> movesKing = {
-    { 0,  1,  1},
-    { 1,  1,  1},
     {-1,  0,  0},
     { 1,  0,  0},
+    { 0,  1,  1},
+    { 1,  1,  1},
+
     { 0, -1, -1},
     {-1, -1, -1},
 };
@@ -103,26 +90,6 @@ void fill_cell(Point point, double mi) {
     glVertex3f(point.x + mi / 2, point.y + mi / 2, 0);
     glVertex3f(point.x + mi / 2, point.y - mi / 2, 0);
     glEnd();
-}
-
-
-void horse(Point tmp, vector<Point>& list, double mi) {
-    int horseX = tmp.col, horseY = tmp.row;
-    for (auto move : movesHorse) {
-        int nextY = horseY + move[1];
-        int nextX = horseX;
-        nextX += move[0];
-
-        if (isValid(nextX, nextY, tmp.dist + move[2])) {
-            for (int i = 0; i < list.size(); i++)
-            {
-                if (list[i].row == nextY && list[i].col == nextX) {
-                    renderText(list[i].x, list[i].y, "OK");
-                    break;
-                }
-            }
-        }
-    }
 }
 
 void king(Point tmp, vector<Point>& list) {
@@ -265,8 +232,6 @@ void display(void)
     int nKing, nHorse, n, tTmp = 1;
     cout << "Введите максимальную возможную длину : ";
     cin >> n;
-    cout << "Введите позицию коня на пирамидной доске: ";
-    cin >> nHorse;
     cout << "Введите позицию короля на пирамидной доске:   ";
     cin >> nKing;
 
@@ -324,9 +289,8 @@ void display(void)
         in++;
     }
 
-    nHorse--, nKing--;
+    nKing--;
     list[nKing].figure = 1;
-    list[nHorse].figure = 2;
 
     for (int i = 0; i < list.size(); i++) {
         cout << "Index: " << list[i].index << endl;
@@ -348,10 +312,10 @@ void display(void)
     cin >> need;
     need--;
     Node src = { kingX,  kingY };
-    Node dest = { list[need].row, list[need].col };
+    Node dest = { list[need].col, list[need].row };
     fill_cell(list[need], mi);
     create_table(list, mi);
-    if (src.x != kingX && src.y != kingY) {
+    if (src.x != dest.x && src.y != dest.y) {
         findShortestDistance(n, src, dest, list, mi);
     }
 
