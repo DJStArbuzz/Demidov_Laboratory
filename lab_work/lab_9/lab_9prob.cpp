@@ -1,32 +1,67 @@
 #include <iostream>
 
+using namespace std;
 class Permutation {
 private:
-    int* perm;
-    int size;
+	int* list;
+	int size;
+
 public:
-    Permutation(unsigned int n) {
+	Permutation(unsigned int n) {
+		size = n;
+        list = new int[size];
+		for (int i = 0; i < size; i++) {
+            list[i] = i;
+		}
+	}
+    Permutation(unsigned int n, int arr[]) {
         size = n;
-        perm = new int[size];
+        list = new int[size];
         for (int i = 0; i < size; i++) {
-            perm[i] = i;
+            list[i] = arr[i];
         }
     }
-
-    Permutation(unsigned int n, int* arr) {
-        size = n;
-        perm = new int[size];
-        for (int i = 0; i < size; i++) {
-            perm[i] = arr[i];
-        }
+    ~Permutation() {
+        delete[] list;
     }
 
-    Permutation operator*(const Permutation& p) const {
-        Permutation result(size);
-        for (int i = 0; i < size; i++) {
-            result.perm[i] = perm[p.perm[i]];
+    
+    void increment() {
+        int i = size - 2;
+        while (i >= 0 && list[i] > list[i + 1]) {
+            i--;
         }
-        return result;
+
+        if (i == -1) {
+            return;
+        }
+
+        int j = size - 1;
+        while (list[j] < list[i]) {
+            j--;
+        }
+
+        swap(list[i], list[j]);
+        reverse(list + i + 1, list + size);
+    }
+
+    void decrement() {
+        int i = size - 2;
+        while (i >= 0 && list[i] < list[i + 1]) {
+            i--;
+        }
+
+        if (i == -1) {
+            return;
+        }
+
+        int j = size - 1;
+        while (list[j] > list[i]) {
+            j--;
+        }
+
+        swap(list[i], list[j]);
+        reverse(list + i + 1, list + size);
     }
 
     Permutation& operator++() {
@@ -51,123 +86,106 @@ public:
         return temp;
     }
 
+    Permutation operator*(const Permutation& other) {
+        Permutation result(size);
+        for (int i = 0; i < size; i++) {
+            result.list[i] = other.list[list[i]];
+        }
+        return result;
+    }
+
     void next() {
-        int i = size - 1;
-        while (i > 0 && perm[i - 1] >= perm[i]) {
-            i--;
-        }
-
-        if (i == 0) {
-            return;
-        }
-
-        int j = size - 1;
-        while (perm[j] <= perm[i - 1]) {
-            j--;
-        }
-
-        std::swap(perm[i - 1], perm[j]);
-
-        j = size - 1;
-        while (i < j) {
-            std::swap(perm[i], perm[j]);
-            i++;
-            j--;
-        }
+        increment();
     }
 
     void previous() {
-        int i = size - 1;
-        while (i > 0 && perm[i - 1] <= perm[i]) {
-            i--;
-        }
-
-        if (i == 0) {
-            return;
-        }
-
-        int j = size - 1;
-        while (perm[j] >= perm[i - 1]) {
-            j--;
-        }
-
-        std::swap(perm[i - 1], perm[j]);
-
-        j = size - 1;
-        while (i < j) {
-            std::swap(perm[i], perm[j]);
-            i++;
-            j--;
-        }
+        decrement();
     }
-
-    bool operator<(const Permutation& p) const {
+    bool operator<(const Permutation& other) const {
         for (int i = 0; i < size; i++) {
-            if (perm[i] < p.perm[i]) {
+            if (list[i] < other.list[i]) {
                 return true;
             }
-            else if (perm[i] > p.perm[i]) {
+            else if (list[i] > other.list[i]) {
                 return false;
             }
         }
         return false;
     }
 
-    bool operator>(const Permutation& p) const {
-        return p < *this;
+    bool operator>(const Permutation& other) const {
+        return other < *this;
     }
 
-    bool operator==(const Permutation& p) const {
+    bool operator==(const Permutation& other) const {
         for (int i = 0; i < size; i++) {
-            if (perm[i] != p.perm[i]) {
+            if (list[i] != other.list[i]) {
                 return false;
             }
         }
         return true;
     }
 
-    bool operator!=(const Permutation& p) const {
-        return !(*this == p);
+    bool operator!=(const Permutation& other) const {
+        return !(*this == other);
     }
 
-    bool operator<=(const Permutation& p) const {
-        return *this < p || *this == p;
+    bool operator<=(const Permutation& other) const {
+        return *this < other || *this == other;
     }
 
-    bool operator>=(const Permutation& p) const {
-        return *this > p || *this == p;
+    bool operator>=(const Permutation& other) const {
+        return *this > other || *this == other;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Permutation& p) {
-        for (int i = 0; i < p.size; i++) {
-            os << p.perm[i] << " ";
+    void print() const {
+        for (unsigned int i = 0; i < size; ++i) {
+            cout << list[i] << " ";
         }
-        return os;
+        cout << '\n';
     }
 
-    ~Permutation() {
-        delete[] perm;
-    }
 };
 
 int main() {
-    int arr1[] = { 1, 2, 0 };
-    int arr2[] = { 1, 0, 2 };
+    setlocale(LC_ALL, "Russian");
+    int arr1[] = { 1, 0, 2 , 4, 5};
+    int arr2[] = { 2, 3, 0 , 1, 4 };
 
-    Permutation p1(3, arr1);
-    Permutation p2(3, arr2);
+    Permutation p1(5, arr1);
+    Permutation p2(5, arr2);
 
-    std::cout << "p1: " << p1 << std::endl;
-    std::cout << "p2: " << p2 << std::endl;
+    cout << "p1: ";
+    p1.print();
+    cout << "p2: ";
+    p2.print();
 
     Permutation p3 = p1 * p2;
-    std::cout << "p1 * p2: " << p3 << std::endl;
+    cout << "p1 * p2: ";
+    p3.print();
 
-    ++p1;
-    std::cout << "++p1: " << p1 << std::endl;
+    p3.next();
+    cout << "p3 после next(): ";
+    p3.print();
 
-    --p2;
-    std::cout << "--p2: " << p2 << std::endl;
+    p3.previous();
+    cout << "p3 после previous(): ";
+    p3.print();
 
-    std::cout << "p1 < p2: " << (p1 < p2) << std::endl;
+    p3.previous();
+    cout << "p3 после previous() * 2: ";
+    p3.print();
+    int arr3[] = { 0, 1, 2 , 3, 4 };
+    Permutation p4(5, arr3);
+
+    p4.previous();
+    cout << "p4 после previous(): ";
+    p4.print();
+
+    --p4;
+    p4.print();
+    
+    cout << (p1 < p2);
+
+    return 0;
 }
