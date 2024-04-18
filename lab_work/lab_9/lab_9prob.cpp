@@ -768,22 +768,23 @@ int main() {
     
     cout << (p1 < p2) << '\n';
 
-    Permutation p5(5, BigInteger(4));
+    Permutation p5(5, BigInteger(5));
     p5.print();
 
     cout << "-----------\n";
-    p3.print();
-    p3 += 3;
-    p3.print();
-    p3 -= 3;
-    p3.print();
+    Permutation p10 = p1 * p2;
+    p10.print();
+    p10 += 3;
+    p10.print();
+    p10 -= 3;
+    p10.print();
 
     cout << "-----------\n";
-    p3.print();
-    p3 = p3 - 3;
-    p3.print();
-    p3 = p3 + 3;
-    p3.print();
+    p10.print();
+    p10 = p10 - 3;
+    p10.print();
+    p10 = p10 + 3;
+    p10.print();
 
     cout << "-----------\n";
     int arr7[] = { 0, 3, 2, 1 };
