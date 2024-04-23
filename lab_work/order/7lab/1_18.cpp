@@ -29,13 +29,13 @@ double perimeter(Point p1, Point p2, Point p3)
 }
 
 bool checkCircle(Point center, Point tmp, double R) {
-	return abs((pow(center.x - tmp.x, 2) + pow(center.y - tmp.y, 2)) <= R * R);
+	return (abs((pow(center.x - tmp.x, 2) + pow(center.y - tmp.y, 2)) - R * R)) <= 1E-10;
 }
 
 void drawCircle(float cx, float cy, float r, int num_segments)
 {
 	float theta = 3.1415926 * 2 / float(num_segments);
-	float tangetial_factor = tanf(theta);//calculate the tangential factor 
+	float tangetial_factor = tanf(theta);
 
 	float radial_factor = cosf(theta);
 
@@ -86,7 +86,7 @@ pair<Point, Point>  checkRadius(vector<Point>& list) {
 
 	cout << "Центр окружности: " << result.first.x << ' ' << result.first.y << '\n';
 	cout << "Радиус окружности: " << distance(result.first, result.second) << '\n';
-	cout << "Вошло точек: " << checkPointsRes<< '\n';
+	cout << "Вошло точек: " << checkPointsRes << '\n';
 	cout << result.second.x << ' ' << result.second.y << " ";
 	return result;
 }
@@ -109,10 +109,10 @@ void display()
 
 
 	pair< Point, Point> circle = checkRadius(list);
-	
+
 	glPointSize(6.0);
 	glBegin(GL_POINTS);
-	for (int i = 0; i < list.size(); i++){
+	for (int i = 0; i < list.size(); i++) {
 		glVertex2d(list[i].x, list[i].y);
 	}
 	glEnd();
