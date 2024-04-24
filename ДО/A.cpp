@@ -1,0 +1,176 @@
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+/*
+        SQRT
+        1. Создадим sqrt декомпазцию
+        a_1 a_2 a_3    a_n
+        2. Создадим дополнительный вектор Б
+        b_1 b_2 b_3    b_n
+        a_i = sum a_j
+        пример: n = 100
+        каждое b_i хранит сумма 10 a_j
+        b_1 = a_1  + ... + а_10
+        b_2 = a_11 + ... + а_20
+
+        сумма от 5-го по 40-ый элементы: a_5 + ... + a_10 + b_2 + b_3 + b_4
+    */
+
+    /*
+        Делаем бинарное взвешенное дерево - дерево отрезков
+        У каждого родителя еть два сына (или вообще их нет)
+        [0, 8)          __О__
+        [0, 4)       о_/     \_о        [4, 8)
+        [0, 2)    о_/ \_о   о_/ \_о
+                  0     1   2     3
+        1) Определеяем корень, связи
+        Корень имеет номер 1, i
+        Левый сын имеeт номер 2 * i, правый 2 * i + 1
+
+
+                     1
+                  2     3
+                4   5 6   7
+
+             Идекс левого сына- степень двойки
+
+
+        Сумма дерева
+
+        Суть работы:
+        1) Бежим от предка к сыну и проверяем явлеяется ли он ответом, полуответом или не ответом.
+        2) Если полуответ, то начинаем дробить
+    */
+
+void updateSum(vector<long long>& Tree, int num_left_list, int id, int val) {
+    int num_list = num_left_list + id; // В задачах требуется порой индексация не с 0, а с 1
+    Tree[num_list] = val;
+    while (num_list != 1) {
+        num_list /= 2;
+        Tree[num_list] = Tree[num_list * 2] + Tree[num_list * 2 + 1]; // Родитель = Левый сын + Правый сын
+    }
+}
+
+long long Sum_tree(vector<long long>& Tree, int id_tree, int lt, int rt, int l, int r) {
+    if (l <= lt && rt <= r) {
+        return Tree[id_tree];
+    }
+    if (rt <= l || r <= lt) {
+        return 0;
+    }
+
+    int mid = (lt + rt) / 2;
+    long long l_block = Sum_tree(Tree, id_tree * 2, lt, mid, l, r);
+    long long r_block = Sum_tree(Tree, id_tree * 2 + 1, mid, rt, l, r);
+    return l_block + r_block; 
+}
+
+
+void updateMin(vector<long long>& Tree, int num_left_list, int id, int val) {
+    int num_list = num_left_list + id; // В задачах требуется порой индексация не с 0, а с 1
+    Tree[num_list] = val;
+    while (num_list != 1) {
+        num_list /= 2;
+        Tree[num_list] = min(Tree[num_list * 2], Tree[num_list * 2 + 1]); // Родитель = Левый сын + Правый сын
+    }
+}
+
+long long Min_tree(vector<long long>& Tree, int id_tree, int lt, int rt, int l, int r) {
+    if (l <= lt && rt <= r) {
+        return Tree[id_tree];
+    }
+    if (rt <= l || r <= lt) {
+        return -1 * 1e9;
+    }
+
+    int mid = (lt + rt) / 2;
+    long long l_block = Min_tree(Tree, id_tree * 2, lt, mid, l, r);
+    long long r_block = Min_tree(Tree, id_tree * 2 + 1, mid, rt, l, r);
+    return min(l_block, r_block);
+}
+
+
+void update_min_pair(vector<pair<long long, int>>& Tree, int num_left_list, int id, int val) {
+    int num_list = num_left_list + id; // В задачах требуется порой индексация не с 0, а с 1
+    Tree[num_list].first = val;
+    Tree[num_list].second = id;
+    while (num_list != 1) {
+        num_list /= 2;
+
+        if (Tree[num_list * 2].first > Tree[num_list * 2 + 1].first) {
+            Tree[num_list] = Tree[num_list * 2 + 1];
+        }
+        else {
+            Tree[num_list] = Tree[num_list * 2];
+        }
+    }
+}
+
+pair<long long, int> Min_pair_tree(vector<pair<long long, int>>& Tree, int id_tree, int lt, int rt, int l, int r) {
+    if (l <= lt && rt <= r) {
+        return Tree[id_tree];
+    }
+    if (rt <= l || r <= lt) {
+        pair<long long, int> t;
+        t.first = 1e9;
+        t.second = -1;
+        return t;
+    }
+
+    int mid = (lt + rt) / 2;
+    pair<long long, int> l_block = Min_pair_tree(Tree, id_tree * 2, lt, mid, l, r);
+    pair<long long, int> r_block = Min_pair_tree(Tree, id_tree * 2 + 1, mid, rt, l, r);
+    
+    if (l_block.first > r_block.first) {
+        return r_block;
+    }
+    else {
+        return l_block;
+    }
+}
+
+
+// Шахти, нужно еще max
+int main()
+{  
+    int n;
+    int q, l, r, id, val;
+    cin >> n >> q;
+    vector<int> A(n, 0);
+
+    vector<long long> Tree(4 * n); // Делаем с запасом
+    
+    int num_left_list = 1;
+    int count_list = 1;
+    while (num_left_list < n) {
+        num_left_list *= 2;
+    }
+    count_list = num_left_list;
+
+    for (int i = 0; i < n; i++) {
+        updateSum(Tree, num_left_list, i, A[i]);
+    }
+
+    char type;
+    for (int i = 0; i < q; i++) {
+        cin >> type;
+        if (type == 'A') {
+            cin >> id >> val;
+            id--;
+            A[id] = val;
+            updateSum(Tree, num_left_list, id, val);
+        }
+        else {
+            cin >> l >> r;
+            l--;
+            r--;
+            cout << Sum_tree(Tree, 0, l, r, l, r) << '\n';
+
+        }
+    }
+}
+
