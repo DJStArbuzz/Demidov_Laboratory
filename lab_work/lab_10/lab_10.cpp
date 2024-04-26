@@ -64,19 +64,37 @@ public:
 class Shape {
 public:
     virtual void draw() {
-        std::cout << "Drawing a shape" << '\n';
+        cout << "Drawing a shape" << '\n';
     }
 
+    // Периметр
     virtual double perimeter() const = 0;
+    
+    // Площадь
     virtual double area() const = 0;
+    
+    // Совпадает ли эта фигура с другой
     virtual bool operator==(const Shape& other) const = 0;
+    
+    // Равна ли эта фигура другой в геометрическом смысле
     virtual bool isCongruentTo(const Shape& other) const = 0;
+    
+    // Подобна ли эта фигура другой
     virtual bool isSimilarTo(const Shape& other) const = 0;
+    
+    // Находится ли эта точка внутри фигуры
     virtual bool containsPoint(Point point) const = 0;
 
+    // Поворот на угол (в градусах, против часовой стрелки)
     virtual void rotate(Point center, double angle) = 0;
+
+    // Симметрично относительно точки
     virtual void reflex(Point center) = 0;
+
+    // Симметрично относительно прямой
     virtual void reflex(Line axis) = 0;
+
+    // Гомотетию с коэффициентом и центром
     virtual void scale(Point center, double coefficient) = 0;
 };
 
@@ -86,8 +104,10 @@ private:
     vector<Point> vertices;
 
 public:
+    // Можно сконструировать многоугольник из вектора точек - вершин в порядке обхода.
     Polygon(const vector<Point>& points) : vertices(points) {}
 
+    // Можно сконструировать многоугольник из точек, передаваемых в качестве параметров через запятую
     Polygon(Point p1, Point p2, Point p3) {
         vertices.push_back(p1);
         vertices.push_back(p2);
@@ -106,47 +126,37 @@ public:
 
     // Можно спросить isConvex() — выпуклый ли.
     bool isConvex() const {
-        // Check for convexity
+        return true;
     }
 
     double perimeter() const override {
-        // Calculate perimeter
     }
 
     double area() const override {
-        // Calculate area
     }
 
     bool operator==(const Shape& other) const override {
-        // Implement comparison
     }
 
     bool isCongruentTo(const Shape& other) const override {
-        // Implement congruence check
     }
 
     bool isSimilarTo(const Shape& other) const override {
-        // Implement similarity check
     }
 
     bool containsPoint(Point point) const override {
-        // Implement point containment check
     }
 
     void rotate(Point center, double angle) override {
-        // Implement rotation
     }
 
     void reflex(Point center) override {
-        // Implement reflection
     }
 
     void reflex(Line axis) override {
-        // Implement reflection
     }
 
     void scale(Point center, double coefficient) override {
-        // Implement scaling
     }
 };
 
@@ -221,31 +231,83 @@ public:
 // Класс Circle — круг. Круг — частный случай эллипса.
 class Circle : public Ellipse {
 public:
-    // Implementation of Circle class
+    void draw() override {
+       cout << "Drawing a circle" << '\n';
+    }
 };
 
 // Класс Rectangle — прямоугольник. Прямоугольник — частный случай многоугольника.
 class Rectangle : public Polygon {
 public:
-    // Implementation of Rectangle class
+    /*
+    Прямоугольник можно сконструировать
+по двум точкам (его противоположным вершинам) и числу (отношению смежных
+сторон), причем из двух таких прямоугольников выбирается тот, у которого более
+короткая сторона расположена по левую сторону от диагонали, если смотреть от
+первой заданной точки в направлении второй.
+    */
+
+    // Центр прямоугольника
+    Point center() {
+        // calculate and return the center of the rectangle
+    }
+
+    // Пара его диагоналей
+    pair<Line, Line> diagonals() {
+        // calculate and return the diagonals of the rectangle
+    }
 };
 
 // Класс Square — квадрат. Квадрат — частный случай прямоугольника.
 class Square : public Rectangle {
 public:
-    // Implementation of Square class
+    // Квадрат можно задать двумя точками — противоположными вершинами.
+
+    Circle circumscribedCircle() {
+        // calculate and return the circumscribed circle of the square
+    }
+
+    Circle inscribedCircle() {
+        // calculate and return the inscribed circle of the square
+    }
+
+    void draw() override {
+        cout << "Drawing a square" << '\n';
+    }
 };
 
 // Класс Triangle — треугольник. Треугольник — частный случай многоугольника.
 class Triangle : public Polygon {
 public:
-    /*
-    У треугольника можно спросить Circle circumscribedCircle(), Circle inscribedCircle(),
+    // Центр масс
+    Circle circumscribedCircle() {
+        // calculate and return the circumscribed circle of the triangle
+    }
 
-Point centroid() — его центр масс, Point orthocenter() — его ортоцентр, Line EulerLine()
-— его прямую Эйлера, Circle ninePointsCircle() — его окружность Эйлера.
-    
-    */
+    // Центр масс
+    Circle inscribedCircle() {
+        // calculate and return the inscribed circle of the triangle
+    }
+
+    // Центр масс
+    Point centroid() {
+        // calculate and return the centroid of the triangle
+    }
+
+    // Ортоцентр
+    Point orthocenter() {
+        // calculate and return the orthocenter of the triangle
+    }
+
+    // Прямая Эйлера
+    Line EulerLine() {
+        // calculate and return the Euler line of the triangle
+    }
+
+    // Окружность Эйлера
+    Circle ninePointsCircle() {
+        // calculate and return the nine points circle of the triangle
+    }
 };
 
 int main() {
