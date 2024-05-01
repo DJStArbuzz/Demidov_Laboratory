@@ -796,7 +796,7 @@ BigInteger findGCD(BigInteger a, BigInteger b) {
 BigRational BigRational::addition(const BigRational& numTmp) const
 {
     BigRational result;
-    if (numTmp == NONE_BR || (*this) == NONE_BR ) {
+    if (numTmp == NONE_BR || (*this) == NONE_BR) {
         if (numTmp != ONE_BR && (*this) != ONE_BR) {
             return NONE_BR;
         }
@@ -899,7 +899,7 @@ BigRational BigRational::multiplication(const BigRational& numTmp) const
     resDen = den1 * den2;
 
     BigRational result(resNum, resDen);
-    
+
     if ((this->isNegative() && numTmp.isPositive()) ||
         (numTmp.isNegative() && this->isPositive())) {
         result.negaFlag = true;
@@ -1166,19 +1166,12 @@ template <unsigned M, unsigned N, typename Field = BigRational>
 
 class Matrix {
 private:
-    
+
 public:
     vector<vector<Field>> data;
     // M - кол-во строк
     // N - кол-во столбцов
-    
-    unsigned getM() {
-        return M;
-    }
 
-    unsigned getN() {
-        return N;
-    }
     // Конструктор единичной матрицы
     Matrix() {
         data.resize(M, vector<Field>(N, Field()));
@@ -1214,11 +1207,31 @@ public:
         return (*this);
     }
 
+    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    bool operator==(const Matrix<M2, N2, Field2>& other) const {
+        if (M != M2 || N != N2) {
+            return false;
+        }
+
+        for (unsigned i = 0; i < M; ++i) {
+            for (unsigned j = 0; j < N; ++j) {
+                if (data[i][j] != other.data[i][j]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool operator!=(const Matrix& other) const {
+        return !(*this == other);
+    }
 
     // Оператор +=
     template <unsigned M2, unsigned N2, typename Field2 = BigRational>
     Matrix<M, N, Field> operator+=(const Matrix<M2, N2, Field2>& mat) {
-        if((M != M2) || (N != N2)) {
+        if ((M != M2) || (N != N2)) {
             for (unsigned i = 0; i < M; i++) {
                 for (unsigned j = 0; j < N; j++) {
                     data[i][j] = BigRational("1", "0");
@@ -1247,7 +1260,7 @@ public:
     }
 
     // Оператор *= BigRational
-    Matrix<M, N, Field> operator*=(BigRational &scalar) {
+    Matrix<M, N, Field> operator*=(BigRational& scalar) {
         for (unsigned i = 0; i < M; ++i) {
             for (unsigned j = 0; j < N; ++j) {
                 data[i][j] *= scalar;
@@ -1299,7 +1312,7 @@ public:
             for (unsigned i = 0; i < N; i++) {
                 int tmp = i;
                 for (unsigned j = i + 1; j < N; j++) {
-                    if ((*this).data[j][i].absolute() > (*this).data[tmp][i].absolute() ) {
+                    if ((*this).data[j][i].absolute() > (*this).data[tmp][i].absolute()) {
                         tmp = j;
                     }
                 }
@@ -1338,7 +1351,7 @@ public:
                 res.data[j][i] = (*this).data[i][j];
             }
         }
-        
+
         res.print();
     }
 
@@ -1348,7 +1361,7 @@ public:
         if (N != M) {
             return BigRational("1", "0");
         }
- 
+
         BigRational sum("0", "1");
         for (unsigned i = 0; i < N; i++) {
             sum += (*this).data[i][i];
@@ -1423,7 +1436,7 @@ public:
             return (*this);
         }
 
-        vector<vector<BigRational>> list(M, vector<BigRational>(N * 2, BigRational("0", "1")));  
+        vector<vector<BigRational>> list(M, vector<BigRational>(N * 2, BigRational("0", "1")));
         for (unsigned i = 0; i < M; i++) {
             for (unsigned j = 0; j < N; j++) {
                 list[i][j] = (*this).data[i][j];
@@ -1485,7 +1498,7 @@ public:
         if (m < 0 || m >= M) {
             return vector<BigRational>(N, BigRational("1", "0"));
         }
-        
+
         vector<BigRational> res(N, BigRational("0", "1"));
         for (unsigned i = 0; i < N; i++) {
             res[i] = (*this).data[m][i];
@@ -1545,15 +1558,15 @@ int main()
     setlocale(LC_ALL, "Russian");
     Finite<5> a(7);
     Finite<5> b(3);
-    Finite<5> c = a + b; 
+    Finite<5> c = a + b;
     cout << c.getValue() << endl;
 
-    vector<vector<BigRational>> vec = 
+    vector<vector<BigRational>> vec =
     { {BigRational("1", "2"),
-       BigRational("1", "2")}, 
-      {BigRational("1", "3"), 
-        BigRational("1", "3")}};
-    
+       BigRational("1", "2")},
+      {BigRational("1", "3"),
+        BigRational("1", "3")} };
+
     vector<vector<BigRational>> vec2 = {
 {BigRational("2", "1"),
    BigRational("1", "2")},
@@ -1575,15 +1588,15 @@ int main()
     Matrix<2, 2, BigRational> matB(vec2);
     Matrix<3, 2, BigRational> matD(vec3);
     Matrix<2, 2> list, res;
-    
+
     cout << "Изначальная матрица A:\n";
     matA.print();
     cout << '\n';
-    
+
     cout << "Единичная матрица Е:\n";
     list.print();
     cout << '\n';
-    
+
     cout << "A += E\n";
     matA += list;
     matA.print();
@@ -1611,7 +1624,7 @@ int main()
     BigRational detA = matС.det(), detB = matB.det();
     cout << "Определитель матрицы A: " << detA << '\n';
     cout << "Определитель матрицы B: " << detB << "\n\n";
-    
+
     BigRational traceA = matС.trace(), traceB = matB.trace();
     cout << "След матрицы A: " << traceA << '\n';
     cout << "След матрицы B: " << traceB << "\n\n";
@@ -1653,5 +1666,7 @@ int main()
     vector<vector<BigRational>> tmp = { {BigRational("1", "1")} };
     SquareMatrix<1, BigRational> A(tmp);
     A.print();
+
+    cout << (matA == matB);
     return 0;
 }
