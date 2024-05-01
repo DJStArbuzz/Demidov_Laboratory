@@ -1118,20 +1118,6 @@ double BigRational::toDouble() {
     return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 template<int N>
 class Finite {
 private:
@@ -1186,7 +1172,7 @@ public:
     Matrix(const vector<vector<Field>>& vec) : data(vec) {}
 
     // Сложение
-    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    template <unsigned M2, unsigned N2, typename Field2 = Field>
     Matrix<M, N, Field> addition(const Matrix<M2, N2, Field2>& mat) {
         for (unsigned i = 0; i < M; i++) {
             for (unsigned j = 0; j < N; j++) {
@@ -1197,7 +1183,7 @@ public:
     }
 
     // Вычитание
-    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    template <unsigned M2, unsigned N2, typename Field2 = Field>
     Matrix<M, N, Field> substraction(const Matrix<M2, N2, Field2>& mat) {
         for (unsigned i = 0; i < M; i++) {
             for (unsigned j = 0; j < N; j++) {
@@ -1207,7 +1193,7 @@ public:
         return (*this);
     }
 
-    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    template <unsigned M2, unsigned N2, typename Field2 = Field>
     bool operator==(const Matrix<M2, N2, Field2>& other) const {
         if (M != M2 || N != N2) {
             return false;
@@ -1229,12 +1215,12 @@ public:
     }
 
     // Оператор +=
-    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    template <unsigned M2, unsigned N2, typename Field2 = Field>
     Matrix<M, N, Field> operator+=(const Matrix<M2, N2, Field2>& mat) {
         if ((M != M2) || (N != N2)) {
             for (unsigned i = 0; i < M; i++) {
                 for (unsigned j = 0; j < N; j++) {
-                    data[i][j] = BigRational("1", "0");
+                    data[i][j] = Field("1", "0");
                 }
             }
             return (*this);
@@ -1245,12 +1231,12 @@ public:
 
 
     // Оператор -=
-    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    template <unsigned M2, unsigned N2, typename Field2 = Field>
     Matrix<M, N, Field> operator-=(const Matrix<M2, N2, Field2>& mat) {
         if ((M != M2) || (N != N2)) {
             for (unsigned i = 0; i < M; i++) {
                 for (unsigned j = 0; j < N; j++) {
-                    data[i][j] = BigRational("1", "0");
+                    data[i][j] = Field("1", "0");
                 }
             }
             return (*this);
@@ -1260,7 +1246,7 @@ public:
     }
 
     // Оператор *= BigRational
-    Matrix<M, N, Field> operator*=(BigRational& scalar) {
+    Matrix<M, N, Field> operator*=(Field& scalar) {
         for (unsigned i = 0; i < M; ++i) {
             for (unsigned j = 0; j < N; ++j) {
                 data[i][j] *= scalar;
@@ -1270,7 +1256,7 @@ public:
     }
 
     // Умножение на матрицу и оператор *=
-    template <unsigned M2, unsigned N2, typename Field2 = BigRational>
+    template <unsigned M2, unsigned N2, typename Field2 = Field>
     Matrix<M, N, Field> operator*=(const Matrix<M2, N2, Field2>& mat) {
         if (N != M2) {
             for (unsigned i = 0; i < M; i++) {
@@ -1281,7 +1267,7 @@ public:
             return (*this);
         }
 
-        vector < vector<BigRational>> listR(M, vector<BigRational>(N2, BigRational("0", "1")));
+        vector < vector<Field>> listR(M, vector<Field>(N2, Field("0", "1")));
         for (unsigned i = 0; i < N; i++) {
             for (unsigned j = 0; j < M2; j++) {
                 for (unsigned k = 0; k < M; k++) {
@@ -1296,9 +1282,9 @@ public:
     }
 
     // Поиск определителя
-    BigRational det() {
+    Field det() {
         if (N != M) {
-            return BigRational("1", "0");
+            return Field("1", "0");
         }
 
         if (M == 1) {
@@ -1308,7 +1294,7 @@ public:
             return (*this).data[0][0] * (*this).data[1][1] - (*this).data[1][0] * (*this).data[0][1];
         }
         else {
-            BigRational determinant("1", "1");
+            Field determinant("1", "1");
             for (unsigned i = 0; i < N; i++) {
                 int tmp = i;
                 for (unsigned j = i + 1; j < N; j++) {
@@ -1319,16 +1305,16 @@ public:
 
                 if (tmp != i) {
                     swap((*this).data[i], (*this).data[tmp]);
-                    determinant *= BigRational("-1", "1");
+                    determinant *= Field("-1", "1");
                 }
 
-                if ((*this).data[i][i] == BigRational("0", "1")) {
-                    return BigRational("0", "1");
+                if ((*this).data[i][i] == Field("0", "1")) {
+                    return Field("0", "1");
                 }
 
                 determinant *= (*this).data[i][i];
                 for (unsigned j = i + 1; j < N; j++) {
-                    BigRational factor = (*this).data[j][i] / (*this).data[i][i];
+                    Field factor = (*this).data[j][i] / (*this).data[i][i];
                     for (int k = i + 1; k < N; k++) {
                         (*this).data[j][k] -= factor * (*this).data[i][k];
                     }
@@ -1343,7 +1329,7 @@ public:
 
     // Транспонирование матрицы
     void transpose() {
-        vector<vector<BigRational>> list(N, vector<BigRational>(M, BigRational("0", "1")));
+        vector<vector<Field>> list(N, vector<Field>(M, Field("0", "1")));
         Matrix<N, M, Field> res(list);
 
         for (unsigned i = 0; i < M; i++) {
@@ -1357,12 +1343,12 @@ public:
 
 
     // След матрицы
-    BigRational trace() {
+    Field trace() {
         if (N != M) {
-            return BigRational("1", "0");
+            return Field("1", "0");
         }
 
-        BigRational sum("0", "1");
+        Field sum("0", "1");
         for (unsigned i = 0; i < N; i++) {
             sum += (*this).data[i][i];
         }
@@ -1373,7 +1359,7 @@ public:
     {
         for (int i = 0; i < col; i++)
         {
-            BigRational temp = (*this).data[row1][i];
+            Field temp = (*this).data[row1][i];
             (*this).data[row1][i] = (*this).data[row2][i];
             (*this).data[row2][i] = temp;
         }
@@ -1393,7 +1379,7 @@ public:
                 {
                     if (col != row)
                     {
-                        BigRational mult = mat.data[col][row] /
+                        Field mult = mat.data[col][row] /
                             mat.data[row][row];
                         for (int i = 0; i < rank; i++)
                             mat.data[col][i] -= mult * mat.data[row][i];
@@ -1405,7 +1391,7 @@ public:
                 bool reduce = true;
                 for (int i = row + 1; i < M; i++)
                 {
-                    if (mat.data[i][row] != BigRational("0", "1"))
+                    if (mat.data[i][row] != Field("0", "1"))
                     {
                         swapB(row, i, rank);
                         reduce = false;
@@ -1426,53 +1412,48 @@ public:
 
     // Обращение матрицы
     Matrix<M, N, Field> inverted() {
-        BigRational deter = (*this).det();
-        if ((N != M) || (deter == BigRational("0", "1"))) {
+        Field deter = (*this).det();
+        if ((N != M) || (deter == Field("0", "1"))) {
             for (unsigned i = 0; i < M; i++) {
                 for (unsigned j = 0; j < N; j++) {
-                    data[i][j] = BigRational("1", "0");
+                    data[i][j] = Field("1", "0");
                 }
             }
             return (*this);
         }
 
-        vector<vector<BigRational>> list(M, vector<BigRational>(N * 2, BigRational("0", "1")));
+        vector<vector<Field>> list(M, vector<Field>(N * 2, Field("0", "1")));
         for (unsigned i = 0; i < M; i++) {
             for (unsigned j = 0; j < N; j++) {
                 list[i][j] = (*this).data[i][j];
             }
             for (unsigned j = N; j < N * 2; j++) {
                 if (j == (i + N)) {
-                    list[i][j] = BigRational("1", "1");
+                    list[i][j] = Field("1", "1");
                 }
             }
         }
 
         for (unsigned i = N - 1; i > 0; i--) {
             if (list[i - 1][0] < list[i][0]) {
-                vector<BigRational> tmp = list[i];
+                vector<Field> tmp = list[i];
                 list[i] = list[i - 1];
                 list[i - 1] = tmp;
             }
         }
 
-
-
         for (unsigned i = 0; i < N; i++) {
             for (unsigned j = 0; j < N; j++) {
                 if (j != i) {
-                    BigRational temp = list[j][i] / list[i][i];
+                    Field temp = list[j][i] / list[i][i];
                     for (unsigned k = 0; k < N * 2; k++) {
                         list[j][k] -= list[i][k] * temp;
                     }
                 }
             }
         }
-
-
-
         for (unsigned i = 0; i < N; i++) {
-            BigRational t = list[i][i];
+            Field t = list[i][i];
             for (int j = 0; j < 2 * N; j++) {
                 list[i][j] = list[i][j] / t;
             }
@@ -1496,10 +1477,10 @@ public:
     // Получение строки
     vector<Field> getRow(unsigned m) {
         if (m < 0 || m >= M) {
-            return vector<BigRational>(N, BigRational("1", "0"));
+            return vector< Field>(N, Field("1", "0"));
         }
 
-        vector<BigRational> res(N, BigRational("0", "1"));
+        vector<Field> res(N, Field("0", "1"));
         for (unsigned i = 0; i < N; i++) {
             res[i] = (*this).data[m][i];
         }
@@ -1509,10 +1490,10 @@ public:
     // Получение столбца
     vector<Field> getColumn(unsigned n) {
         if (n < 0 || n >= N) {
-            return vector<BigRational>(M, BigRational("1", "0"));
+            return vector<Field>(M, Field("1", "0"));
         }
 
-        vector<BigRational> res(M, BigRational("0", "1"));
+        vector<Field> res(M, Field("0", "1"));
         for (unsigned i = 0; i < M; i++) {
             res[i] = (*this).data[i][n];
         }
@@ -1544,7 +1525,7 @@ template <int N, typename Field = BigRational>
 class SquareMatrix : public Matrix<N, N> {
 public:
     vector<vector<Field>> data;
-    SquareMatrix() : Matrix<N, N, BigRational>() {}
+    SquareMatrix() : Matrix<N, N, Field>() {}
     SquareMatrix(vector<vector<Field>>& vec) : data(vec) {}
     using Matrix<N, N, Field>::transpose;
     using Matrix<N, N, Field>::print;
@@ -1668,5 +1649,6 @@ int main()
     A.print();
 
     cout << (matA == matB);
+
     return 0;
 }
