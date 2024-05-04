@@ -1,0 +1,58 @@
+#include "glut.h"
+
+using namespace std;
+
+const int N = 20; 
+
+void init() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-N, N, -N, N, -1.0, 1.0);
+}
+
+void drawGrid() {
+    glColor3f(0.0, 0.0, 0.0);
+    glLineWidth(1.0);
+    glBegin(GL_LINES);
+    for (int i = -N; i <= N; i++) {
+        glVertex2f(i, -N);
+        glVertex2f(i, N);
+        glVertex2f(-N, i);
+        glVertex2f(N, i);
+    }
+    glEnd();
+}
+
+void drawAxes() {
+    glColor3f(1.0, 0.0, 0.0);
+    glLineWidth(4.0);
+    glBegin(GL_LINES);
+    glVertex2f(-N, 0);
+    glVertex2f(N, 0);
+    glVertex2f(0, -N);
+    glVertex2f(0, N);
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawGrid();
+    drawAxes();
+    glutSwapBuffers();
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(1000, 1000);
+    glutCreateWindow("Лабораторная работа №10, вариант №1");
+
+    init();
+
+    glutDisplayFunc(display);
+
+    glutMainLoop();
+
+    return 0;
+}
