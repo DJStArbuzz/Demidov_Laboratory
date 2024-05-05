@@ -64,13 +64,42 @@ void drawAxes() {
 string text = "Hello, World!";
 
 void keyboard(unsigned char key, int x, int y) {
-    if (key == 27) { // если нажата клавиша Escape
+    switch (key)
+    {
+    case (27):
         exit(0);
+    case (49): // 1
+        cout << "Point\n";
+        break;
+    case (50): // 2
+        cout << "Line\n";
+        break;
+    case (51): // 3
+        cout << "Polygon\n";
+        break;
+    case (52): // 4
+        cout << "Ellipse\n";
+        break;
+    case (53): // 5
+        cout << "Circle\n";
+        break;
+    case (54): // 6
+        cout << "Rectangle\n";
+        break;
+    case(55): // 7
+        cout << "Square\n";
+        break;
+    case(56): // 8
+        cout << "Triangle\n";
+        break;
+    default:
+        break;
     }
 
-    text += key; // добавляем символ к текущему тексту
 
-    glutPostRedisplay(); // перерисовываем экран
+    text += key;
+
+    glutPostRedisplay(); 
 }
 
 void drawSVO() {
@@ -187,7 +216,7 @@ void display() {
     glColor3f(1.0, 1.0, 1.0);
 
     // устанавливаем позицию текста
-    glRasterPos2f(N - RAZ + 2, N - RAZ - 5);
+    glRasterPos2f(N - RAZ - 5, N - RAZ + 2);
 
     // выводим текст
     for (int i = 0; i < text.length(); i++) {
