@@ -6,36 +6,37 @@
 using namespace std;
 
 const double epsilon = 1e-3;
-const double M_PI = acos(-1);
+const double PI = acos(-1);
 
 bool equal(double first, double second) {
     return abs(first - second) < epsilon;
 }
 
 double deg_to_rad(double angle) {
-    return (angle / 180) * M_PI;
+    return (angle / 180) * PI;
 }
 
 double rad_to_deg(double angle) {
-    return (angle / M_PI) * 180;
+    return (angle / PI) * 180;
 }
+
+class Line;
 
 // Структура Point — точка на плоскости.
 struct Point {
     double x, y;    // Должны быть открыты поля x и y.
 
     // Начало координат
-    Point() : x(0.), y(0.) {}
+    Point() : x(0.0), y(0.0) {}
 
     // Точку можно задать двумя числами типа double.
     Point(double x, double y) : x(x), y(y) {}
 
     // Средняя точка
     Point(Point first, Point second) {
-        x = first.x + second.x;
-        x /= 2;
-        y = first.y + second.y;
-        y /= 2;
+        x = (first.x + second.x) / 2;
+        y = (first.y + second.y) / 2;
+
     }
 
     // поворот на угол (в градусах, против часовой стрелки) относительно точки;
@@ -52,9 +53,9 @@ struct Point {
         называется такое преобразование плоскости, при котором
         любая точка А переходит в точку А' такую, что OA' = kOA   
     */
-    void scale(const Point& center, double coe) {
-        x = (x - center.x) * coe + center.x;
-        y = (y - center.y) * coe + center.y;
+    void scale(const Point& center, double coefficient) {
+        x = (x - center.x) * coefficient + center.x;
+        y = (y - center.y) * coefficient + center.y;
     }
 
     void reflect(const Point& center) {
@@ -92,57 +93,59 @@ double vecMultiply(const Point& first, const Point& second) {
 }
 
 bool between(const Point& first, const Point& second, const Point target) {
-    return (min(first.x, second.x) <= target.x) && (max(first.x, second.x) >= target.x) &&
-        (min(first.y, second.y) <= target.y) && (max(first.y, second.y) >= target.y);
+    return (min(first.x, second.x) <= target.x) && 
+           (max(first.x, second.x) >= target.x) &&
+           (min(first.y, second.y) <= target.y) && 
+           (max(first.y, second.y) >= target.y);
 }
 
 // Класс Line — прямая.
 class Line {
 public:
-    double a_;
-    double b_;
-    double c_;
+    double aLine;
+    double bLine;
+    double cLine;
 
 private:
     void normalise() {
-        if (!equal(b_, 1.) && !equal(b_, 0.)) {
-            a_ /= b_;
-            c_ /= b_;
-            b_ = 1.;
+        if (!equal(bLine, 1.) && !equal(bLine, 0.)) {
+            aLine /= bLine;
+            cLine /= bLine;
+            bLine = 1.;
         }
     }
 
-    Line(double a, double b, double c) : a_(a), b_(b), c_(c) {
+    Line(double a, double b, double c) : aLine(a), bLine(b), cLine(c) {
         normalise();
     };
 
 public:
     // Прямую можно задать двумя точками
     Line(const Point& first, const Point& second) {
-        a_ = first.y - second.y;
-        b_ = second.x - first.x;
-        c_ = first.x * second.y - second.x * first.y;
+        aLine = first.y - second.y;
+        bLine = second.x - first.x;
+        cLine = first.x * second.y - second.x * first.y;
         normalise();
     }
 
     // можно двумя числами(угловой коэффициент и сдвиг)
     Line(double k, double b) {
-        a_ = -k;
-        b_ = 1;
-        c_ = -b;
+        aLine = -k;
+        bLine = 1;
+        cLine = -b;
     }
 
     // можно точкой и числом (угловой коэффициент)
-    Line(const Point& point, double k) : a_(-k), b_(1) {
-        c_ = point.x * k - point.y;
+    Line(const Point& point, double k) : aLine(-k), bLine(1) {
+        cLine = point.x * k - point.y;
     }
 };
 
 // Линии можно сравнивать операторами == и !=.
 bool operator==(const Line& first, const Line& second) {
-    return equal(first.a_, second.a_) &&
-        equal(first.b_, second.b_) &&
-        equal(first.c_, second.c_);
+    return equal(first.aLine, second.aLine) &&
+        equal(first.bLine, second.bLine) &&
+        equal(first.cLine, second.cLine);
 }
 
 bool operator!=(const Line& first, const Line& second) {
@@ -151,14 +154,14 @@ bool operator!=(const Line& first, const Line& second) {
 
 Line orthogonal(const Line line, const Point axis = { 0, 0 }) {
     Point n_1 = Point(axis.x, axis.y);
-    Point n_2 = Point(axis.x + line.a_, axis.y + line.b_);
+    Point n_2 = Point(axis.x + line.aLine, axis.y + line.bLine);
     return { n_1, n_2 };
 }
 
 int type(const Line& first, const Line& second) {
-    if (equal(first.b_, 0)) {
-        if (equal(second.b_, 0)) {
-            if (equal(first.a_ / first.c_, second.a_ / second.c_)) {
+    if (equal(first.bLine, 0)) {
+        if (equal(second.bLine, 0)) {
+            if (equal(first.aLine / first.cLine, second.aLine / second.cLine)) {
                 return 0;
             }
             else {
@@ -170,12 +173,12 @@ int type(const Line& first, const Line& second) {
         }
     }
     else {
-        if (equal(second.b_, 0)) {
+        if (equal(second.bLine, 0)) {
             return 1;
         }
         else {
-            if (equal(first.a_ / first.b_, second.a_ / second.b_)) {
-                if (equal(first.c_ / first.b_, second.c_ / second.b_)) {
+            if (equal(first.aLine / first.bLine, second.aLine / second.bLine)) {
+                if (equal(first.cLine / first.bLine, second.cLine / second.bLine)) {
                     return 0;
                 }
                 else {
@@ -188,11 +191,11 @@ int type(const Line& first, const Line& second) {
 }
 
 Point intersect(const Line& first, const Line& second) {
-    assert(!equal(first.a_ * second.b_ - second.a_ * first.b_, 0));
-    double x = (first.b_ * second.c_ - second.b_ * first.c_) /
-        (first.a_ * second.b_ - second.a_ * first.b_);
-    double y = (first.c_ * second.a_ - second.c_ * first.a_) /
-        (first.a_ * second.b_ - second.a_ * first.b_);
+    assert(!equal(first.aLine * second.bLine - second.aLine * first.bLine, 0));
+    double x = (first.bLine * second.cLine - second.bLine * first.cLine) /
+        (first.aLine * second.bLine - second.aLine * first.bLine);
+    double y = (first.cLine * second.aLine - second.cLine * first.aLine) /
+        (first.aLine * second.bLine - second.aLine * first.bLine);
     return { x, y };
 }
 
@@ -248,29 +251,29 @@ public:
 // Многоугольник — частный случай фигуры.
 class Polygon : public Shape {
 protected:
-    vector<Point> vertices_;
+    vector<Point> vertices;
 
     Point vert(int pos) const {
-        int ver = verticesCount();
-        return vertices_[((pos % ver) + ver) % ver];
+        int verCount = verticesCount();
+        return vertices[((pos % verCount) + verCount) % verCount];
     }
 
 public:
     void print() const {
         for (int i = 0; i < verticesCount(); ++i) {
-            std::cout << '{' << vert(i).x << ", " << vert(i).y << "}, ";
+            cout << '{' << vert(i).x << ", " << vert(i).y << "}, ";
         }
-        std::cout << '\n';
+        cout << '\n';
     }
 
     // количество вершин
     int verticesCount() const {
-        return vertices_.size();
+        return vertices.size();
     }
 
     // сами вершины без возможности изменения.
     vector<Point> getVertices() const {
-        vector<Point> ver = vertices_;
+        vector<Point> ver = vertices;
         return ver;
     }
 
@@ -302,13 +305,13 @@ public:
         return false;
     }
 
-    Polygon(const vector<Point>& ver) : vertices_(ver) {}
+    Polygon(const vector<Point>& ver) : vertices(ver) {}
 
     template<typename... T>
-    Polygon(T... points) : vertices_({ points... }) {};
+    Polygon(T... points) : vertices({ points... }) {};
 
     double perimeter() override {
-        if (vertices_.size() <= 1) {
+        if (vertices.size() <= 1) {
             return 0;
         }
         double su = 0;
@@ -322,8 +325,8 @@ public:
         double su = 0;
         int count = verticesCount();
         for (int i = 0; i < count; ++i) {
-            su += vertices_[i].x * vertices_[(i + 1) % count].y -
-                vertices_[i].y * vertices_[(i + 1) % count].x;
+            su += vertices[i].x * vertices[(i + 1) % count].y -
+                vertices[i].y * vertices[(i + 1) % count].x;
         }
         return fabsl(su / 2);
     }
@@ -409,10 +412,10 @@ public:
         int amount = 0;
         Line line = Line(point, point + Point(1, 1));
         for (int i = 0; i < count; ++i) {
-            auto cur = vertices_[i];
+            auto cur = vertices[i];
             auto next = vert(i + 1);
-            if (equal(cur.x * line.a_ + cur.y * line.b_ + line.c_, 0)) {
-                if (equal(next.x * line.a_ + next.y * line.b_ + line.c_, 0)) {
+            if (equal(cur.x * line.aLine + cur.y * line.bLine + line.cLine, 0)) {
+                if (equal(next.x * line.aLine + next.y * line.bLine + line.cLine, 0)) {
                     if (between(cur, next, point)) {
                         return true;
                     }
@@ -429,10 +432,10 @@ public:
                 if (equal(cur.x, point.x)) {
                     return true;
                 }
-                if ((next.x * line.a_ + next.y * line.b_ + line.c_ > 0 &&
-                    prev.x * line.a_ + prev.y * line.b_ + line.c_ < 0) ||
-                    (next.x * line.a_ + next.y * line.b_ + line.c_ < 0 &&
-                        prev.x * line.a_ + prev.y * line.b_ + line.c_ > 0)) {
+                if ((next.x * line.aLine + next.y * line.bLine + line.cLine > 0 &&
+                    prev.x * line.aLine + prev.y * line.bLine + line.cLine < 0) ||
+                    (next.x * line.aLine + next.y * line.bLine + line.cLine < 0 &&
+                        prev.x * line.aLine + prev.y * line.bLine + line.cLine > 0)) {
                     ++amount;
                 }
                 else {
@@ -455,40 +458,40 @@ public:
     void rotate(const Point& center, double angle) override {
         double rad = deg_to_rad(angle);
         for (int i = 0; i < verticesCount(); ++i) {
-            vertices_[i].rotate(center, rad);
+            vertices[i].rotate(center, rad);
         }
     }
 
     void reflect(const Point& center) override {
         for (int i = 0; i < verticesCount(); ++i) {
-            vertices_[i].reflect(center);
+            vertices[i].reflect(center);
         }
     }
 
     void reflect(const Line& axis) override {
         for (int i = 0; i < verticesCount(); ++i) {
-            vertices_[i].reflect(axis);
+            vertices[i].reflect(axis);
         }
     }
 
     void scale(const Point& center, double coefficient) override {
         for (int i = 0; i < verticesCount(); ++i) {
-            vertices_[i].scale(center, coefficient);
+            vertices[i].scale(center, coefficient);
         }
     }
 };
 
 // Класс Ellipse — эллипс. Эллипс — частный случай фигуры.
 class Ellipse : public Shape {
-    Point first_;
-    Point second_;
+    Point firstF;
+    Point secondF;
 
 protected:
-    double distance_;
+    double distance;
 
     vector<double> abc() const {
-        double a = distance_ / 2;
-        double b = sqrt(pow(a, 2) - pow(dist(first_, second_) / 2, 2));
+        double a = distance / 2;
+        double b = sqrt(pow(a, 2) - pow(dist(firstF, secondF) / 2, 2));
         double c = sqrt(pow(a, 2) - pow(b, 2));
         return { a, b, c };
     }
@@ -496,19 +499,19 @@ protected:
 public:
     // фокусы
     pair<Point, Point> focuses() const {
-        return make_pair(first_, second_);
+        return make_pair(firstF, secondF);
     }
 
     // директрисы
     pair<Line, Line> directrices() const {
         auto params = abc();
-        Line line = Line(first_, second_);
-        Point d_1 = first_;
-        d_1.scale(second_, (params[0] + params[0] * params[0] / params[2]) / (2 * params[0]));
-        Point d_2 = second_;
-        d_2.scale(first_, (params[0] + params[0] * params[0] / params[2]) / (2 * params[0]));
-        return { Line(d_1, d_1 + Point(line.a_, line.b_)),
-                Line(d_2, d_2 + Point(line.a_, line.b_)) };
+        Line line = Line(firstF, secondF);
+        Point d_1 = firstF;
+        d_1.scale(secondF, (params[0] + params[0] * params[0] / params[2]) / (2 * params[0]));
+        Point d_2 = secondF;
+        d_2.scale(firstF, (params[0] + params[0] * params[0] / params[2]) / (2 * params[0]));
+        return { Line(d_1, d_1 + Point(line.aLine, line.bLine)),
+                Line(d_2, d_2 + Point(line.aLine, line.bLine)) };
     }
 
     // эксцентриситет
@@ -519,29 +522,29 @@ public:
 
     // Центр
     Point center() const {
-        return { (first_.x + second_.x) / 2, (first_.y + second_.y) / 2 };
+        return { (firstF.x + secondF.x) / 2, (firstF.y + secondF.y) / 2 };
     }
 
     Ellipse(Point first, Point second, double distance) :
-        first_(first), second_(second), distance_(distance) {}
+        firstF(first), secondF(second), distance(distance) {}
 
     double perimeter() override {
         auto params = abc();
-        return M_PI * (3 * (params[0] + params[1]) -
+        return PI * (3 * (params[0] + params[1]) -
             sqrtl((3 * params[0] + params[1]) * (params[0] + 3 * params[1])));
     }
 
     double area() const override {
         auto params = abc();
-        return M_PI * params[0] * params[1];
+        return PI * params[0] * params[1];
     }
 
     bool operator==(const Shape& another) const override {
         auto casted = dynamic_cast<const Ellipse*>(&another);
         if ((casted != nullptr) &&
-            ((casted->first_ == first_ && casted->second_ == second_) ||
-                (casted->first_ == second_ && casted->second_ == first_)) &&
-            equal(casted->distance_, distance_)) {
+            ((casted->firstF == firstF && casted->secondF == secondF) ||
+                (casted->firstF == secondF && casted->secondF == firstF)) &&
+            equal(casted->distance, distance)) {
             return true;
         }
         return false;
@@ -550,9 +553,9 @@ public:
     bool isCongruentTo(const Shape& another) const override {
         auto casted = dynamic_cast<const Ellipse*>(&another);
         if ((casted != nullptr) &&
-            equal(dist(casted->first_, casted->second_),
-                dist(first_, second_)) &&
-            equal(casted->distance_, distance_)) {
+            equal(dist(casted->firstF, casted->secondF),
+                dist(firstF, secondF)) &&
+            equal(casted->distance, distance)) {
             return true;
         }
         return false;
@@ -561,15 +564,15 @@ public:
     bool isSimilarTo(const Shape& another) const override {
         auto casted = dynamic_cast<const Ellipse*>(&another);
         if ((casted != nullptr) &&
-            equal(dist(casted->first_, casted->second_),
-                dist(first_, second_) * casted->distance_ / distance_)) {
+            equal(dist(casted->firstF, casted->secondF),
+                dist(firstF, secondF) * casted->distance / distance)) {
             return true;
         }
         return false;
     }
 
     bool containsPoint(const Point& point) const override {
-        if (dist(point, first_) + dist(point, second_) <= distance_) {
+        if (dist(point, firstF) + dist(point, secondF) <= distance) {
             return true;
         }
         return false;
@@ -577,24 +580,24 @@ public:
 
     void rotate(const Point& center, double angle) override {
         double rad = deg_to_rad(angle);
-        first_.rotate(center, rad);
-        second_.rotate(center, rad);
+        firstF.rotate(center, rad);
+        secondF.rotate(center, rad);
     }
 
     void reflect(const Point& center) override {
-        first_.reflect(center);
-        second_.reflect(center);
+        firstF.reflect(center);
+        secondF.reflect(center);
     }
 
     void reflect(const Line& axis) override {
-        first_.reflect(axis);
-        second_.reflect(axis);
+        firstF.reflect(axis);
+        secondF.reflect(axis);
     }
 
     void scale(const Point& center, double coefficient) override {
-        first_.scale(center, coefficient);
-        second_.scale(center, coefficient);
-        distance_ *= coefficient;
+        firstF.scale(center, coefficient);
+        secondF.scale(center, coefficient);
+        distance *= coefficient;
     }
 };
 
@@ -607,7 +610,7 @@ public:
 
     // Радиус
     double radius() const {
-        return distance_ / 2;
+        return distance / 2;
     }
 
     // Круг можно задать точкой и числом (центр и радиус).
@@ -635,12 +638,12 @@ public:
     //  сторон),
     Rectangle(Point first, Point second, double k) :
         Polygon(first, Point(0, 0), second, Point(0, 0)) {
-        double angle = M_PI - 2 * atan(k);
+        double angle = PI - 2 * atan(k);
         Point middle = Point(first, second);
         first.rotate(middle, angle);
-        vertices_[1] = first;
+        vertices[1] = first;
         second.rotate(middle, angle);
-        vertices_[3] = second;
+        vertices[3] = second;
     }
 };
 
@@ -671,47 +674,55 @@ class Triangle : public Polygon {
 public:
     // Описанная окружность
     Circle circumscribedCircle() const {
-        Line first = orthogonal(Line(vertices_[0], vertices_[1]),
-            Point((vertices_[0].x + vertices_[1].x) / 2,
-                (vertices_[0].y + vertices_[1].y) / 2));
-        Line second = orthogonal(Line(vertices_[1], vertices_[2]),
-            Point((vertices_[1].x + vertices_[2].x) / 2,
-                (vertices_[1].y + vertices_[2].y) / 2));
+        Line first = orthogonal(Line(vertices[0], vertices[1]),
+            Point((vertices[0].x + vertices[1].x) / 2,
+                (vertices[0].y + vertices[1].y) / 2));
+        Line second = orthogonal(Line(vertices[1], vertices[2]),
+            Point((vertices[1].x + vertices[2].x) / 2,
+                (vertices[1].y + vertices[2].y) / 2));
         Point center = intersect(first, second);
-        return { center, dist(center, vertices_[0]) };
+        return { center, dist(center, vertices[0]) };
     }
 
     // Вписанная окружность
     Circle inscribedCircle() const {
-        double a = dist(vertices_[0], vertices_[1]);
-        double b = dist(vertices_[1], vertices_[2]);
-        double c = dist(vertices_[2], vertices_[0]);
+        double a = dist(vertices[0], vertices[1]);
+        double b = dist(vertices[1], vertices[2]);
+        double c = dist(vertices[2], vertices[0]);
         Point tmp;
-        tmp.x = (vertices_[2].x * a + vertices_[0].x * b + vertices_[1].x * c) / (a + b + c);
-        tmp.y = (vertices_[2].y * a + vertices_[0].y * b + vertices_[1].y * c) / (a + b + c);
+        tmp.x = (vertices[2].x * a + vertices[0].x * b + vertices[1].x * c) / (a + b + c);
+        tmp.y = (vertices[2].y * a + vertices[0].y * b + vertices[1].y * c) / (a + b + c);
         return { tmp, 2 * area() / (a + b + c) };
     }
 
     // Центр масс
     Point centroid() const {
-        double x = (vertices_[0].x + vertices_[1].x + vertices_[2].x) / 3;
-        double y = (vertices_[0].y + vertices_[1].y + vertices_[2].y) / 3;
+        double x = (vertices[0].x + vertices[1].x + vertices[2].x) / 3;
+        double y = (vertices[0].y + vertices[1].y + vertices[2].y) / 3;
         return { x, y };
     }
 
     // Ортоцентр
     Point orthocenter() const {
-        Line first = orthogonal(Line(vertices_[0], vertices_[1]), vertices_[2]);
-        Line second = orthogonal(Line(vertices_[1], vertices_[2]), vertices_[0]);
+        Line first = orthogonal(Line(vertices[0], vertices[1]), vertices[2]);
+        Line second = orthogonal(Line(vertices[1], vertices[2]), vertices[0]);
         return intersect(first, second);
     }
 
     // Прямая Эйлера
+    /*
+       Прямая, проходящая через центр описанной
+       окружности и ортоцентр треугольника
+    */
     Line EulerLine() const {
         return { circumscribedCircle().center(), orthocenter() };
     }
 
     // Окружность Эйлера
+    /*
+      Окружность девяти точек - это окружность,
+      проходящая через середины всех трех сторон треугольника
+    */
     Circle ninePointsCircle() const {
         Point first = circumscribedCircle().center();
         Point second = orthocenter();
@@ -719,4 +730,3 @@ public:
         return { center, circumscribedCircle().radius() / 2 };
     }
 };
-
