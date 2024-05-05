@@ -730,3 +730,23 @@ public:
         return { center, circumscribedCircle().radius() / 2 };
     }
 };
+
+/*
+    У любой фигуры можно вычислить:
+        — double perimeter() — периметр;
+        — double area() — площадь;
+        — operator==(const Shape& another) — совпадает ли эта фигура с другой;
+        — isCongruentTo(const Shape& another) — равна ли эта фигура
+    другой в геометрическом смысле;
+
+        — isSimilarTo(const Shape& another) — подобна ли эта фигура другой;
+        — containsPoint(Point point) — находится ли точка внутри фигуры.
+
+    С любой фигурой можно сделать следующие действия:
+        — rotate(Point center, double angle) — поворот на угол (в градусах, 
+    против часовой стрелки) относительно точки;
+        — reflex(Point center) — симметрию относительно точки;
+        — reflex(Line axis) — симметрию относительно прямой;
+        — scale(Point center, double coefficient) — гомотетию с коэффициентом coefficient
+и центром center.
+*/
