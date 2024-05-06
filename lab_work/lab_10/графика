@@ -7,19 +7,120 @@
 using namespace std;
 
 const int N = 30;
-const int RAZ = 10;
+const int RAZ = 15;
+
+
+class Button {
+private:
+    double x;
+    double y;
+    double width;
+    double height;
+    const char* text;
+public:
+    Button() : x(0), y(0), width(0), height(0), text(nullptr) {};
+    Button(double x, double y, double width, double height, const char* text)
+        : x(x), y(y), width(width), height(height), text(text) {};
+
+    vector <double> colors;
+    void setColor(double first, double second, double third) {
+        colors.push_back(first);
+        colors.push_back(second);
+        colors.push_back(third);
+    }
+
+    void drawButton() {
+
+        //Отрисовка кнопки
+        glBegin(GL_POLYGON);
+        glColor3f(colors[0], colors[1], colors[2]); // Серый цвет
+        glVertex2f(x, y);
+        glVertex2f(x + width, y);
+        glVertex2f(x + width, y + height);
+        glVertex2f(x, y + height);
+        glEnd();
+
+        glColor3f(0.0f, 0.0f, 0.0f); // Серый цвет
+        int textLength = strlen(text);
+        float textX = x + 1;
+        float textY = y + 1;
+
+        glRasterPos2f(textX, textY);
+        for (int i = 0; i < textLength; i++) {
+            glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
+        }
+    }
+
+    bool isButtonHovered(Point& najatie) {
+        return najatie.x >= this->x && najatie.x <= this->x + this->width &&
+            najatie.y >= this->y && najatie.y <= this->y + this->height;
+    }
+
+};
+
+vector<pair<int, int>> list = { {0, 0}, {1, 1}, {2,  0} };
+
+/*
+    0 - Point, точка на плоскости
+    1 - Line, прямая
+    2 - Polygon, многоугольник
+    3 - Ellipse, эллипс
+    4 - Circle, круг
+    5 - Rectangle, прямоугольник
+    6 - Square, квадрат
+    7 - Triangle, треугольник
+*/
+vector<Point> pointList = { Point(1.0, 1.0), Point(2.9, 2.1) };
+vector<Line> lineList = { Line(Point(1.0, 1.0), Point(2.0, 2.0)), Line(5, 5) };
+vector<Shape> polygonList = { Polygon({Point(1.0, 2.0), Point(3.0, 3.0), Point(1.0, 3.0)})};
+vector<Shape> ellipseList = { Ellipse(Point(1.0, 2.0), Point(2.0, 5.0), 5) };
+vector<Shape> circleList = { Circle(Point(1.0, 6.0), 5) };
+vector<Shape> rectangleList;
+vector<Shape> squareList;
+vector<Shape> triangleList;
+
+int editing_number = -1;
+
+enum MenuState
+{
+    MAIN,
+    CREATION,
+    POLYGON,
+    ELLIPSE,
+    CIRCLE,
+    RECTANGLE,
+    SQUARE,
+    TRIANGLE,
+    EDIT
+};
+
+MenuState currentMenuState = MAIN;
+//Кнопки меню
+Button bPolygon(31, 25, 12, 4, "Polygon");
+Button bEllipse(31, 20, 12, 4, "Ellipse");
+Button bCircle(31, 15, 12, 4, "Circle");
+Button bRectangle(31, 10, 12, 4, "Rectangle");
+Button bTriangle(31, 5, 12, 4, "Triangle");
+Button bSquare(31, 0, 12, 4, "Square");
+Button to_Main_Menu(31, -5, 12, 4, "To start");
+
+Button Create(31, -10, 12, 4, "Create");
+Button Edit(31, -15, 12, 4, "Edit");
+
 
 void instruction() {
     cout << "Сначала указываем на массив с фигурами\n";
-    cout << "Потом Указываем на номер в массиве\n";    
-    cout << "1 - Point, точка на плоскости\n";    
-    cout << "2 - Line, прямая\n";    
-    cout << "3 - Polygon, многоугольник\n";    
-    cout << "4 - Ellipse, эллипс\n";     
-    cout << "5 - Circle, круг\n";     
-    cout << "6 - Rectangle, прямоугольник\n";    
-    cout << "7 - Square, квадрат\n";   
-    cout << "8 - Triangle, треугольник\n";
+    cout << "Потом Указываем на номер в массиве\n";
+    cout << "1 - Создать элемент\n";
+    cout << "2 - Удалить элемент\n";
+    cout << "3 - Периметр\n";
+    cout << "4 - Площадь\n";
+    cout << "5 - Равенство с фигурой\n";
+    cout << "6 - Подобие с фигурой\n";
+    cout << "7 - Нахождение в фигуре\n";
+    cout << "8 - Поворот на угол\n";
+    cout << "9 - Симметрия\n";
+    cout << "9 - Гомотетия\n";
     cout << "-----------------------------\n";
 }
 
@@ -27,201 +128,82 @@ void init() {
     glClearColor(0.0, 0.0, 1.0, 1.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-N - RAZ, N + RAZ, -N - RAZ, N + RAZ, -1.0, 1.0);
+    glOrtho(-N, N + RAZ, -N, N, -1.0, 1.0);
+}
+
+
+void drawMenu() {
+    bCreate.setColor(0.9, 0.0, 0.5);
+    bDelete.setColor(0.9, 0.0, 0.5);
+    bEdit.setColor(0.9, 0.0, 0.5);
+    bNext.setColor(0.9, 0.0, 0.5);
+    bPreview.setColor(0.9, 0.0, 0.5);
+    bInstruction.setColor(0.9, 0.0, 0.5);
+
+
+    bCreate.drawButton();
+    bDelete.drawButton();
+    bEdit.drawButton();
+    bNext.drawButton();
+    bPreview.drawButton();
+    bInstruction.drawButton();
 }
 
 void drawGrid() {
-    glBegin(GL_QUADS);
-    glVertex2f(-N-RAZ, -N - RAZ);
-    glVertex2f(-N-RAZ, N-RAZ);
-    glVertex2f(N-RAZ, N-RAZ);
-    glVertex2f(N - RAZ, -N-RAZ);
-    glEnd();
-
     glColor3f(0.0, 0.0, 0.0);
     glLineWidth(1.0);
     glBegin(GL_LINES);
-    for (int i = -N - RAZ; i <= N - RAZ; i++) {
-        glVertex2f(i, -N-RAZ);
-        glVertex2f(i, N-RAZ);
-        glVertex2f(-N-RAZ, i);
-        glVertex2f(N-RAZ, i);
+    for (int i = -N; i <= N; i++) {
+        glVertex2f(i, -N);
+        glVertex2f(i, N);
+        glVertex2f(-N, i);
+        glVertex2f(N, i);
     }
     glEnd();
 }
 
+
 void drawAxes() {
+    glBegin(GL_QUADS);
+    glVertex2f(-N, -N);
+    glVertex2f(-N, N);
+    glVertex2f(N, N);
+    glVertex2f(N, -N);
+    glEnd();
+
     glColor3f(1.0, 0.0, 0.0);
     glLineWidth(4.0);
     glBegin(GL_LINES);
-    glVertex2f(-N - RAZ, -RAZ);
-    glVertex2f(N - RAZ, -RAZ);
-    glVertex2f(-RAZ, -N - RAZ);
-    glVertex2f(-RAZ, N - RAZ);
+    glVertex2f(-N, 0);
+    glVertex2f(N, 0);
+    glVertex2f(0, -N);
+    glVertex2f(0, N);
     glEnd();
 }
 
-string text = "Hello, World!";
+void mouseClickHandler(int button, int state, int x, int y) {
+    setlocale(LC_ALL, "rus");
+    double X = (x - N + RAZ) * 2, Y = N - (y * 2);
 
-void keyboard(unsigned char key, int x, int y) {
-    switch (key)
+    Point najatie(X, Y);
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-    case (27):
-        exit(0);
-    case (49): // 1
-        cout << "Point\n";
-        break;
-    case (50): // 2
-        cout << "Line\n";
-        break;
-    case (51): // 3
-        cout << "Polygon\n";
-        break;
-    case (52): // 4
-        cout << "Ellipse\n";
-        break;
-    case (53): // 5
-        cout << "Circle\n";
-        break;
-    case (54): // 6
-        cout << "Rectangle\n";
-        break;
-    case(55): // 7
-        cout << "Square\n";
-        break;
-    case(56): // 8
-        cout << "Triangle\n";
-        break;
-    default:
-        break;
-    }
-
-
-    text += key;
-
-    glutPostRedisplay(); 
-}
-
-void drawSVO() {
-    glColor3f(0.0, 1.0, 0.0);
-    glLineWidth(7.0);
-    vector<Point> list = { Point(15.0, 5.0), Point(19.0, 5.0),
-        Point(19.0, 19.0), Point(15.0, 19.0), Point(5.0, 19.0),
-        Point(10.0, 5.0), Point(15.0, 19.0), Point(0.0, 19.0), Point(0.0, 12.0),
-    Point(5.0, 12.0), Point(5.0, 5.0), Point(0.0, 5.0)};
-    glBegin(GL_LINES);
-    // O
-    glVertex2f(list[0].x - RAZ, list[0].y - RAZ);
-    glVertex2f(list[1].x - RAZ, list[1].y - RAZ);
-
-    glVertex2f(list[1].x - RAZ, list[1].y - RAZ);
-    glVertex2f(list[2].x - RAZ, list[2].y - RAZ);
-
-    glVertex2f(list[2].x - RAZ, list[2].y - RAZ);
-    glVertex2f(list[3].x - RAZ, list[3].y - RAZ);
-
-    glVertex2f(list[3].x - RAZ, list[3].y - RAZ);
-    glVertex2f(list[0].x - RAZ, list[0].y - RAZ);
-
-    // V
-    glVertex2f(list[4].x - RAZ, list[4].y - RAZ);
-    glVertex2f(list[5].x - RAZ, list[5].y - RAZ);
-
-    glVertex2f(list[5].x - RAZ, list[5].y - RAZ);
-    glVertex2f(list[6].x - RAZ, list[6].y - RAZ);
-
-    // S
-    glVertex2f(list[4].x - RAZ, list[4].y - RAZ);
-    glVertex2f(list[7].x - RAZ, list[7].y - RAZ);
-
-    glVertex2f(list[7].x - RAZ, list[7].y - RAZ);
-    glVertex2f(list[8].x - RAZ, list[8].y - RAZ);
-
-    glVertex2f(list[8].x - RAZ, list[8].y - RAZ);
-    glVertex2f(list[9].x - RAZ, list[9].y - RAZ);
-
-    glVertex2f(list[9].x - RAZ, list[9].y - RAZ);
-    glVertex2f(list[10].x - RAZ, list[10].y - RAZ);
-
-    glVertex2f(list[10].x - RAZ, list[10].y - RAZ);
-    glVertex2f(list[11].x - RAZ, list[11].y - RAZ);
-
-    // Симметрия буквы V относительно точки
-    Point tmp4 = list[4], tmp5 = list[5], tmp6 = list[6];
-    tmp4.reflect(Point(0.0, 0.0));
-    tmp5.reflect(Point(0.0, 0.0));
-    tmp6.reflect(Point(0.0, 0.0));
-
-    glVertex2f(tmp4.x - RAZ, tmp4.y - RAZ);
-    glVertex2f(tmp5.x - RAZ, tmp5.y - RAZ);
-
-    glVertex2f(tmp5.x - RAZ, tmp5.y - RAZ);
-    glVertex2f(tmp6.x - RAZ, tmp6.y - RAZ);
-
-    // Симметрия буквы V относительно прямой
-    Point tmp24 = list[4], tmp25 = list[5], tmp26 = list[6];
-    tmp24.reflect(Line(Point(0.0, 0.0), Point(20.0, 0.0)));
-    tmp25.reflect(Line(Point(0.0, 0.0), Point(20.0, 0.0)));
-    tmp26.reflect(Line(Point(0.0, 0.0), Point(20.0, 0.0)));
-
-    glVertex2f(tmp24.x - RAZ, tmp24.y - RAZ);
-    glVertex2f(tmp25.x - RAZ, tmp25.y - RAZ);
-
-    glVertex2f(tmp25.x - RAZ, tmp25.y - RAZ);
-    glVertex2f(tmp26.x - RAZ, tmp26.y - RAZ);
-
-    // Отрисовка квадрата
-    Square sq(Point(-19, 19), Point(-1, 1));
-    vector<Point> listSq = sq.getVertices();
-    for (int i = 0; i < listSq.size() - 1; i++) {
-        glVertex2f(listSq[i].x - RAZ, listSq[i].y - RAZ);
-        glVertex2f(listSq[i + 1].x - RAZ, listSq[i + 1].y - RAZ);
-        glFlush();
-    }
-    glVertex2f(listSq[listSq.size() - 1].x - RAZ, listSq[listSq.size() - 1].y - RAZ);
-    glVertex2f(listSq[0].x - RAZ, listSq[0].y - RAZ);
-
-
-    glEnd();   
-}
-
-void drawMenu() {
-    int tmp = 0;
-    for (int i = 1; i <= 5; i += 1) {
-        glBegin(GL_QUADS);
-        glVertex2f(N - (RAZ - 1),     N - tmp - RAZ * i);
-        glVertex2f(N, N - tmp - RAZ * i);
-        glVertex2f(N, N - tmp - RAZ * (i + 1));
-        glVertex2f(N - (RAZ - 1),     N - tmp - RAZ* (i + 1));
-        glEnd();
-
-        glBegin(GL_QUADS);
-        glVertex2f(N + 1, N - tmp - RAZ * i);
-        glVertex2f(N + RAZ - 1, N - tmp - RAZ * i);
-        glVertex2f(N + RAZ - 1, N - tmp - RAZ * (i + 1));
-        glVertex2f(N + 1, N - tmp - RAZ * (i + 1));
-        glEnd();
-        tmp += 2;
+        switch (currentMenuState)
+        {
+            case 
+        }
     }
 }
+
 
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
-    drawGrid();
     drawAxes();
-    drawSVO();
     drawMenu();
+    drawGrid();
 
     glColor3f(1.0, 1.0, 1.0);
-
-    // устанавливаем позицию текста
-    glRasterPos2f(N - RAZ - 5, N - RAZ + 2);
-
-    // выводим текст
-    for (int i = 0; i < text.length(); i++) {
-        glutBitmapCharacter(GLUT_BITMAP_8_BY_13, text[i]);
-    }
 
     glFlush();
 
@@ -239,7 +221,7 @@ int main(int argc, char** argv) {
     init();
 
     glutDisplayFunc(display);
-    glutKeyboardFunc(keyboard);
+    glutKeyboardFunc(mouseClickHandler);
 
     glutMainLoop();
 
