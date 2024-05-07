@@ -89,6 +89,60 @@ Button bNext(31, 10, 12, 4, "Next");
 Button bPreview(31, 5, 12, 4, "Preview");
 Button bInstruction(31, 0, 12, 4, "Instruction");
 
+void listFigure() {
+    cout << "--------------------------\n";
+    cout << "1 - Point, точка на плоскости;\n";
+    cout << "2 - Line, прямая;\n";
+    cout << "3 - Polygon, многоугольник;\n";
+    cout << "4 - Ellipse, эллипс;\n";
+    cout << "5 - Circle, круг;\n";
+    cout << "6 - Rectangle, прямоугольник;\n";
+    cout << "7 - Square, квадрат;\n";
+    cout << "8 - Triangle, треугольник;\n";
+    cout << "--------------------------\n";
+}
+
+void listOper() {
+    cout << "--------------------------\n";
+    cout << "A - Периметр;\n";
+    cout << "S - Площадь;\n";
+    cout << "D - Совпадение;\n";
+    cout << "F - Равенство;\n";
+    cout << "G - Равенство в геометрическом смысле;\n";
+    cout << "H - Подобие;\n";
+    cout << "J - Нахождение в точке;\n";
+
+    cout << "Z - Поворот на угол;\n";
+    cout << "X - Симметрия относительно точки;\n";
+    cout << "C - Симметрия относительно прямой;\n";
+    cout << "V - Гомотетия;\n";
+
+    cout << "--------------------------\n";
+}
+
+void Instruction() {
+    cout << "Нажмите на одну из предложенных кнопок:\n";
+    cout << "Create - создать фигуру;\n";
+    cout << "Delete - удалить фигуру;\n";
+    cout << "Edit - изменение фигуры;\n";
+    cout << "Next - переключиться на следующую фигуру;\n";
+    cout << "Preview - переключиться на предыдущую фигуру;\n";
+    cout << "Next - просмотр инструкции;\n\n";
+
+    cout << "При выборе Next или Preview программа укажет на ";
+    cout << "текущую (подсвеченную) фигуру.\n\n";
+
+    cout << "При выборе Edit или Delete программа запросит номер ";
+    cout << "фигуры, которую Вы хотите удалить.\n";
+    cout << "С фигурой можно:\n";
+    listOper();
+
+    cout << "При выборе Create пользователю предлагается список возможных ";
+    cout << "элементов / фигур, которые он захочет создать:\n";
+
+    listFigure();
+}
+
 void init() {
     glClearColor(0.0, 0.0, 1.0, 1.0);
     glMatrixMode(GL_PROJECTION);
@@ -160,8 +214,44 @@ void display() {
     glutSwapBuffers();
 }
 
-void Create() {
+void keyboardInput(unsigned char key, int x, int y) {
+    switch (key) {
+    case '1':
+        editing_number = 1;
+        break;
+    case '2':
+        editing_number = 2;
+        break;
+    case '3':
+        editing_number = 3;
+        break;
+    case '4':
+        editing_number = 4;
+        break;
+    case '5':
+        editing_number = 5;
+        break;
+    case '6':
+        editing_number = 6;
+        break;
+    case '7':
+        editing_number = 7;
+        break;
+    case '8':
+        editing_number = 8;
+        break;
+    default:
+        editing_number = -1;
+        break;
+    }
 
+    if (editing_number != -1) {
+        cout << "Выбран номер: " << editing_number << endl;
+    }
+}
+
+void Create() {
+    listFigure();
 }
 
 void Delete() {
@@ -183,36 +273,6 @@ void Delete() {
 }
 
 void Edit() {
-
-}
-
-void Instruction() {
-    cout << "Нажмите на одну из предложенных кнопок:\n";
-    cout << "Create - создать фигуру;\n";
-    cout << "Delete - удалить фигуру;\n";
-    cout << "Edit - изменение фигуры;\n";
-    cout << "Next - переключиться на следующую фигуру;\n";
-    cout << "Preview - переключиться на предыдущую фигуру;\n";
-    cout << "Next - просмотр инструкции;\n\n";
-
-    cout << "При выборе Next или Preview программа укажет на ";
-    cout << "текущую (подсвеченную) фигуру.\n\n";
-    
-    cout << "При выборе Edit или Delete программа запросит номер ";
-    cout << "фигуры, которую Вы хотите удалить.\n\n";
-
-    cout << "При выборе Create пользователю предлагается список возможных ";
-    cout << "элементов / фигур, которые он захочет создать:\n";
-
-    cout << "0 - Point, точка на плоскости;\n";
-    cout << "1 - Line, прямая;\n";
-    cout << "2 - Polygon, многоугольник;\n";
-    cout << "3 - Ellipse, эллипс;\n";
-    cout << "4 - Circle, круг;\n";
-    cout << "5 - Rectangle, прямоугольник;\n";
-    cout << "6 - Square, квадрат;\n";
-    cout << "7 - Triangle, треугольник;\n";
-    cout << "--------------------------\n";
 
 }
 
@@ -282,6 +342,8 @@ int main(int argc, char** argv) {
 
     glutDisplayFunc(display);
     glutMouseFunc(mouseClick);
+    glutKeyboardFunc(keyboardInput);
+
 
     glutMainLoop();
 
