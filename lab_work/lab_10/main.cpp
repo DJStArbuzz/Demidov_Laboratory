@@ -10,6 +10,57 @@ const int N = 30;
 const int RAZ = 15;
 
 
+void listFigure() {
+    cout << "--------------------------\n";
+    cout << "1 - Point, точка на плоскости;\n";
+    cout << "2 - Line, прямая;\n";
+    cout << "3 - Polygon, многоугольник;\n";
+    cout << "4 - Ellipse, эллипс;\n";
+    cout << "5 - Circle, круг;\n";
+    cout << "6 - Rectangle, прямоугольник;\n";
+    cout << "7 - Square, квадрат;\n";
+    cout << "8 - Triangle, треугольник;\n";
+    cout << "--------------------------\n";
+}
+
+void listOper() {
+    cout << "_1 - Периметр;\n";
+    cout << "_2 - Площадь;\n";
+    cout << "_3 - Совпадение;\n";
+    cout << "_4 - Равенство;\n";
+    cout << "_5 - Равенство в геометрическом смысле;\n";
+    cout << "_6 - Подобие;\n";
+    cout << "_7 - Нахождение в точке;\n";
+    cout << "_8 - Поворот на угол;\n";
+    cout << "_9 - Симметрия относительно точки;\n";
+    cout << "10 - Симметрия относительно прямой;\n";
+    cout << "11 - Гомотетия;\n";
+    cout << "--------------------------\n";
+}
+
+void Instruction() {
+    cout << "Нажмите на одну из предложенных кнопок:\n";
+    cout << "Create - создать фигуру;\n";
+    cout << "Delete - удалить фигуру;\n";
+    cout << "Edit - изменение фигуры;\n";
+    cout << "Next - переключиться на следующую фигуру;\n";
+    cout << "Preview - переключиться на предыдущую фигуру;\n";
+    cout << "Next - просмотр инструкции;\n\n";
+
+    cout << "При выборе Next или Preview программа укажет на ";
+    cout << "текущую (подсвеченную) фигуру.\n\n";
+
+    cout << "При выборе Edit или Delete программа запросит номер ";
+    cout << "фигуры, которую Вы хотите удалить.\n";
+    cout << "С фигурой можно:\n";
+    listOper();
+
+    cout << "При выборе Create пользователю предлагается список возможных ";
+    cout << "элементов / фигур, которые он захочет создать:\n";
+
+    listFigure();
+}
+
 class Button {
 private:
     double x;
@@ -30,7 +81,6 @@ public:
     }
 
     void drawButton() {
-
         //Отрисовка кнопки
         glBegin(GL_POLYGON);
         glColor3f(colors[0], colors[1], colors[2]); // Серый цвет
@@ -58,18 +108,10 @@ public:
 
 };
 
+// Массив из всех элементов
 vector<pair<int, int>> list = { {0, 0}, {1, 1}, {2,  0} };
 
-/*
-    0 - Point, точка на плоскости
-    1 - Line, прямая
-    2 - Polygon, многоугольник
-    3 - Ellipse, эллипс
-    4 - Circle, круг
-    5 - Rectangle, прямоугольник
-    6 - Square, квадрат
-    7 - Triangle, треугольник
-*/
+// Массив элементов определенного вида фигуры
 vector<Point> pointList = { Point(1.0, 1.0), Point(2.9, 2.1) };
 vector<Line> lineList = { Line(Point(1.0, 1.0), Point(2.0, 2.0)), Line(5, 5) };
 vector<Polygon> polygonList = { Polygon({Point(1.0, 2.0), Point(3.0, 3.0), Point(1.0, 3.0)})};
@@ -79,69 +121,7 @@ vector<Rectangle> rectangleList;
 vector<Square> squareList;
 vector<Triangle> triangleList;
 
-int editing_number = -1;
-
-//Кнопки меню
-Button bCreate(31, 25, 12, 4, "Create");
-Button bDelete(31, 20, 12, 4, "Delete");
-Button bEdit(31, 15, 12, 4, "Edit");
-Button bNext(31, 10, 12, 4, "Next");
-Button bPreview(31, 5, 12, 4, "Preview");
-Button bInstruction(31, 0, 12, 4, "Instruction");
-
-void listFigure() {
-    cout << "--------------------------\n";
-    cout << "1 - Point, точка на плоскости;\n";
-    cout << "2 - Line, прямая;\n";
-    cout << "3 - Polygon, многоугольник;\n";
-    cout << "4 - Ellipse, эллипс;\n";
-    cout << "5 - Circle, круг;\n";
-    cout << "6 - Rectangle, прямоугольник;\n";
-    cout << "7 - Square, квадрат;\n";
-    cout << "8 - Triangle, треугольник;\n";
-    cout << "--------------------------\n";
-}
-
-void listOper() {
-    cout << "--------------------------\n";
-    cout << "A - Периметр;\n";
-    cout << "S - Площадь;\n";
-    cout << "D - Совпадение;\n";
-    cout << "F - Равенство;\n";
-    cout << "G - Равенство в геометрическом смысле;\n";
-    cout << "H - Подобие;\n";
-    cout << "J - Нахождение в точке;\n";
-
-    cout << "Z - Поворот на угол;\n";
-    cout << "X - Симметрия относительно точки;\n";
-    cout << "C - Симметрия относительно прямой;\n";
-    cout << "V - Гомотетия;\n";
-
-    cout << "--------------------------\n";
-}
-
-void Instruction() {
-    cout << "Нажмите на одну из предложенных кнопок:\n";
-    cout << "Create - создать фигуру;\n";
-    cout << "Delete - удалить фигуру;\n";
-    cout << "Edit - изменение фигуры;\n";
-    cout << "Next - переключиться на следующую фигуру;\n";
-    cout << "Preview - переключиться на предыдущую фигуру;\n";
-    cout << "Next - просмотр инструкции;\n\n";
-
-    cout << "При выборе Next или Preview программа укажет на ";
-    cout << "текущую (подсвеченную) фигуру.\n\n";
-
-    cout << "При выборе Edit или Delete программа запросит номер ";
-    cout << "фигуры, которую Вы хотите удалить.\n";
-    cout << "С фигурой можно:\n";
-    listOper();
-
-    cout << "При выборе Create пользователю предлагается список возможных ";
-    cout << "элементов / фигур, которые он захочет создать:\n";
-
-    listFigure();
-}
+int cur = -1;
 
 void init() {
     glClearColor(0.0, 0.0, 1.0, 1.0);
@@ -150,7 +130,37 @@ void init() {
     glOrtho(-N, N + RAZ, -N, N, -1.0, 1.0);
 }
 
+//Кнопки изначального меню
+Button bCreate(31, 25, 12, 4, "Create");
+Button bDelete(31, 20, 12, 4, "Delete");
+Button bEdit(31, 15, 12, 4, "Edit");
+Button bNext(31, 10, 12, 4, "Next");
+Button bPreview(31, 5, 12, 4, "Preview");
+Button bInstruction(31, 0, 12, 4, "Instruction");
 
+//Кнопки меню выбора точек
+Button bPoint    (31,  25, 12, 4, "Point");
+Button bLine     (31,  20, 12, 4, "Line");
+Button bPolygon  (31,  15, 12, 4, "Polygon");
+Button bEllipse  (31,  10, 12, 4, "Ellipse");
+Button bCircle   (31,   5, 12, 4, "Circle");
+Button bRectangle(31,   0, 12, 4, "Rectangle");
+Button bSquare   (31,  -5, 12, 4, "Square");
+Button bTriangle (31, -10, 12, 4, "Triangle");
+
+//Кнопки меню выбора операции
+Button bPerimeter    (31,  25, 12, 4, "Perimeter");
+Button bArea         (31,  20, 12, 4, "Area");
+Button bEqual        (31,  15, 12, 4, "Equal (==)");
+Button bIsCongruentTo(31,  10, 12, 4, "Is Congruent To");
+Button bIsSimilarTo  (31,   5, 12, 4, "Is Similar To");
+Button bContainsP    (31,   0, 12, 4, "ContainsPoint");
+Button bRotate       (31,  -5, 12, 4, "Rotate");
+Button bReflexP      (31, -10, 12, 4, "Reflex with Point");
+Button bReflexL      (31, -15, 12, 4, "Reflex with Line");
+Button bScale        (31, -20, 12, 4, "Scale");
+
+// Отрисовка стартового меню
 void drawMenu() {
     bCreate.setColor(0.9, 0.0, 0.5);
     bDelete.setColor(0.9, 0.0, 0.5);
@@ -158,7 +168,6 @@ void drawMenu() {
     bNext.setColor(0.9, 0.0, 0.5);
     bPreview.setColor(0.9, 0.0, 0.5);
     bInstruction.setColor(0.9, 0.0, 0.5);
-
 
     bCreate.drawButton();
     bDelete.drawButton();
@@ -168,6 +177,53 @@ void drawMenu() {
     bInstruction.drawButton();
 }
 
+// Отрисовка меню выбора фигур
+void drawMenuFigure() {
+    bPoint.setColor(0.9, 0.0, 0.5);
+    bLine.setColor(0.9, 0.0, 0.5);
+    bPolygon.setColor(0.9, 0.0, 0.5);
+    bEllipse.setColor(0.9, 0.0, 0.5);
+    bCircle.setColor(0.9, 0.0, 0.5);
+    bRectangle.setColor(0.9, 0.0, 0.5);
+    bSquare.setColor(0.9, 0.0, 0.5);
+    bTriangle.setColor(0.9, 0.0, 0.5);
+
+    bPoint.drawButton();
+    bLine.drawButton();
+    bPolygon.drawButton();
+    bEllipse.drawButton();
+    bCircle.drawButton();
+    bRectangle.drawButton();
+    bSquare.drawButton();
+    bTriangle.drawButton();
+}
+
+// Отрисовка меню выбора операции
+void drawMenuOperation() {
+    bPerimeter.setColor(0.9, 0.0, 0.5);
+    bArea.setColor(0.9, 0.0, 0.5);
+    bEqual.setColor(0.9, 0.0, 0.5);
+    bIsCongruentTo.setColor(0.9, 0.0, 0.5);
+    bIsSimilarTo.setColor(0.9, 0.0, 0.5);
+    bContainsP.setColor(0.9, 0.0, 0.5);
+    bRotate.setColor(0.9, 0.0, 0.5);
+    bReflexP.setColor(0.9, 0.0, 0.5);
+    bReflexL.setColor(0.9, 0.0, 0.5);
+    bScale.setColor(0.9, 0.0, 0.5);
+
+    bPerimeter.drawButton();
+    bArea.drawButton();
+    bEqual.drawButton();
+    bIsCongruentTo.drawButton();
+    bIsSimilarTo.drawButton();
+    bContainsP.drawButton();
+    bRotate.drawButton();
+    bReflexP.drawButton();
+    bReflexL.drawButton();
+    bScale.drawButton();
+}
+
+// Отрисовка координатной плоскости
 void drawGrid() {
     glColor3f(0.0, 0.0, 0.0);
     glLineWidth(1.0);
@@ -180,7 +236,6 @@ void drawGrid() {
     }
     glEnd();
 }
-
 
 void drawAxes() {
     glBegin(GL_QUADS);
@@ -200,58 +255,45 @@ void drawAxes() {
     glEnd();
 }
 
-
+// Отображение изначального экрана
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     drawAxes();
     drawGrid();
     drawMenu();
-
     glColor3f(1.0, 1.0, 1.0);
-
     glFlush();
-
     glutSwapBuffers();
 }
 
-void keyboardInput(unsigned char key, int x, int y) {
-    switch (key) {
-    case '1':
-        editing_number = 1;
-        break;
-    case '2':
-        editing_number = 2;
-        break;
-    case '3':
-        editing_number = 3;
-        break;
-    case '4':
-        editing_number = 4;
-        break;
-    case '5':
-        editing_number = 5;
-        break;
-    case '6':
-        editing_number = 6;
-        break;
-    case '7':
-        editing_number = 7;
-        break;
-    case '8':
-        editing_number = 8;
-        break;
-    default:
-        editing_number = -1;
-        break;
-    }
+// Отображение экрана с выбором фигур
+void display2() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 1.0, 1.0);
+    drawMenuFigure();
+    glutPostRedisplay();
+    glFlush();
+    glutSwapBuffers();
+}
 
-    if (editing_number != -1) {
-        cout << "Выбран номер: " << editing_number << endl;
-    }
+// Отображение экрана с выбором операций
+void display3() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 1.0, 1.0);
+    drawMenuOperation();
+    glutPostRedisplay();
+    glFlush();
+    glutSwapBuffers();
 }
 
 void Create() {
     listFigure();
+    glutInitWindowSize(1000, 1000);
+    glutCreateWindow("Create");
+    init();
+    glutDisplayFunc(display2);
+    glutMainLoop();
+
 }
 
 void Delete() {
@@ -273,8 +315,16 @@ void Delete() {
 }
 
 void Edit() {
+    listOper();
+    glutInitWindowSize(1000, 1000);
+    glutCreateWindow("Edit");
+    init();
+    glutDisplayFunc(display3);
+    glutMainLoop();
 
 }
+
+
 
 void mouseClick(int button, int state, int x, int y) {
     setlocale(LC_ALL, "rus");
@@ -329,7 +379,6 @@ void mouseClick(int button, int state, int x, int y) {
     }
 }
 
-
 int main(int argc, char** argv) {
     setlocale(LC_ALL, "RUS");
     Instruction();
@@ -342,8 +391,6 @@ int main(int argc, char** argv) {
 
     glutDisplayFunc(display);
     glutMouseFunc(mouseClick);
-    glutKeyboardFunc(keyboardInput);
-
 
     glutMainLoop();
 
