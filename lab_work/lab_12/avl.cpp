@@ -169,6 +169,89 @@ void show(AVLNode* Elem, int level) {
 		show(Elem->right, level + 1);
 }
 
+// Поиск элемента в дереве по ключу
+AVLNode* search(AVLNode* root, int key) {
+	AVLNode* current = root;
+	while (current != NULL) {
+		if (key < current->key) {
+			current = current->left;
+		}
+		else if (key > current->key) {
+			current = current->right;
+		}
+		else {
+			return current;
+		}
+	}
+	return NULL;
+}
+
+
+// Очистка дерева
+void clearTree(AVLNode* root) {
+	if (root != NULL) {
+		clearTree(root->left);
+		clearTree(root->right);
+		delete root;
+	}
+	else {
+		return;
+	}
+}
+
+// Копирование элемента в однонаправленный циклический список
+class ListNode {
+public:
+	int key;
+	ListNode* next;
+};
+
+ListNode* copyToLinkedList(AVLNode* root) {
+	if (root == NULL)
+		return NULL;
+
+	ListNode* head = new ListNode();
+	head->key = root->key;
+
+	ListNode* current = head;
+
+	if (root->left != NULL) {
+		current->next = copyToLinkedList(root->left);
+	}
+
+	ListNode* temp = current;
+	while (current->next != NULL)
+		current = current->next;
+
+	if (root->right != NULL) {
+		current->next = copyToLinkedList(root->right);
+	}
+
+	return temp;
+}
+
+// Очистка однонаправленного циклического списка
+void clearLinkedList(ListNode* head) {
+	if (head != NULL) {
+		ListNode* current = head->next;
+		while (current != head) {
+			ListNode* temp = current;
+			current = current->next;
+			delete temp;
+		}
+		delete head;
+	}
+}
+void showLinkedList(ListNode* head) {
+	ListNode* current = head;
+	while (current != NULL) {
+		cout << current->key << " ";
+		current = current->next;
+	}
+	cout << endl;
+}
+
+
 int main()
 {
 	AVLNode* root = NULL;
@@ -195,10 +278,25 @@ int main()
 	root = insert(root, 16);
 	root = insert(root, 17);
 	root = insert(root, 18);
-	for (int i = 0;i < 100;i++)
-		root = insert(root, i);
-
 	show(root, 0);
+
+
+	cout << "\n-------------\n";
+	AVLNode *tm = search(root, 21);
+	
+	show(tm, 0);
+	cout << "\n-------------\n";
+	show(root, 0);
+
+	cout << "\n" << root->depth;
+
+	cout << "\n-------------\n";
+
+
+	cout << "\n-------------\n";
+
+	ListNode* y = copyToLinkedList(root);
+	showLinkedList(y);
 }
 /*
  ссылки:
