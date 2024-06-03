@@ -230,6 +230,7 @@ ListNode* copyToLinkedList(AVLNode* root) {
 	return temp;
 }
 
+
 // Очистка однонаправленного циклического списка
 void clearLinkedList(ListNode* head) {
 	if (head != NULL) {
@@ -242,12 +243,18 @@ void clearLinkedList(ListNode* head) {
 		delete head;
 	}
 }
-void showLinkedList(ListNode* head) {
+
+void helpShowList(ListNode* head) {
 	ListNode* current = head;
 	while (current != NULL) {
 		cout << current->key << " ";
 		current = current->next;
 	}
+}
+
+void showLinkedList(ListNode* head) {
+	helpShowList(head);
+	cout << head->key;
 	cout << endl;
 }
 
@@ -282,8 +289,8 @@ int main()
 
 
 	cout << "\n-------------\n";
-	AVLNode *tm = search(root, 21);
-	
+	AVLNode* tm = search(root, 21);
+
 	show(tm, 0);
 	cout << "\n-------------\n";
 	show(root, 0);
@@ -298,4 +305,3 @@ int main()
 	ListNode* y = copyToLinkedList(root);
 	showLinkedList(y);
 }
-
